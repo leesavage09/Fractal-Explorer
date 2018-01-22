@@ -1,0 +1,25 @@
+@import "../../../node_modules/normalize-scss/sass/normalize/import-now";
+
+.fractal-black {
+    $corner-radius: 30px;
+    $colour-tool: rgb(178, 178, 178);
+    $color-tool-bg: black;
+    $color-canvas-bg: rgb(29, 0, 0);
+    $color-highlight-bg: rgba(0, 0, 0, 0.5);
+    $color-mouseover: white;
+
+    @import "fractal.component.scss";
+}
+
+.fractal-lime {
+    $corner-radius: 12px;
+    $colour-tool: rgb(0, 180, 0);
+    $color-tool-bg: rgb(4, 21, 63);
+    $color-canvas-bg: rgb(187, 255, 0);
+    $color-highlight-bg: rgba(183, 255, 100, 0.5);
+    $color-mouseover: rgb(100, 255, 100);
+
+    @import "fractal.component.scss";
+}
+
+@import "fractal.component.scss";

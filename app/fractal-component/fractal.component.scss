@@ -1,0 +1,178 @@
+$button-size: 40px !default;
+$input-spacing: 10px !default;
+$input-width: 70px !default;
+$corner-radius: 3px !default;
+
+$explorer-width: 400px !default;
+$explorer-height: 300px !default;
+
+$colour-tool: rgb(100, 100, 100) !default;
+$color-tool-bg: white !default;
+$color-canvas-bg: rgb(0, 29, 0) !default;
+$color-highlight-bg: rgba(255, 255, 255, 0.5) !default;
+$color-mouseover: black !default;
+
+$font-family: Arial, sans-serif !default;
+$font-weight: bold !default;
+$font-size: 16px !default;
+$font-size-small: 14px !default;
+
+@mixin interactive {
+    background-color: $color-tool-bg;
+    color: $colour-tool;
+    font-weight: $font-weight;
+    font-family: $font-family;
+    text-align: center;
+    pointer-events: all;
+    font-size: $font-size;
+    line-height: $button-size;
+    padding: 0px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $colour-tool;
+    border-radius: $corner-radius;
+}
+
+@mixin prevent-drag-selection {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+#explorer {
+    height: $explorer-height;
+    position: relative;
+    width: $explorer-width;
+    border-style: solid;
+    border-width: 1px;
+    background-color: $color-canvas-bg;
+    z-index: initial;
+
+    @include prevent-drag-selection;
+
+    #fractal {
+        height: 100%;
+        width: 100%;
+        display: block;
+        cursor: grab;
+    }
+
+    #navigator-window {
+        width: $explorer-width / 4;
+        height: $explorer-height / 4;
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    p {
+        background-color: $color-highlight-bg;
+        border-radius: $corner-radius;
+        font-size: $font-size-small;
+        margin: 0px;
+        text-align: center;
+    }
+
+    .controls {
+        pointer-events: none;
+        position: absolute;
+        padding: 10px;
+        font-size: 0px;
+
+        input, label, select, a, .btn {
+            @include interactive;
+
+            &:hover {
+                color: $color-mouseover;
+            }
+        }
+
+        input:focus, select:focus {
+            outline: none;
+        }
+
+        select {
+            height: $button-size;
+            width: $input-width * 2;
+        }
+
+        .btn {
+            display: inline-block;
+            width: $button-size;
+            height: $button-size;
+            margin-top: $input-spacing * 2;
+        }
+    }
+
+    .bottom-right {
+        bottom: 0;
+        right: 0;
+
+        .btn-group-vertical {
+            .btn {
+                margin-left: auto;
+                display: block;
+            }
+
+            > .btn:first-child {
+                margin-bottom: 0 - $input-spacing * 2;
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-bottom: 1px;
+                border-bottom-style: solid;
+            }
+
+            > .btn:last-child {
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+            }
+        }
+
+        > .btn:last-child {
+            margin-left: $input-spacing;
+        }
+    }
+
+    .top-left {
+        top: 0;
+        left: 0;
+
+        .btn {
+            margin: 0px;
+            vertical-align: top;
+        }
+
+        :first-child {
+            border-right-style: none;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+
+        :last-child {
+            border-left-style: none;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+
+        input {
+            border-right-style: none;
+            border-left-style: none;
+            margin: 0px;
+            width: $input-width;
+            height: $button-size;
+            border-radius: 0px;
+        }
+    }
+
+    .top-right {
+        top: 0;
+        right: 0;
+    }
+
+    .bottom-left {
+        bottom: 0;
+        left: 0;
+    }
+}
