@@ -6,7 +6,6 @@ import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
 
-
 @Component({
   selector: "FractalComponent",
   templateUrl: "./fractal.component.html",
@@ -33,10 +32,11 @@ export class FractalComponent implements OnInit {
   private explorerWindowStyle: string;
 
   private fractal: Fractals.Fractal;
-  private fractalNavigator: Fractals.Fractal;
+  //private fractalNavigator: Fractals.Fractal;
 
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
+  private zoomGestureHappening: boolean = false;
 
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
@@ -84,9 +84,6 @@ export class FractalComponent implements OnInit {
       }
     }
 
-
-
-
     let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     let htmlCanvas: HTMLCanvasElement = ctx.canvas;
@@ -126,24 +123,91 @@ export class FractalComponent implements OnInit {
     }
   }
 
-  startDrag(event) {
+  touchStartDrag(event) {
+    event.preventDefault();
+    if (event.touches.length === 2) {
+      this.zoomGestureHappening = true;
+      this.fractal.getAnimator().dragCancel();
+      this.zoomGestureStart(event);
+    }
+    else {
+      event = this.addTocuchOffsets(event);
+      this.startDrag(event)
+    }
+  }
+
+  touchMove(event) {
+    event.preventDefault();
+    if (this.zoomGestureHappening) {
+      this.zoomGestureMove(event);
+    }
+    else {
+      event = this.addTocuchOffsets(event);
+      this.mouseMove(event);
+    }
+  }
+
+  touchEndDrag(event) {
+    event.preventDefault();
+    if (this.zoomGestureHappening) {
+      this.zoomGestureHappening = false;
+      this.zoomGestureEnd(event);
+    }
+    else {
+      event = this.addTocuchOffsets(event);
+      this.endDrag(event);
+    }
+  }
+
+  private zoomGestureStart(event) {
+    var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
+    let minX = Math.min(event.touches[0].clientX,event.touches[1].clientX);
+    let minY = Math.min(event.touches[0].clientY,event.touches[1].clientY);
+    let centerX = minX+(Math.abs(event.touches[0].clientX-event.touches[1].clientX)/2);
+    let centerY = minY+(Math.abs(event.touches[0].clientY-event.touches[1].clientY)/2);
+    var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
+    centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
+    centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
+    this.fractal.getAnimator().tempZomeScaleStart(dist,centerX,centerY)
+  }
+  private zoomGestureMove(event) {
+    var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
+    this.fractal.getAnimator().tempZoomScale(dist);
+  }
+  private zoomGestureEnd(event) {
+    this.fractal.getAnimator().tempZoomEnd();
+  }
+
+  private addTocuchOffsets(event) {
+    var touch = event.touches[0] || event.changedTouches[0];
+    var realTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (realTarget === this.HTMLfractal.nativeElement) {
+      event.offsetX = touch.clientX - (<any>realTarget.getBoundingClientRect()).x;
+      event.offsetY = touch.clientY - (<any>realTarget.getBoundingClientRect()).y;
+    }
+    return event;
+  }
+
+  private removeAllSelections() {
     let doc = <any>document;
     if (doc.selection) {
       doc.selection.empty();
     } else if (window.getSelection) {
       window.getSelection().removeAllRanges();
     }
+  }
+
+  startDrag(event) {
+    this.removeAllSelections();
     this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
   }
 
   endDrag(event) {
     this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY);
-
   }
 
   mouseMove(event) {
     this.fractal.getAnimator().dragMove(event.offsetX, event.offsetY);
-
   }
 
   onColorChanged(event) {
