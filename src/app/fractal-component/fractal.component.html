@@ -1,16 +1,19 @@
 <div class={{theme}}>
   <div #explorer id="explorer">
 
-    <canvas #fractal id="fractal" (mouseleave)="endDrag($event)"
-                                  (wheel)="wheel($event)" 
-                                  (window:resize)="windowResized()" 
+    <canvas #fractal id="fractal" (window:resize)="windowResized()" 
+
                                   (mousedown)="startDrag($event)" 
                                   (mouseup)="endDrag($event)" 
                                   (mousemove)="mouseMove($event)" 
+                                  (mouseleave)="endDrag($event)"
+
+                                  (wheel)="wheel($event)" 
                                   
                                   (touchstart)="touchStartDrag($event)"
                                   (touchmove)="touchMove($event)"
-                                  (touchend)="touchEndDrag($event)"></canvas>
+                                  (touchend)="touchEndDrag($event)">
+    </canvas>
 
     <div #iterationControls class="controls top-left">
       <div class="btn-group" data-toggle="buttons">

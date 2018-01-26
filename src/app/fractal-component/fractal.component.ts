@@ -216,7 +216,6 @@ export class FractalComponent implements OnInit {
   }
 
   onColorChanged(event) {
-    console.log("color Changed");
     this.changeColor(event.target.value);
     this.fractal.render();
   }
