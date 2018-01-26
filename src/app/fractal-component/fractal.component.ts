@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 
-import { Fractals } from "../../fractal/fractal.module";
+import { Fractals, MaxZoomListner } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
@@ -11,7 +11,7 @@ import { ComplexNumber } from "../../fractal/complexNumbers";
   templateUrl: "./fractal.component.html",
   styleUrls: ["./fractalThemes.component.scss"]
 })
-export class FractalComponent implements OnInit {
+export class FractalComponent implements OnInit, MaxZoomListner {
   @Input() width: string;
   @Input() height: string;
   @Input() equation: string;
@@ -22,6 +22,7 @@ export class FractalComponent implements OnInit {
   @Input() complexWidth: string;
   @ViewChild('explorer') HTMLexplorer: ElementRef;
   @ViewChild('fractal') HTMLfractal: ElementRef;
+  @ViewChild('alert') HTMLalert: ElementRef;
   @ViewChild('iterationControls') HTMLiterationControls: ElementRef;
   @ViewChild('colorControls') HTMLcolorControls: ElementRef;
   @ViewChild('zoomControls') HTMLzoomControls: ElementRef;
@@ -41,6 +42,7 @@ export class FractalComponent implements OnInit {
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 
+  alertText: string;
   colorBW: string = "rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
   colorRainbow: string = "rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
   colorBlueGold: string = "rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128";
@@ -89,6 +91,7 @@ export class FractalComponent implements OnInit {
     ctx.canvas.height = canvas.offsetHeight;
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq);
     this.fractal.iterations = this.iterations;
+    this.fractal.setMaxZoomListener(this);
     this.changeColor(colorCommandString);
     this.fractal.render();
     /*
@@ -176,14 +179,14 @@ export class FractalComponent implements OnInit {
     var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
     centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
     centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
-    this.fractal.getAnimator().tempZomeScaleStart(dist, centerX, centerY)
+    this.fractal.getAnimator().zoomByScaleStart(dist, centerX, centerY)
   }
   private zoomGestureMove(event) {
     var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-    this.fractal.getAnimator().tempZoomScale(dist);
+    this.fractal.getAnimator().zoomByScale(dist);
   }
   private zoomGestureEnd(event) {
-    this.fractal.getAnimator().tempZoomEnd();
+    this.fractal.getAnimator().zoomByScaleEnd();
   }
 
   private addTocuchOffsets(event) {
@@ -218,6 +221,19 @@ export class FractalComponent implements OnInit {
   onColorChanged(event) {
     this.changeColor(event.target.value);
     this.fractal.render();
+  }
+
+  closeAlert() {
+    if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
+      this.HTMLalert.nativeElement.style.visibility = "hidden";
+      return;
+    }
+  }
+
+  maxZoomReached() {
+    this.fractal.deleteMaxZoomListener();
+    this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
+    this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
   private changeColor(commandString: string) {

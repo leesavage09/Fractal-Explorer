@@ -9,8 +9,9 @@ $explorer-height: 300px !default;
 $colour-tool: rgb(100, 100, 100) !default;
 $color-tool-bg: white !default;
 $color-canvas-bg: rgb(0, 29, 0) !default;
-$color-highlight-bg: rgba(255, 255, 255, 0.5) !default;
+$color-highlight-bg: rgba(255, 255, 255, 0.7) !default;
 $color-mouseover: black !default;
+$color-text: black !default;
 
 $font-family: Arial, sans-serif !default;
 $font-weight: bold !default;
@@ -67,17 +68,27 @@ $font-size-small: 14px !default;
         border-width: 1px;
     }
 
-    p {
+    .alert {
+        color: $color-text;
         background-color: $color-highlight-bg;
-        border-radius: $corner-radius;
-        font-size: $font-size-small;
-        margin: 0px;
+        padding: 10px;
         text-align: center;
+        border-radius: $corner-radius;
+        visibility: hidden;
+        pointer-events: all;
+
+        .btn {
+            @include interactive;
+
+            display: inline-block;
+            width: 80px;
+            height: 20px;
+            line-height: 20px;
+        }
     }
 
     .controls {
         pointer-events: none;
-        position: absolute;
         padding: 10px;
         font-size: 0px;
 
@@ -106,36 +117,19 @@ $font-size-small: 14px !default;
         }
     }
 
-    .bottom-right {
-        bottom: 0;
+    .center {
+        position: absolute;
+        left: 0;
         right: 0;
-
-        .btn-group-vertical {
-            .btn {
-                margin-left: auto;
-                display: block;
-            }
-
-            > .btn:first-child {
-                margin-bottom: 0 - $input-spacing * 2;
-                border-bottom-left-radius: 0px;
-                border-bottom-right-radius: 0px;
-                border-bottom: 1px;
-                border-bottom-style: solid;
-            }
-
-            > .btn:last-child {
-                border-top-left-radius: 0px;
-                border-top-right-radius: 0px;
-            }
-        }
-
-        > .btn:last-child {
-            margin-left: $input-spacing;
-        }
+        top: 50%;
+        transform: perspective(1px) translateY(-50%);
+        width: $explorer-width / 1.5;
+        margin: auto;
+        z-index: 99;
     }
 
     .top-left {
+        position: absolute;
         top: 0;
         left: 0;
 
@@ -167,12 +161,44 @@ $font-size-small: 14px !default;
     }
 
     .top-right {
+        position: absolute;
         top: 0;
         right: 0;
     }
 
     .bottom-left {
+        position: absolute;
         bottom: 0;
         left: 0;
+    }
+
+    .bottom-right {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+
+        .btn-group-vertical {
+            .btn {
+                margin-left: auto;
+                display: block;
+            }
+
+            > .btn:first-child {
+                margin-bottom: 0 - $input-spacing * 2;
+                border-bottom-left-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-bottom: 1px;
+                border-bottom-style: solid;
+            }
+
+            > .btn:last-child {
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+            }
+        }
+
+        > .btn:last-child {
+            margin-left: $input-spacing;
+        }
     }
 }

@@ -1,18 +1,7 @@
 <div class={{theme}}>
   <div #explorer id="explorer">
 
-    <canvas #fractal id="fractal" (window:resize)="windowResized()" 
-
-                                  (mousedown)="startDrag($event)" 
-                                  (mouseup)="endDrag($event)" 
-                                  (mousemove)="mouseMove($event)" 
-                                  (mouseleave)="endDrag($event)"
-
-                                  (wheel)="wheel($event)" 
-                                  
-                                  (touchstart)="touchStartDrag($event)"
-                                  (touchmove)="touchMove($event)"
-                                  (touchend)="touchEndDrag($event)">
+    <canvas #fractal id="fractal" (window:resize)="windowResized()" (mousedown)="startDrag($event)" (mouseup)="endDrag($event)" (mousemove)="mouseMove($event)" (mouseleave)="endDrag($event)" (wheel)="wheel($event)" (touchstart)="touchStartDrag($event)" (touchmove)="touchMove($event)" (touchend)="touchEndDrag($event)">
     </canvas>
 
     <div #iterationControls class="controls top-left">
@@ -33,6 +22,15 @@
         <option value="rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">Rainbow</option>
         <option value="rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128">Blue/Gold</option>
       </select>
+    </div>
+
+    <div #alert class="alert center" (wheel)="$event.preventDefault()">
+      <h4>Alert</h4>
+      <p>{{alertText}}</p>
+      <a (click)="closeAlert($event)" class="btn">
+        Ok
+        <i class="fa fa-check" aria-hidden="true"></i>
+      </a>
     </div>
 
     <div class="controls bottom-right">

@@ -15,6 +15,7 @@ export module Fractals {
 		private updateTimeout: number = 200
 		private lastUpdate: number;
 		private animator: FractalNavigationAnimator;
+		private maxZoomListner: MaxZoomListner;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
@@ -29,6 +30,9 @@ export module Fractals {
 
 		public render(): void {
 			this.stopRendering();
+			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
+				this.notifiMaxZoomListeners();
+			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.5);
 			var self = this;
 			setTimeout(function () {
@@ -86,6 +90,20 @@ export module Fractals {
 
 		public getCurrentVersion(): number {
 			return this.renderVersion;
+		}
+
+		public setMaxZoomListener(l: MaxZoomListner) {
+			this.maxZoomListner = l;
+		}
+
+		public deleteMaxZoomListener() {
+			this.maxZoomListner = null;
+		}
+
+		private notifiMaxZoomListeners() {
+			if (this.maxZoomListner != null) {
+				this.maxZoomListner.maxZoomReached();
+			}
 		}
 	}
 
@@ -219,8 +237,8 @@ export module Fractals {
 		magnification: number;
 		focusX: number;
 		focusY: number;
-		touchStartDelta:number;
-		touchLastScale:number;
+		touchStartDelta: number;
+		touchLastScale: number;
 		constructor(fractal: Fractal) {
 			this.fractal = fractal;
 		}
@@ -265,7 +283,7 @@ export module Fractals {
 
 		dragEnd(x: number, y: number): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
-			
+
 			if (!isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
 				this.startTime = (new Date).getTime();
 				this.animationIsRunning = true;
@@ -296,7 +314,7 @@ export module Fractals {
 				this.dragEnd(this.lastmousex, this.lastmousey);
 				return;
 			}
-			
+
 			this.lastmousex = this.lastmousex + this.speedX;
 			this.lastmousey = this.lastmousey + this.speedY;
 
@@ -307,7 +325,7 @@ export module Fractals {
 			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
 
 			let tempScale = EasingFunctions.easeOutQuart(scale)
-		
+
 			this.speedX = this.driftSpeedX - this.driftSpeedX * tempScale;
 			this.speedY = this.driftSpeedY - this.driftSpeedY * tempScale;
 
@@ -319,16 +337,15 @@ export module Fractals {
 			window.requestAnimationFrame(function () { that.dragDrifting() });
 		}
 
-		tempZomeScaleStart(startDist,x,y) {
+		zoomByScaleStart(startDist, x, y) {
 			this.touchStartDelta = startDist;
 			this.clickX = x;
 			this.clickY = y;
 			this.initBufferedImage();
 		}
 
-		tempZoomScale(dist) {
-			//neg scale is zoomout pos is zoomin
-			let scale = dist/this.touchStartDelta;
+		zoomByScale(dist) {
+			let scale = dist / this.touchStartDelta;
 			this.touchLastScale = scale;
 			let width = this.bufferedCanvas.width * scale;
 			let height = this.bufferedCanvas.height * scale;
@@ -339,7 +356,7 @@ export module Fractals {
 			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
 		}
 
-		tempZoomEnd() {
+		zoomByScaleEnd() {
 			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
 			let newWidthScale = this.bufferedCanvas.width / (2 * this.touchLastScale);
 			let newHeightScale = this.bufferedCanvas.height / (2 * this.touchLastScale);
@@ -453,4 +470,8 @@ export module Fractals {
 		}
 	}*/
 
+}
+
+export interface MaxZoomListner {
+	maxZoomReached();
 }
