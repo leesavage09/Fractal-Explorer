@@ -266,7 +266,7 @@ export module Fractals {
 		dragEnd(x: number, y: number): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
 			
-			if (this.speedX != 0 || this.speedY != 0) {
+			if (!isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
 				this.startTime = (new Date).getTime();
 				this.animationIsRunning = true;
 				this.driftSpeedX = this.speedX;
