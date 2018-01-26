@@ -44,9 +44,7 @@ export class FractalComponent implements OnInit {
   colorBW: string = "rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
   colorRainbow: string = "rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
   colorBlueGold: string = "rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128";
-  constructor() {
-
-  }
+  constructor() { }
 
   ngOnInit() {
     if (this.width != undefined) this.HTMLexplorer.nativeElement.style.width = this.width.toString();
@@ -108,7 +106,12 @@ export class FractalComponent implements OnInit {
   */
 
   windowResized() {
-    if (this.explorerWindowIsMaximised) {
+    let d = <any>document;
+    var fullscreenElement = d.fullscreenElement || d.mozFullScreenElement || d.webkitFullscreenElement || d.msFullscreenElement;
+    if (fullscreenElement == undefined && this.explorerWindowIsMaximised) {
+      this.toggelFullScreen()
+    }
+    else if (this.explorerWindowIsMaximised) {
       this.fullScreenWindow();
     }
   }
@@ -148,7 +151,7 @@ export class FractalComponent implements OnInit {
       }
       else {
         this.endDrag(event);
-      }      
+      }
     }
   }
 
@@ -166,14 +169,14 @@ export class FractalComponent implements OnInit {
 
   private zoomGestureStart(event) {
     var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-    let minX = Math.min(event.touches[0].clientX,event.touches[1].clientX);
-    let minY = Math.min(event.touches[0].clientY,event.touches[1].clientY);
-    let centerX = minX+(Math.abs(event.touches[0].clientX-event.touches[1].clientX)/2);
-    let centerY = minY+(Math.abs(event.touches[0].clientY-event.touches[1].clientY)/2);
+    let minX = Math.min(event.touches[0].clientX, event.touches[1].clientX);
+    let minY = Math.min(event.touches[0].clientY, event.touches[1].clientY);
+    let centerX = minX + (Math.abs(event.touches[0].clientX - event.touches[1].clientX) / 2);
+    let centerY = minY + (Math.abs(event.touches[0].clientY - event.touches[1].clientY) / 2);
     var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
     centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
     centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
-    this.fractal.getAnimator().tempZomeScaleStart(dist,centerX,centerY)
+    this.fractal.getAnimator().tempZomeScaleStart(dist, centerX, centerY)
   }
   private zoomGestureMove(event) {
     var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
