@@ -143,7 +143,12 @@ export class FractalComponent implements OnInit {
     }
     else {
       event = this.addTocuchOffsets(event);
-      this.mouseMove(event);
+      if (document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY) === this.HTMLfractal.nativeElement) {
+        this.mouseMove(event);
+      }
+      else {
+        this.endDrag(event);
+      }      
     }
   }
 
@@ -180,11 +185,8 @@ export class FractalComponent implements OnInit {
 
   private addTocuchOffsets(event) {
     var touch = event.touches[0] || event.changedTouches[0];
-    var realTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (realTarget === this.HTMLfractal.nativeElement) {
-      event.offsetX = touch.clientX - (<any>realTarget.getBoundingClientRect()).x;
-      event.offsetY = touch.clientY - (<any>realTarget.getBoundingClientRect()).y;
-    }
+    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).x;
+    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).y;
     return event;
   }
 
