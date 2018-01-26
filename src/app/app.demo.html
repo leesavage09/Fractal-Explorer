@@ -1,0 +1,54 @@
+<div>
+    <h1>Fractal Explorer</h1>
+    <h3>An angular component for exploring fractals</h3>
+    <a href="https://github.com/leesavage09/Fractal-Explorer">https://github.com/leesavage09/Fractal-Explorer</a>
+</div>
+<div>
+    <h4>Example</h4>
+    <p>The number in the top left of the explorer is the iteration counter,
+        <br> play with it as you zoom,
+        <br> see how it effects the detail in the fractal,</p>
+    <FractalComponent iterations="950" complexCenter="-0.8331712433689156,0.21016474143589414" complexWidth="0.0012298571241501398" theme="fractal-lime" color="rainbow"></FractalComponent>
+</div>
+
+<div>
+    <h2>Motivation</h2>
+    <p>My longer term goal is to create an interactive learning tool that will teach the concepts of fractals.
+        <br>
+        <br> To do this I need a fractal explorer that is as easy to use and as familiar as a map navigator. It must be intuitive for people that are new to Fractals.
+        <br>
+        <br> Fractal explorers are often a programming project of choice as they present many challenges to solve. There are lots of examples of fractal explorers on the web however many are overly complex and technical or have poor UX.
+        <br>
+        <br> This explorer aims to solve that.
+    </p>
+    <h2>Challenges solved so far</h2>
+    <p>An intuitive zoom and panning UI that can be used like a mapping program. with easing functions that make it smooth. Abstracting the need for the user to mathematically render the fractal. Mouse wheels and track pad gesture control is supported.
+        <br>
+        <br> Simulated performance by caching images during panning and zooming to give the feel you are exploring the fractal without the constant technical input that fractal explorers usually need.
+        <br>
+        <br> A full screen view, the fractal can be explored as a full screen app on modern browser that support that function.
+        <br>
+        <br> A colour rendering engine that will ultimately be customisable so the users can make there own gradients. Right now there are few pre made ones to pick from.
+    </p>
+
+    <h1>Below are some examples of how the component can be configured.</h1>
+
+    <h3>Basic instantiation</h3>
+    <p>&lt;FractalComponent&gt;&lt;/FractalComponent&gt;</p>
+    <FractalComponent></FractalComponent>
+
+    <h3>Alternative theme and size and colour</h3>
+    <p>&lt;FractalComponent width="600px" height="250px" theme="fractal-black" color="blue/gold"&gt;&lt;/FractalComponent&gt;</p>
+    <FractalComponent width="600px" height="250px" theme="fractal-black" color="blue/gold"></FractalComponent>
+
+
+    <h3>Alternative equation</h3>
+    <p>&lt;FractalComponent equation="burningShip" &gt;&lt;/FractalComponent&gt;</p>
+    <FractalComponent equation="burningShip"></FractalComponent>
+
+
+    <h3>Predetermined start location in fractal</h3>
+    <p>&lt;FractalComponent iterations="950" complexCenter="-0.8331712433689156,0.21016474143589414" complexWidth="0.0012298571241501398" theme="fractal-lime" color="rainbow"&gt;&lt;/FractalComponent&gt;</p>
+    <FractalComponent iterations="950" complexCenter="-0.8331712433689156,0.21016474143589414" complexWidth="0.0012298571241501398" theme="fractal-lime" color="rainbow"></FractalComponent>
+
+</div>

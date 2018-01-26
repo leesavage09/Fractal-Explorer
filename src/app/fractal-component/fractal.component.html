@@ -1,0 +1,61 @@
+<div class={{theme}}>
+  <div #explorer id="explorer">
+
+    <canvas #fractal id="fractal" (mouseleave)="endDrag($event)"
+                                  (wheel)="wheel($event)" 
+                                  (window:resize)="windowResized()" 
+                                  (mousedown)="startDrag($event)" 
+                                  (mouseup)="endDrag($event)" 
+                                  (mousemove)="mouseMove($event)" 
+                                  
+                                  (touchstart)="touchStartDrag($event)"
+                                  (touchmove)="touchMove($event)"
+                                  (touchend)="touchEndDrag($event)"></canvas>
+
+    <div #iterationControls class="controls top-left">
+      <div class="btn-group" data-toggle="buttons">
+        <a (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+        <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
+        <a (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <div #colorControls class="controls top-right">
+      <select #colourSelect (change)="onColorChanged($event)">
+        <option value="rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">B/W</option>
+        <option value="rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">Rainbow</option>
+        <option value="rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128">Blue/Gold</option>
+      </select>
+    </div>
+
+    <div class="controls bottom-right">
+      <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
+        <a (click)="zoomInClick($event)" class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+        <a (click)="zoomOutClick($event)" class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <a #fullScreenControls (click)="toggelFullScreen()" class="btn">
+        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+      </a>
+      <a (click)="toggelEye()" class="btn eye">
+        <i #eyeControls class="fa fa-eye-slash" aria-hidden="true"></i>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!--
+  <div class="controls bottom-left">
+    <p>This is the width</p>
+    <canvas id="navigator-window"></canvas>
+  </div>
+-->
