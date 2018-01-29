@@ -119,6 +119,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
+  /*
+  * Mouse wheel and trackpad events
+  */
   wheel(event) {
     event.preventDefault();
     if (event.deltaY < 0) {
@@ -129,15 +132,27 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
+  /*
+  * Touch Screen Events
+  */
   touchStartDrag(event) {
     event.preventDefault();
+    event = this.addTocuchOffsets(event);
     if (event.touches.length === 2) {
+      this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY,false);
       this.zoomGestureHappening = true;
-      this.fractal.getAnimator().dragCancel();
-      this.zoomGestureStart(event);
+      //this.fractal.getAnimator().dragCancel();
+      var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
+      let minX = Math.min(event.touches[0].clientX, event.touches[1].clientX);
+      let minY = Math.min(event.touches[0].clientY, event.touches[1].clientY);
+      let centerX = minX + (Math.abs(event.touches[0].clientX - event.touches[1].clientX) / 2);
+      let centerY = minY + (Math.abs(event.touches[0].clientY - event.touches[1].clientY) / 2);
+      var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
+      centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
+      centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
+      this.fractal.getAnimator().zoomByScaleStart(dist, centerX, centerY)
     }
     else {
-      event = this.addTocuchOffsets(event);
       this.startDrag(event)
     }
   }
@@ -145,66 +160,40 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   touchMove(event) {
     event.preventDefault();
     if (this.zoomGestureHappening) {
-      this.zoomGestureMove(event);
+      var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
+      this.fractal.getAnimator().zoomByScale(dist);
+      return;
     }
-    else {
-      event = this.addTocuchOffsets(event);
-      if (document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY) === this.HTMLfractal.nativeElement) {
-        this.mouseMove(event);
-      }
-      else {
-        this.endDrag(event);
-      }
+    event = this.addTocuchOffsets(event);
+    if (document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY) === this.HTMLfractal.nativeElement) {
+      this.mouseMove(event);
+      return;
     }
+    this.endDrag(event);
   }
 
   touchEndDrag(event) {
     event.preventDefault();
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
-      this.zoomGestureEnd(event);
+      if (event.touches.length >= 1) {
+        this.fractal.getAnimator().zoomByScaleEnd(false);
+        this.touchStartDrag(event);
+      }
+      else {
+        this.fractal.getAnimator().zoomByScaleEnd();
+      }
     }
     else {
       event = this.addTocuchOffsets(event);
-      this.endDrag(event);
+    this.endDrag(event);
     }
+    
   }
 
-  private zoomGestureStart(event) {
-    var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-    let minX = Math.min(event.touches[0].clientX, event.touches[1].clientX);
-    let minY = Math.min(event.touches[0].clientY, event.touches[1].clientY);
-    let centerX = minX + (Math.abs(event.touches[0].clientX - event.touches[1].clientX) / 2);
-    let centerY = minY + (Math.abs(event.touches[0].clientY - event.touches[1].clientY) / 2);
-    var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
-    centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
-    centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
-    this.fractal.getAnimator().zoomByScaleStart(dist, centerX, centerY)
-  }
-  private zoomGestureMove(event) {
-    var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-    this.fractal.getAnimator().zoomByScale(dist);
-  }
-  private zoomGestureEnd(event) {
-    this.fractal.getAnimator().zoomByScaleEnd();
-  }
-
-  private addTocuchOffsets(event) {
-    var touch = event.touches[0] || event.changedTouches[0];
-    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).x;
-    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).y;
-    return event;
-  }
-
-  private removeAllSelections() {
-    let doc = <any>document;
-    if (doc.selection) {
-      doc.selection.empty();
-    } else if (window.getSelection) {
-      window.getSelection().removeAllRanges();
-    }
-  }
-
+  /*
+  * Mouse pointer events
+  */
   startDrag(event) {
     this.removeAllSelections();
     this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
@@ -218,6 +207,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.fractal.getAnimator().dragMove(event.offsetX, event.offsetY);
   }
 
+  /*
+  * Form and button events
+  */
   onColorChanged(event) {
     this.changeColor(event.target.value);
     this.fractal.render();
@@ -227,59 +219,6 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
       this.HTMLalert.nativeElement.style.visibility = "hidden";
       return;
-    }
-  }
-
-  maxZoomReached() {
-    this.fractal.deleteMaxZoomListener();
-    this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
-    this.HTMLalert.nativeElement.style.visibility = "visible";
-  }
-
-  private changeColor(commandString: string) {
-    let commands = commandString.split(",");
-    for (let i = 0; i < commands.length; i++) {
-      let thisCommand = commands[i].split(":");
-
-      let command = thisCommand[0];
-      let value = thisCommand[1];
-
-      if (command == "rp") {
-        this.fractal.color.redPhase = parseInt(value);
-      }
-      else if (command == "gp") {
-        this.fractal.color.greenPhase = parseInt(value);
-      }
-      else if (command == "bp") {
-        this.fractal.color.bluePhase = parseInt(value);
-      }
-      if (command == "rf") {
-        this.fractal.color.redFrequency = parseInt(value);
-      }
-      else if (command == "gf") {
-        this.fractal.color.greenFrequency = parseInt(value);
-      }
-      else if (command == "bf") {
-        this.fractal.color.blueFrequency = parseInt(value);
-      }
-      if (command == "rw") {
-        this.fractal.color.redWidth = parseInt(value);
-      }
-      else if (command == "gw") {
-        this.fractal.color.greenWidth = parseInt(value);
-      }
-      else if (command == "bw") {
-        this.fractal.color.blueWidth = parseInt(value);
-      }
-      if (command == "rc") {
-        this.fractal.color.redColorCenter = parseInt(value);
-      }
-      else if (command == "gc") {
-        this.fractal.color.greenColorCenter = parseInt(value);
-      }
-      else if (command == "bc") {
-        this.fractal.color.blueColorCenter = parseInt(value);
-      }
     }
   }
 
@@ -356,10 +295,19 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   /*
+  * Callbacks from fractal explorer
+  */
+  maxZoomReached() {
+    this.fractal.deleteMaxZoomListener();
+    this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
+    this.HTMLalert.nativeElement.style.visibility = "visible";
+  }
+
+  /*
   * Helper Functions \/
   */
 
-  requestNativeFullScreen() {
+  private requestNativeFullScreen() {
     let body = <any>document.body;
     let requestMethod = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullScreen;
     if (requestMethod) {
@@ -367,7 +315,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  exitNativeFullScreen() {
+  private exitNativeFullScreen() {
     let doc = <any>document;
     if (doc.exitFullscreen) {
       doc.exitFullscreen();
@@ -380,12 +328,12 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  iterationsChanged() {
+  private iterationsChanged() {
     this.fractal.iterations = this.iterations;
     this.fractal.render();
   }
 
-  fullScreenWindow() {
+  private fullScreenWindow() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
     explorerDiv.setAttribute("style", "position: fixed; top: 0px; left: 0px; border: none; z-index: 9999;");
     explorerDiv.style.width = window.innerWidth.toString() + "px";
@@ -393,7 +341,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.canvasSizeChanged();
   }
 
-  canvasSizeChanged() {
+  private canvasSizeChanged() {
     let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.canvas.width = canvas.offsetWidth;
@@ -401,6 +349,69 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     let cp = this.fractal.complexPlain;
     cp.replaceView(cp.getSquare().center.r, cp.getSquare().center.i, cp.getSquare().width, canvas);
     this.fractal.render();
+  }
+
+  private changeColor(commandString: string) {
+    let commands = commandString.split(",");
+    for (let i = 0; i < commands.length; i++) {
+      let thisCommand = commands[i].split(":");
+
+      let command = thisCommand[0];
+      let value = thisCommand[1];
+
+      if (command == "rp") {
+        this.fractal.color.redPhase = parseInt(value);
+      }
+      else if (command == "gp") {
+        this.fractal.color.greenPhase = parseInt(value);
+      }
+      else if (command == "bp") {
+        this.fractal.color.bluePhase = parseInt(value);
+      }
+      if (command == "rf") {
+        this.fractal.color.redFrequency = parseInt(value);
+      }
+      else if (command == "gf") {
+        this.fractal.color.greenFrequency = parseInt(value);
+      }
+      else if (command == "bf") {
+        this.fractal.color.blueFrequency = parseInt(value);
+      }
+      if (command == "rw") {
+        this.fractal.color.redWidth = parseInt(value);
+      }
+      else if (command == "gw") {
+        this.fractal.color.greenWidth = parseInt(value);
+      }
+      else if (command == "bw") {
+        this.fractal.color.blueWidth = parseInt(value);
+      }
+      if (command == "rc") {
+        this.fractal.color.redColorCenter = parseInt(value);
+      }
+      else if (command == "gc") {
+        this.fractal.color.greenColorCenter = parseInt(value);
+      }
+      else if (command == "bc") {
+        this.fractal.color.blueColorCenter = parseInt(value);
+      }
+    }
+  }
+
+  private addTocuchOffsets(event) {
+    var touch = event.touches[0] || event.changedTouches[0];
+    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).x;
+    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).y;
+    return event;
+  }
+
+  private removeAllSelections() {
+    let doc = <any>document;
+    if (doc.selection) {
+      doc.selection.empty();
+    } else if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
   }
 
 }

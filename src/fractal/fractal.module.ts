@@ -237,7 +237,7 @@ export module Fractals {
 		magnification: number;
 		focusX: number;
 		focusY: number;
-		touchStartDelta: number;
+		touchStartDelta: number = null;
 		touchLastScale: number;
 		constructor(fractal: Fractal) {
 			this.fractal = fractal;
@@ -250,16 +250,16 @@ export module Fractals {
 			this.bufferedCanvas.getContext('2d').drawImage(this.fractal.complexPlain.getViewCanvas(), 0, 0);
 		}
 
-		dragStart(mouseX: number, mouseY: number): void {
+		dragStart(x: number, y: number): void {
 			if (this.animationIsRunning) return;
 			this.fractal.stopRendering();
 			this.initBufferedImage();
-			this.mouseStartDragPos = { x: mouseX, y: mouseY };
+			this.mouseStartDragPos = { x: x, y: y };
 		}
 
-		dragCancel() {
-			this.mouseStartDragPos = null;
-		}
+		//dragCancel() {
+		//	this.mouseStartDragPos = null;
+		//}
 
 		dragMove(x: number, y: number): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
@@ -281,10 +281,10 @@ export module Fractals {
 			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
 		}
 
-		dragEnd(x: number, y: number): void {
+		dragEnd(x: number, y: number, animate:boolean = true): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
 
-			if (!isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
+			if (animate && !isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
 				this.startTime = (new Date).getTime();
 				this.animationIsRunning = true;
 				this.driftSpeedX = this.speedX;
@@ -300,7 +300,7 @@ export module Fractals {
 			let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(oldPos.x - deltaX, oldPos.y - deltaY);
 			let newWidth = this.fractal.complexPlain.getSquare().width;
 			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, this.fractal.complexPlain.getViewCanvas());
-			this.fractal.render();
+			if (animate) this.fractal.render();
 			this.mouseStartDragPos = null;
 		}
 
@@ -330,7 +330,7 @@ export module Fractals {
 			this.speedY = this.driftSpeedY - this.driftSpeedY * tempScale;
 
 			if (Math.abs(this.speedX) < 1 && Math.abs(this.speedY) < 1) {
-				this.startTime = this.startTime - 1000;
+				this.startTime = this.startTime - this.driftAnimationTime;
 			}
 
 			let that = this;
@@ -338,6 +338,7 @@ export module Fractals {
 		}
 
 		zoomByScaleStart(startDist, x, y) {
+			if (this.animationIsRunning || this.mouseStartDragPos != null) return;
 			this.touchStartDelta = startDist;
 			this.clickX = x;
 			this.clickY = y;
@@ -345,6 +346,7 @@ export module Fractals {
 		}
 
 		zoomByScale(dist) {
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta==null) return;
 			let scale = dist / this.touchStartDelta;
 			this.touchLastScale = scale;
 			let width = this.bufferedCanvas.width * scale;
@@ -356,7 +358,9 @@ export module Fractals {
 			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
 		}
 
-		zoomByScaleEnd() {
+		zoomByScaleEnd(animate:boolean = true) {
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta==null) return;
+			this.touchStartDelta = null;
 			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
 			let newWidthScale = this.bufferedCanvas.width / (2 * this.touchLastScale);
 			let newHeightScale = this.bufferedCanvas.height / (2 * this.touchLastScale);
@@ -365,8 +369,7 @@ export module Fractals {
 			let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(this.focusX, this.focusY);//TODO ComplexNumber    
 			let newWidth = this.fractal.complexPlain.getSquare().width / this.touchLastScale
 			this.fractal.complexPlain = new ComplexPlain(newCenter.r, newCenter.i, newWidth, viewCanvas);
-			console.log("touch zoom end render")
-			this.fractal.render();
+			if (animate) this.fractal.render();
 		}
 
 		zoomStart(x: number, y: number, magnification: number, animationTime: number): void {
