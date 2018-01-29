@@ -257,10 +257,6 @@ export module Fractals {
 			this.mouseStartDragPos = { x: x, y: y };
 		}
 
-		//dragCancel() {
-		//	this.mouseStartDragPos = null;
-		//}
-
 		dragMove(x: number, y: number): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
 
@@ -281,7 +277,7 @@ export module Fractals {
 			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
 		}
 
-		dragEnd(x: number, y: number, animate:boolean = true): void {
+		dragEnd(x: number, y: number, animate: boolean = true): void {
 			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
 
 			if (animate && !isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
@@ -346,7 +342,7 @@ export module Fractals {
 		}
 
 		zoomByScale(dist) {
-			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta==null) return;
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta == null) return;
 			let scale = dist / this.touchStartDelta;
 			this.touchLastScale = scale;
 			let width = this.bufferedCanvas.width * scale;
@@ -358,8 +354,8 @@ export module Fractals {
 			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
 		}
 
-		zoomByScaleEnd(animate:boolean = true) {
-			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta==null) return;
+		zoomByScaleEnd(animate: boolean = true) {
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta == null) return;
 			this.touchStartDelta = null;
 			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
 			let newWidthScale = this.bufferedCanvas.width / (2 * this.touchLastScale);

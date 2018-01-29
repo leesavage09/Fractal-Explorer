@@ -6,11 +6,11 @@
 
     <div #iterationControls class="controls top-left">
       <div class="btn-group" data-toggle="buttons">
-        <a (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+        <a (touchstart)="startChangingIterations(0.9)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-minus" aria-hidden="true"></i>
         </a>
         <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
-        <a (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+        <a (touchstart)="startChangingIterations(1.1)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-plus" aria-hidden="true"></i>
         </a>
       </div>

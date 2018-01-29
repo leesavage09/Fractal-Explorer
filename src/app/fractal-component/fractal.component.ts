@@ -139,7 +139,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     event.preventDefault();
     event = this.addTocuchOffsets(event);
     if (event.touches.length === 2) {
-      this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY,false);
+      this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY, false);
       this.zoomGestureHappening = true;
       //this.fractal.getAnimator().dragCancel();
       var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
@@ -186,9 +186,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
     else {
       event = this.addTocuchOffsets(event);
-    this.endDrag(event);
+      this.endDrag(event);
     }
-    
+
   }
 
   /*
