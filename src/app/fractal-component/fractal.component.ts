@@ -387,7 +387,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   fullScreenWindow() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
-    explorerDiv.setAttribute("style", "position: absolute; top: 0px; left: 0px; border: none; z-index: 9999;");
+    explorerDiv.setAttribute("style", "position: fixed; top: 0px; left: 0px; border: none; z-index: 9999;");
     explorerDiv.style.width = window.innerWidth.toString() + "px";
     explorerDiv.style.height = window.innerHeight.toString() + "px";
     this.canvasSizeChanged();
