@@ -246,6 +246,9 @@ export module Fractals {
 			this.fractal = fractal;
 		}
 
+		/*
+		* Setup a timed animation
+		*/
 		private initBufferedImage(): void {
 			this.bufferedCanvas = document.createElement('canvas');
 			this.bufferedCanvas.width = this.fractal.complexPlain.getViewCanvas().width;
@@ -253,6 +256,10 @@ export module Fractals {
 			this.bufferedCanvas.getContext('2d').drawImage(this.fractal.complexPlain.getViewCanvas(), 0, 0);
 		}
 
+
+		/*
+		* Drag image over time 
+		*/
 		dragStart(x: number, y: number): void {
 			if (this.animationIsRunning || this.touchStartDelta != null) return;
 			this.fractal.stopRendering();
@@ -304,39 +311,9 @@ export module Fractals {
 		}
 
 
-		private dragDrifting(): void {
-			let delta = (new Date).getTime() - this.startTime;
-			let scale = delta / this.driftAnimationTime;
-			if (scale > 1) {
-				this.speedX = 0;
-				this.speedY = 0;
-				this.animationIsRunning = false;
-				this.dragEnd(this.lastmousex, this.lastmousey);
-				return;
-			}
-
-			this.lastmousex = this.lastmousex + this.speedX;
-			this.lastmousey = this.lastmousey + this.speedY;
-
-			let dx = this.lastmousex - this.mouseStartDragPos.x;
-			let dy = this.lastmousey - this.mouseStartDragPos.y;
-			let canvas = this.fractal.complexPlain.getViewCanvas();
-			canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
-
-			let tempScale = EasingFunctions.easeOutQuart(scale)
-
-			this.speedX = this.driftSpeedX - this.driftSpeedX * tempScale;
-			this.speedY = this.driftSpeedY - this.driftSpeedY * tempScale;
-
-			if (Math.abs(this.speedX) < 1 && Math.abs(this.speedY) < 1) {
-				this.startTime = this.startTime - this.driftAnimationTime;
-			}
-
-			let that = this;
-			window.requestAnimationFrame(function () { that.dragDrifting() });
-		}
-
+		/*
+		* Scale an image over time
+		*/
 		zoomByScaleStart(startDist, x, y): void {
 			if (this.animationIsRunning || this.mouseStartDragPos != null) return;
 			this.touchStartDelta = startDist;
@@ -386,9 +363,106 @@ export module Fractals {
 			this.focusX = this.clickX - General.mapInOut(this.clickX, 0, this.bufferedCanvas.width, 0 - newWidthScale, newWidthScale);
 			this.focusY = this.clickY - General.mapInOut(this.clickY, 0, this.bufferedCanvas.height, 0 - newHeightScale, newHeightScale);
 			let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(this.focusX, this.focusY);//TODO ComplexNumber    
-			let newWidth = this.fractal.complexPlain.getSquare().width / this.touchLastScale
-			this.fractal.complexPlain = new ComplexPlain(newCenter.r, newCenter.i, newWidth, viewCanvas);
+			let newWidth = this.fractal.complexPlain.getSquare().width / this.touchLastScale;
+			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
 			if (animate) this.fractal.render();
+		}
+
+
+		/*
+		* Start a zoom animation
+		*/
+		zoomStart(x: number, y: number, magnification: number, animationTime: number): void {
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta != null) return;
+			this.animationIsRunning = true;
+			this.fractal.stopRendering();
+			this.clickX = x
+			this.clickY = y;
+			this.magnification = magnification;
+			this.startTime = (new Date).getTime();
+			this.initBufferedImage();
+			let that = this;
+			window.requestAnimationFrame(function () { that.zooming(animationTime) });
+		}
+
+
+		/*
+		* Animations
+		*/
+		private dragDrifting(): void {
+			let delta = (new Date).getTime() - this.startTime;
+			let scale = delta / this.driftAnimationTime;
+			if (scale > 1) {
+				this.speedX = 0;
+				this.speedY = 0;
+				this.animationIsRunning = false;
+				this.dragEnd(this.lastmousex, this.lastmousey);
+				return;
+			}
+
+			this.lastmousex = this.lastmousex + this.speedX;
+			this.lastmousey = this.lastmousey + this.speedY;
+
+			let dx = this.lastmousex - this.mouseStartDragPos.x;
+			let dy = this.lastmousey - this.mouseStartDragPos.y;
+			let canvas = this.fractal.complexPlain.getViewCanvas();
+			canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+			canvas.getContext('2d').drawImage(this.bufferedCanvas, dx, dy);
+
+			let tempScale = EasingFunctions.easeOutQuart(scale)
+
+			this.speedX = this.driftSpeedX - this.driftSpeedX * tempScale;
+			this.speedY = this.driftSpeedY - this.driftSpeedY * tempScale;
+
+			if (Math.abs(this.speedX) < 1 && Math.abs(this.speedY) < 1) {
+				this.startTime = this.startTime - this.driftAnimationTime;
+			}
+
+			let that = this;
+			window.requestAnimationFrame(function () { that.dragDrifting() });
+		}
+
+		private zooming(deltaTime: number): void {
+			let delta = (new Date).getTime() - this.startTime;
+			let scale = (delta / deltaTime);
+			let quadScale = EasingFunctions.easeInOutQuad(scale)
+			if (scale > 1) {
+				scale = 1; //last frame
+				quadScale = this.magnification;
+			}
+			else if (this.magnification > 1) {
+				quadScale = 1 + (quadScale * (this.magnification - 1));
+			} else {
+				quadScale = 1 - (quadScale * (1 - this.magnification));
+			}
+
+			let width = this.bufferedCanvas.width * quadScale;
+			let height = this.bufferedCanvas.height * quadScale;
+			let cx = this.clickX - (this.clickX * quadScale);
+			let cy = this.clickY - (this.clickY * quadScale);
+			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
+			viewCanvas.getContext('2d').clearRect(0, 0, viewCanvas.width, viewCanvas.height);
+			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
+
+			if (quadScale != this.magnification) {
+				let that = this;
+				window.requestAnimationFrame(function () { that.zooming(deltaTime) });
+			}
+			else {
+				let newWidthScale = this.bufferedCanvas.width / (2 * quadScale);
+				let newHeightScale = this.bufferedCanvas.height / (2 * quadScale);
+				this.focusX = this.clickX - General.mapInOut(this.clickX, 0, this.bufferedCanvas.width, 0 - newWidthScale, newWidthScale);
+				this.focusY = this.clickY - General.mapInOut(this.clickY, 0, this.bufferedCanvas.height, 0 - newHeightScale, newHeightScale);
+				let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(this.focusX, this.focusY);//TODO ComplexNumber    
+				let newWidth = this.fractal.complexPlain.getSquare().width / quadScale;
+				this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
+				let version = this.fractal.getCurrentVersion();
+				let that = this;
+				setTimeout(function () {
+					that.fractal.renderIfVersionIsNew(version);
+				}, 300)
+				this.animationIsRunning = false;
+			}
 		}
 
 		private touchZoomDrifting(): void {
@@ -427,62 +501,17 @@ export module Fractals {
 			window.requestAnimationFrame(function () { that.touchZoomDrifting() });
 		}
 
-		zoomStart(x: number, y: number, magnification: number, animationTime: number): void {
-			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta != null) return;
-			this.animationIsRunning = true;
-			this.fractal.stopRendering();
-			this.clickX = x
-			this.clickY = y;
-			this.magnification = magnification;
-			this.startTime = (new Date).getTime();
-			this.initBufferedImage();
-			let that = this;
-			window.requestAnimationFrame(function () { that.zooming(animationTime) });
-		}
 
-		private zooming(deltaTime: number): void {
-			let delta = (new Date).getTime() - this.startTime;
-			let scale = (delta / deltaTime);
-			let quadScale = EasingFunctions.easeInOutQuad(scale)
-			if (scale > 1) {
-				scale = 1; //last frame
-				quadScale = this.magnification;
-			}
-			else if (this.magnification > 1) {
-				quadScale = 1 + (quadScale * (this.magnification - 1));
-			} else {
-				quadScale = 1 - (quadScale * (1 - this.magnification));
-			}
-
-			let width = this.bufferedCanvas.width * quadScale;
-			let height = this.bufferedCanvas.height * quadScale;
-			let cx = this.clickX - (this.clickX * quadScale);
-			let cy = this.clickY - (this.clickY * quadScale);
+		private updateFractalView(scale,screenX,screenY) {
 			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
-			viewCanvas.getContext('2d').clearRect(0, 0, viewCanvas.width, viewCanvas.height);
-			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
-
-			if (quadScale != this.magnification) {
-				let that = this;
-				window.requestAnimationFrame(function () { that.zooming(deltaTime) });
-			}
-			else {
-				let newWidthScale = this.bufferedCanvas.width / (2 * quadScale);
-				let newHeightScale = this.bufferedCanvas.height / (2 * quadScale);
-				this.focusX = this.clickX - General.mapInOut(this.clickX, 0, this.bufferedCanvas.width, 0 - newWidthScale, newWidthScale);
-				this.focusY = this.clickY - General.mapInOut(this.clickY, 0, this.bufferedCanvas.height, 0 - newHeightScale, newHeightScale);
-				let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(this.focusX, this.focusY);//TODO ComplexNumber    
-				let newWidth = this.fractal.complexPlain.getSquare().width / quadScale
-				this.fractal.complexPlain = new ComplexPlain(newCenter.r, newCenter.i, newWidth, viewCanvas);
-				let version = this.fractal.getCurrentVersion();
-				let that = this;
-				setTimeout(function () {
-					that.fractal.renderIfVersionIsNew(version);
-				}, 300)
-				this.animationIsRunning = false;
-			}
+			let newWidthScale = this.bufferedCanvas.width / (2 * scale);
+			let newHeightScale = this.bufferedCanvas.height / (2 * scale);
+			let focusX = screenX - General.mapInOut(screenX, 0, this.bufferedCanvas.width, 0 - newWidthScale, newWidthScale);
+			let focusY = screenY - General.mapInOut(screenY, 0, this.bufferedCanvas.height, 0 - newHeightScale, newHeightScale);
+			let newCenter = this.fractal.complexPlain.getComplexNumberFromMouse(focusX, focusY);    
+			let newWidth = this.fractal.complexPlain.getSquare().width / scale;
+			this.fractal.complexPlain.replaceView(newCenter.r, newCenter.i, newWidth, viewCanvas);
 		}
-
 	}
 
 	/*
