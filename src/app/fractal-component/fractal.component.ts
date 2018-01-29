@@ -223,7 +223,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.fractal.render();
   }
 
-  closeAlert() {
+  closeAlert(event) {
     if (getComputedStyle(this.HTMLalert.nativeElement).visibility == "visible") {
       this.HTMLalert.nativeElement.style.visibility = "hidden";
       return;

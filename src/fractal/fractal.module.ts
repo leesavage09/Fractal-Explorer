@@ -12,7 +12,7 @@ export module Fractals {
 		img: ImageData;
 		private calculationFunction: Function;
 		private renderVersion: number = 0;
-		private updateTimeout: number = 200
+		private updateTimeout: number = 100
 		private lastUpdate: number;
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
