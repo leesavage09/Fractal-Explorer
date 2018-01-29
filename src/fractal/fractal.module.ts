@@ -219,7 +219,7 @@ export module Fractals {
 
 	export class FractalNavigationAnimator {
 		fractal: Fractal;
-		driftAnimationTime: number = 800;
+		driftAnimationTime: number = 1500;//800
 		zoomAnimationTime: number = 200;
 		animationIsRunning: boolean = false;
 		mouseStartDragPos: { x: number, y: number };
@@ -228,7 +228,10 @@ export module Fractals {
 		speedY: number;
 		lastmousex: number;
 		lastmousey: number;
-		lastmousetime: number;
+		lastDist: number;
+		speedDist: number;
+		driftSpeedDist: number;
+		lastSpeedTime: number;
 		startTime: number;
 		driftSpeedX: number;
 		driftSpeedY: number;
@@ -251,16 +254,16 @@ export module Fractals {
 		}
 
 		dragStart(x: number, y: number): void {
-			if (this.animationIsRunning) return;
+			if (this.animationIsRunning || this.touchStartDelta != null) return;
 			this.fractal.stopRendering();
 			this.initBufferedImage();
 			this.mouseStartDragPos = { x: x, y: y };
 		}
 
 		dragMove(x: number, y: number): void {
-			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
+			if (this.mouseStartDragPos == null || this.animationIsRunning || this.touchStartDelta != null) return;
 
-			let dt = (new Date).getTime() - this.lastmousetime;
+			let dt = (new Date).getTime() - this.lastSpeedTime;
 			let dx = x - this.lastmousex;
 			let dy = y - this.lastmousey;
 			this.speedX = Math.round(dx / dt * 10);
@@ -268,7 +271,7 @@ export module Fractals {
 
 			this.lastmousex = x;
 			this.lastmousey = y;
-			this.lastmousetime = (new Date).getTime();
+			this.lastSpeedTime = (new Date).getTime();
 
 			dx = x - this.mouseStartDragPos.x;
 			dy = y - this.mouseStartDragPos.y;
@@ -278,7 +281,7 @@ export module Fractals {
 		}
 
 		dragEnd(x: number, y: number, animate: boolean = true): void {
-			if (this.mouseStartDragPos == null || this.animationIsRunning) return;
+			if (this.mouseStartDragPos == null || this.animationIsRunning || this.touchStartDelta != null) return;
 
 			if (animate && !isNaN(this.speedX) && !isNaN(this.speedY) && this.speedX != 0 && this.speedY != 0) {
 				this.startTime = (new Date).getTime();
@@ -299,6 +302,7 @@ export module Fractals {
 			if (animate) this.fractal.render();
 			this.mouseStartDragPos = null;
 		}
+
 
 		private dragDrifting(): void {
 			let delta = (new Date).getTime() - this.startTime;
@@ -333,7 +337,7 @@ export module Fractals {
 			window.requestAnimationFrame(function () { that.dragDrifting() });
 		}
 
-		zoomByScaleStart(startDist, x, y) {
+		zoomByScaleStart(startDist, x, y): void {
 			if (this.animationIsRunning || this.mouseStartDragPos != null) return;
 			this.touchStartDelta = startDist;
 			this.clickX = x;
@@ -341,8 +345,17 @@ export module Fractals {
 			this.initBufferedImage();
 		}
 
-		zoomByScale(dist) {
+		zoomByScale(dist): void {
 			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta == null) return;
+
+			let deltaTime = (new Date).getTime() - this.lastSpeedTime;
+			let deltaDist = dist - this.lastDist;
+			this.speedDist = Math.round(deltaDist / deltaTime * 10);
+
+			this.lastDist = dist;
+			this.lastSpeedTime = (new Date).getTime();
+
+
 			let scale = dist / this.touchStartDelta;
 			this.touchLastScale = scale;
 			let width = this.bufferedCanvas.width * scale;
@@ -354,8 +367,18 @@ export module Fractals {
 			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
 		}
 
-		zoomByScaleEnd(animate: boolean = true) {
+		zoomByScaleEnd(animate: boolean = true): void {
 			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta == null) return;
+
+			if (animate && !isNaN(this.speedDist) && this.speedDist != 0) {
+				this.startTime = (new Date).getTime();
+				this.animationIsRunning = true;
+				this.driftSpeedDist = this.speedDist;
+				let that = this;
+				window.requestAnimationFrame(function () { that.touchZoomDrifting() });
+				return;
+			}
+
 			this.touchStartDelta = null;
 			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
 			let newWidthScale = this.bufferedCanvas.width / (2 * this.touchLastScale);
@@ -368,8 +391,44 @@ export module Fractals {
 			if (animate) this.fractal.render();
 		}
 
+		private touchZoomDrifting(): void {
+			let delta = (new Date).getTime() - this.startTime;
+			let scale = delta / this.driftAnimationTime;
+			if (scale > 1) {
+				this.speedDist = 0;
+				this.animationIsRunning = false;
+				this.zoomByScaleEnd();
+				return;
+			}
+
+			this.lastDist = this.lastDist + this.speedDist;
+
+			let s = this.lastDist / this.touchStartDelta;
+			this.touchLastScale = s;
+			let width = this.bufferedCanvas.width * s;
+			let height = this.bufferedCanvas.height * s;
+			let cx = this.clickX - (this.clickX * s);
+			let cy = this.clickY - (this.clickY * s);
+			let viewCanvas = this.fractal.complexPlain.getViewCanvas();
+			viewCanvas.getContext('2d').clearRect(0, 0, viewCanvas.width, viewCanvas.height);
+			viewCanvas.getContext('2d').drawImage(this.bufferedCanvas, cx, cy, width, height);
+
+			let tempScale = EasingFunctions.easeOutQuart(scale)
+
+			this.speedDist = this.driftSpeedDist - this.driftSpeedDist * tempScale;
+
+			console.log(this.speedDist);
+
+			if (Math.abs(this.speedDist) < 1) {
+				this.startTime = this.startTime - this.driftAnimationTime;
+			}
+
+			let that = this;
+			window.requestAnimationFrame(function () { that.touchZoomDrifting() });
+		}
+
 		zoomStart(x: number, y: number, magnification: number, animationTime: number): void {
-			if (this.animationIsRunning || this.mouseStartDragPos != null) return;
+			if (this.animationIsRunning || this.mouseStartDragPos != null || this.touchStartDelta != null) return;
 			this.animationIsRunning = true;
 			this.fractal.stopRendering();
 			this.clickX = x

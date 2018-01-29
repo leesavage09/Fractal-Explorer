@@ -178,13 +178,14 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     event.preventDefault();
     if (this.zoomGestureHappening) {
       this.zoomGestureHappening = false;
-      if (event.touches.length >= 1) {
-        this.fractal.getAnimator().zoomByScaleEnd(false);
-        this.touchStartDrag(event);
-      }
-      else {
-        this.fractal.getAnimator().zoomByScaleEnd();
-      }
+      //if (event.touches.length >= 1) {
+      //  this.fractal.getAnimator().zoomByScaleEnd(false);
+      //  this.touchStartDrag(event);
+      //}
+      //else {
+      event.touches.length == 0
+      this.fractal.getAnimator().zoomByScaleEnd();
+      //}
     }
     else {
       event = this.addTocuchOffsets(event);
@@ -302,7 +303,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   gradientPhaseChange() {
-    this.fractal.color.totalPhase = this.gradientPhase/this.gradientFreq;
+    this.fractal.color.totalPhase = this.gradientPhase / this.gradientFreq;
     this.fractal.render();
   }
 
