@@ -1,7 +1,9 @@
 $button-size: 40px !default;
 $input-spacing: 10px !default;
-$input-width: 70px !default;
+$iterations-width: 70px !default;
+$select-width: $iterations-width + $button-size * 2 !default;
 $corner-radius: 3px !default;
+$padding: 10px !default;
 
 $explorer-width: 400px !default;
 $explorer-height: 300px !default;
@@ -32,6 +34,10 @@ $font-size-small: 14px !default;
     border-width: 1px;
     border-color: $colour-tool;
     border-radius: $corner-radius;
+
+    &:hover {
+        color: $color-mouseover;
+    }
 }
 
 @mixin prevent-drag-selection {
@@ -61,17 +67,17 @@ $font-size-small: 14px !default;
         cursor: grab;
     }
 
-    #navigator-window {
-        width: $explorer-width / 4;
-        height: $explorer-height / 4;
-        border-style: solid;
-        border-width: 1px;
-    }
+    //#navigator-window {
+    //    width: $explorer-width / 4;
+    //    height: $explorer-height / 4;
+    //    border-style: solid;
+    //    border-width: 1px;
+    //}
 
     .alert {
         color: $color-text;
         background-color: $color-highlight-bg;
-        padding: 10px;
+        padding: $padding;
         text-align: center;
         border-radius: $corner-radius;
         visibility: hidden;
@@ -89,24 +95,36 @@ $font-size-small: 14px !default;
 
     .controls {
         pointer-events: none;
-        padding: 10px;
-        font-size: 0px;
+        padding: $padding;
 
-        input, label, select, a, .btn {
+        input, label, a, .btn {
+            @include interactive;
+        }
+
+        #colour-select {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+
             @include interactive;
 
-            &:hover {
-                color: $color-mouseover;
-            }
+            padding-left: $padding;
+            padding-right: $padding;
+            height: $button-size;
+            width: $select-width;
+        }
+
+        #select-caret-down {
+            position: absolute;
+            right: $padding;
+            top: $padding;
+            height: $button-size;
+            line-height: $button-size;
+            padding-right: $padding;
+            color: $colour-tool;
         }
 
         input:focus, select:focus {
             outline: none;
-        }
-
-        select {
-            height: $button-size;
-            width: $input-width * 2;
         }
 
         .btn {
@@ -154,7 +172,11 @@ $font-size-small: 14px !default;
             border-right-style: none;
             border-left-style: none;
             margin: 0px;
-            width: $input-width;
+            margin-left: -$font-size;
+            margin-right: -$font-size;
+            padding-left: $font-size;
+            padding-right: $font-size;
+            width: $iterations-width;
             height: $button-size;
             border-radius: 0px;
         }

@@ -17,11 +17,14 @@
     </div>
 
     <div #colorControls class="controls top-right">
-      <select #colourSelect (change)="onColorChanged($event)">
+      <select #colourSelect id="colour-select" (change)="onColorChanged($event)">
         <option value="rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">B/W</option>
         <option value="rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">Rainbow</option>
         <option value="rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128">Blue/Gold</option>
       </select>
+      <div id="select-caret-down">
+        <i class="fa fa-caret-down" aria-hidden="true"></i>
+      </div>
     </div>
 
     <div #alert class="alert center" (wheel)="$event.preventDefault()">

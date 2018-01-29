@@ -148,8 +148,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
       let centerX = minX + (Math.abs(event.touches[0].clientX - event.touches[1].clientX) / 2);
       let centerY = minY + (Math.abs(event.touches[0].clientY - event.touches[1].clientY) / 2);
       var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
-      centerX = centerX - (<any>realTarget.getBoundingClientRect()).x;
-      centerY = centerY - (<any>realTarget.getBoundingClientRect()).y;
+      centerX = centerX - (<any>realTarget.getBoundingClientRect()).left;
+      centerY = centerY - (<any>realTarget.getBoundingClientRect()).top;
       this.fractal.getAnimator().zoomByScaleStart(dist, centerX, centerY)
     }
     else {
@@ -328,7 +328,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  private iterationsChanged() {
+  iterationsChanged() {
     this.fractal.iterations = this.iterations;
     this.fractal.render();
   }
@@ -400,8 +400,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   private addTocuchOffsets(event) {
     var touch = event.touches[0] || event.changedTouches[0];
-    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).x;
-    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).y;
+    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).left;
+    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).top;
     return event;
   }
 
