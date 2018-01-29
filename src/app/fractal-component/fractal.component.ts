@@ -18,6 +18,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   @Input() theme: string;
   @Input() color: string;
   @Input() iterations: number = 30;
+  @Input() gradientPhase: number = 0;
+  @Input() gradientFreq: number = 1;
   @Input() complexCenter: string;
   @Input() complexWidth: string;
   @ViewChild('explorer') HTMLexplorer: ElementRef;
@@ -292,6 +294,16 @@ export class FractalComponent implements OnInit, MaxZoomListner {
       this.explorerWindowStyle = div.getAttribute("style");
       this.fullScreenWindow();
     }
+  }
+
+  gradientFreqChange() {
+    this.fractal.color.totalFrequency = this.gradientFreq;
+    this.fractal.render();
+  }
+
+  gradientPhaseChange() {
+    this.fractal.color.totalPhase = this.gradientPhase/this.gradientFreq;
+    this.fractal.render();
   }
 
   /*

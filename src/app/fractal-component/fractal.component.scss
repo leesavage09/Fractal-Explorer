@@ -101,16 +101,47 @@ $font-size-small: 14px !default;
             @include interactive;
         }
 
+        .slidecontainer {
+            @include interactive;
+
+            height: $button-size * 1.5;
+            text-align: center;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-top: none;
+        }
+
+        #gradient-phase, #gradient-freq {
+            height: $button-size / 1.5;
+            width: $select-width * 0.8;
+            margin: auto;
+            display: block;
+            border: none;
+        }
+
         #colour-select {
             -moz-appearance: none;
             -webkit-appearance: none;
 
             @include interactive;
 
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            text-align: left;
             padding-left: $padding;
             padding-right: $padding;
             height: $button-size;
             width: $select-width;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
         }
 
         #select-caret-down {
@@ -186,6 +217,7 @@ $font-size-small: 14px !default;
         position: absolute;
         top: 0;
         right: 0;
+        text-align: right;
     }
 
     .bottom-left {
