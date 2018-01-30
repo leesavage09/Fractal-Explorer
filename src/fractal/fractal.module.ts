@@ -399,9 +399,9 @@ export module Fractals {
 			this.speedX = this.driftSpeedX - this.driftSpeedX * tempScale;
 			this.speedY = this.driftSpeedY - this.driftSpeedY * tempScale;
 
-			//if (Math.abs(this.speedX) < 1 && Math.abs(this.speedY) < 1) {
-			//	this.startTime = this.startTime - this.driftAnimationTime;
-			//}
+			if (Math.abs(this.speedX) < 1 && Math.abs(this.speedY) < 1) {
+				this.startTime = this.startTime - this.driftAnimationTime;
+			}
 
 			let that = this;
 			window.requestAnimationFrame(function () { that.dragDrifting() });
@@ -441,6 +441,8 @@ export module Fractals {
 
 		private touchZoomDrifting(): void {
 			if (!this.zoomAnimationIsRunning) return;
+			this.lastDist = this.lastDist + this.speedDist;
+			if (this.lastDist < 5) this.startTime = this.startTime - this.driftAnimationTime;
 			let delta = (new Date).getTime() - this.startTime;
 			let scale = delta / this.driftAnimationTime;
 			if (scale > 1) {
@@ -450,15 +452,10 @@ export module Fractals {
 				return;
 			}
 
-			this.lastDist = this.lastDist + this.speedDist;
 			this.currentMagnification = this.lastDist / this.touchStartDelta;
 			this.drawScaledView(this.currentMagnification, this.clickX, this.clickY);
 			let tempScale = EasingFunctions.easeOutQuart(scale)
 			this.speedDist = this.driftSpeedDist - this.driftSpeedDist * tempScale;
-
-			//if (Math.abs(this.speedDist) < 1) {
-			//	this.startTime = this.startTime - this.driftAnimationTime;
-			//}
 
 			let that = this;
 			window.requestAnimationFrame(function () { that.touchZoomDrifting() });
