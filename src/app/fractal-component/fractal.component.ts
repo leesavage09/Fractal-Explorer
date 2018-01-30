@@ -219,27 +219,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   startChangingIterations(i) {
-    var self = this;
-    this.iterationsAreChanging = true;
-    setTimeout(function () {
-      if (i > 1) {
-        self.iterations = Math.ceil(self.iterations * i)
-      } else {
-        self.iterations = Math.floor(self.iterations * i)
-      }
-
-      if (self.iterations < 1) {
-        self.iterations = 1;
-        self.iterationsAreChanging = false;
-      }
-      self.iterationsChanged();
-
-      if (!self.iterationsAreChanging) {
-        return;
-      } else {
-        self.startChangingIterations(i);
-      }
-    }, 100);
+    if (this.iterationsAreChanging) return;
+    this.changingIterations(i);
   }
 
   stopChangingIterations() {
@@ -312,6 +293,29 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   /*
   * Helper Functions \/
   */
+
+  private changingIterations(i) {
+    var self = this;
+    this.iterationsAreChanging = true;
+    this.fractal.stopRendering();
+    setTimeout(function () {
+      if (!self.iterationsAreChanging) return;
+
+      if (i > 1) {
+        self.iterations = Math.ceil(self.iterations * i)
+      } else {
+        self.iterations = Math.floor(self.iterations * i)
+      }
+
+      if (self.iterations < 1) {
+        self.iterations = 1;
+        self.iterationsAreChanging = false;
+      }
+      self.iterationsChanged();
+
+      self.changingIterations(i);
+    }, 100);
+  }
 
   private requestNativeFullScreen() {
     let body = <any>document.body;

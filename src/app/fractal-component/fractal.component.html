@@ -6,11 +6,11 @@
 
     <div #iterationControls class="controls top-left">
       <div class="btn-group" data-toggle="buttons">
-        <a (touchstart)="startChangingIterations(0.9)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+        <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-minus" aria-hidden="true"></i>
         </a>
         <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
-        <a (touchstart)="startChangingIterations(1.1)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+        <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-plus" aria-hidden="true"></i>
         </a>
       </div>
@@ -26,8 +26,8 @@
         <i class="fa fa-caret-down" aria-hidden="true"></i>
       </div>
       <div class="slidecontainer">
-          <input [(ngModel)]="gradientPhase" (ngModelChange)="gradientPhaseChange()" type="range" min="0" max="100" value="0" class="slider" id="gradient-phase">
-          <input [(ngModel)]="gradientFreq" (ngModelChange)="gradientFreqChange()" type="range" min="1" max="6" value="1" class="slider" id="gradient-freq">
+        <input [(ngModel)]="gradientPhase" (ngModelChange)="gradientPhaseChange()" type="range" min="0" max="100" value="0" class="slider" id="gradient-phase">
+        <input [(ngModel)]="gradientFreq" (ngModelChange)="gradientFreqChange()" type="range" min="1" max="6" value="1" class="slider" id="gradient-freq">
       </div>
     </div>
 
