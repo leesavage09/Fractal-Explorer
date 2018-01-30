@@ -34,6 +34,7 @@ export module Fractals {
 				this.notifiMaxZoomListeners();
 			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.5);
+			this.color.compile(this.iterations);
 			var self = this;
 			setTimeout(function () {
 				self.scanLine(0, self.renderVersion);
@@ -41,16 +42,14 @@ export module Fractals {
 		}
 
 		private scanLine(y: number, version: number): void {
-			if (this.renderVersion != version) {
-				return;
-			}
-
+			if (this.renderVersion != version) return;
 			this.img = this.complexPlain.getScanLineImage();
 			var Ci = this.complexPlain.getImaginaryNumber(y);
-			for (var x = 0; x <= this.complexPlain.getDrawableWidth() - 1; x++) {
+			let width = this.complexPlain.getDrawableWidth() - 1;
+			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
 				var n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius);
-				this.color.normalizediterationcount(n[0], x, this.iterations, n[1], n[2]);
+				this.color.compiledNormalizediterationcount(n[0], x, n[1], n[2]);
 			}
 			this.complexPlain.updateCanvas(y);
 

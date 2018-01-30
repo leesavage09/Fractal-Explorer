@@ -2,11 +2,11 @@ import { Fractals } from "../fractal/fractal.module";
 
 export class FractalColoring {
 	fractal: Fractals.Fractal;
-	totalPhase:number;
+	totalPhase: number;
 	redPhase: number;
 	greenPhase: number;
 	bluePhase: number;
-	totalFrequency:number;
+	totalFrequency: number;
 	redFrequency: number;
 	greenFrequency: number;
 	blueFrequency: number;
@@ -16,6 +16,17 @@ export class FractalColoring {
 	greenColorCenter: number;
 	blueWidth: number;
 	blueColorCenter: number;
+
+	compiledMaxN: number;
+	compiledRn: number;
+	compiledGn: number;
+	compiledBn: number;
+	compiledRedFrequency: number;
+	compiledGreenFrequency: number;
+	compiledBlueFrequency: number;
+	nthRn: number;
+	nthGn: number;
+	nthBn: number;
 
 	constructor(fractal: Fractals.Fractal) {
 		this.fractal = fractal;
@@ -33,6 +44,47 @@ export class FractalColoring {
 		this.greenColorCenter = 128;
 		this.blueWidth = 127;
 		this.blueColorCenter = 128;
+	}
+
+	compile(n_max: number) {
+		this.compiledMaxN = n_max;
+		let compiled100thMaxN = n_max / 100;
+		let frequency = (Math.PI * 2) / n_max;
+		frequency = frequency * this.totalFrequency;
+
+		this.compiledRedFrequency = this.redFrequency * frequency;
+		this.compiledGreenFrequency = this.greenFrequency * frequency;
+		this.compiledBlueFrequency = this.blueFrequency * frequency;
+		this.compiledRn = compiled100thMaxN * (this.redPhase + this.totalPhase);
+		this.compiledGn = compiled100thMaxN * (this.greenPhase + this.totalPhase);
+		this.compiledBn = compiled100thMaxN * (this.bluePhase + this.totalPhase);
+	}
+
+
+	compiledNormalizediterationcount(n: number, pixel: number, Zr: number, Zi: number): void {
+		if (n >= this.compiledMaxN) {
+			this.fractal.img.data[(pixel * 4) + 0] = 0; //red
+			this.fractal.img.data[(pixel * 4) + 1] = 0; //green
+			this.fractal.img.data[(pixel * 4) + 2] = 0; //blue
+			this.fractal.img.data[(pixel * 4) + 3] = 255;  //alphas
+		}
+		else {
+			// normalize colors
+			n = n + 1 - Math.log((Math.log(Zr * Zr + Zi * Zi) / 2) / 0.301029996) / 0.301029996
+
+			//phase shift colors
+			this.nthRn = n + this.compiledRn;
+			this.nthRn = this.nthRn > this.compiledMaxN ? this.nthRn - this.compiledMaxN : this.nthRn;
+			this.nthGn = n + this.compiledGn;
+			this.nthGn = this.nthGn > this.compiledMaxN ? this.nthGn - this.compiledMaxN : this.nthGn;
+			this.nthBn = n + this.compiledBn;
+			this.nthBn = this.nthBn > this.compiledMaxN ? this.nthBn - this.compiledMaxN : this.nthBn;
+
+			this.fractal.img.data[(pixel * 4) + 0] = Math.sin(this.compiledRedFrequency * this.nthRn) * this.redWidth + this.redColorCenter;
+			this.fractal.img.data[(pixel * 4) + 1] = Math.sin(this.compiledGreenFrequency * this.nthGn) * this.greenWidth + this.greenColorCenter;
+			this.fractal.img.data[(pixel * 4) + 2] = Math.sin(this.compiledBlueFrequency * this.nthBn) * this.blueWidth + this.blueColorCenter;
+			this.fractal.img.data[(pixel * 4) + 3] = 255;  //alphas
+		}
 	}
 
 	normalizediterationcount(n: number, x: number, n_max: number, Zr: number, Zi: number): void {
@@ -59,11 +111,11 @@ export class FractalColoring {
 
 	picColor(n: number, n_max: number): [number, number, number] {
 		//phase shift colors
-		var Rn = n + ((n_max / 100) * (this.redPhase+this.totalPhase));
+		var Rn = n + ((n_max / 100) * (this.redPhase + this.totalPhase));
 		var Rn = Rn > n_max ? Rn - n_max : Rn;
-		var Gn = n + ((n_max / 100) * (this.greenPhase+this.totalPhase));
+		var Gn = n + ((n_max / 100) * (this.greenPhase + this.totalPhase));
 		var Gn = Gn > n_max ? Gn - n_max : Gn;
-		var Bn = n + ((n_max / 100) * (this.bluePhase+this.totalPhase));
+		var Bn = n + ((n_max / 100) * (this.bluePhase + this.totalPhase));
 		var Bn = Bn > n_max ? Bn - n_max : Bn;
 
 		//calculate colors
