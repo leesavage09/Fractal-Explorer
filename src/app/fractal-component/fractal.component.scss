@@ -104,20 +104,21 @@ $font-size-small: 14px !default;
         .slidecontainer {
             @include interactive;
 
-            height: $button-size * 1.5;
+            height: $button-size;
             text-align: center;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
             border-top: none;
         }
 
-        #gradient-phase, #gradient-freq {
-            height: $button-size / 1.5;
-            width: $select-width * 0.8;
-            margin: auto;
-            display: block;
-            border: none;
-        }
+
+        // #gradient-phase, #gradient-freq {
+        //     height: $button-size / 1.5;
+        //     width: $select-width * 0.8;
+        //     margin: auto;
+        //     display: block;
+        //     border: none;
+        // }
 
         #colour-select {
             -moz-appearance: none;

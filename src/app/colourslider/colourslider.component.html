@@ -1,0 +1,13 @@
+<canvas #slider 
+ width="120px" height="16px"
+
+(mousedown)="start($event)" 
+(mouseup)="end($event)" 
+(mousemove)="move($event)" 
+(mouseleave)="end($event)" 
+
+(touchstart)="start($event)" 
+(touchmove)="touchMove($event)" 
+(touchend)="end($event)"
+
+></canvas>

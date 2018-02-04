@@ -46,6 +46,59 @@ export class FractalColoring {
 		this.blueColorCenter = 128;
 	}
 
+	changeColor(commandString:string) {
+		let commands = commandString.split(",");
+		for (let i = 0; i < commands.length; i++) {
+			let thisCommand = commands[i].split(":");
+
+			let command = thisCommand[0];
+			let value = thisCommand[1];
+
+			if (command == "rp") {
+				this.redPhase = parseInt(value);
+			}
+			else if (command == "gp") {
+				this.greenPhase = parseInt(value);
+			}
+			else if (command == "bp") {
+				this.bluePhase = parseInt(value);
+			}
+			else if (command == "rf") {
+				this.redFrequency = parseInt(value);
+			}
+			else if (command == "gf") {
+				this.greenFrequency = parseInt(value);
+			}
+			else if (command == "bf") {
+				this.blueFrequency = parseInt(value);
+			}
+			else if (command == "rw") {
+				this.redWidth = parseInt(value);
+			}
+			else if (command == "gw") {
+				this.greenWidth = parseInt(value);
+			}
+			else if (command == "bw") {
+				this.blueWidth = parseInt(value);
+			}
+			else if (command == "rc") {
+				this.redColorCenter = parseInt(value);
+			}
+			else if (command == "gc") {
+				this.greenColorCenter = parseInt(value);
+			}
+			else if (command == "bc") {
+				this.blueColorCenter = parseInt(value);
+			}
+			else if (command == "tp") {
+				this.totalPhase = parseInt(value);
+			}
+			else if (command == "tf") {
+				this.totalFrequency = parseInt(value);
+			}
+		}
+	}
+
 	compile(n_max: number) {
 		this.compiledMaxN = n_max;
 		let compiled100thMaxN = n_max / 100;
@@ -87,27 +140,27 @@ export class FractalColoring {
 		}
 	}
 
-	normalizediterationcount(n: number, x: number, n_max: number, Zr: number, Zi: number): void {
-		if (n >= n_max) {
-			this.fractal.img.data[(x * 4) + 0] = 0; //red
-			this.fractal.img.data[(x * 4) + 1] = 0; //green
-			this.fractal.img.data[(x * 4) + 2] = 0; //blue
-			this.fractal.img.data[(x * 4) + 3] = 255;  //alphas
-		}
-		else {
-			// normalize colors
-			var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
-			var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
-			n = n + 1 - nu
+	// normalizediterationcount(n: number, x: number, n_max: number, Zr: number, Zi: number): void {
+	// 	if (n >= n_max) {
+	// 		this.fractal.img.data[(x * 4) + 0] = 0; //red
+	// 		this.fractal.img.data[(x * 4) + 1] = 0; //green
+	// 		this.fractal.img.data[(x * 4) + 2] = 0; //blue
+	// 		this.fractal.img.data[(x * 4) + 3] = 255;  //alphas
+	// 	}
+	// 	else {
+	// 		// normalize colors
+	// 		var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
+	// 		var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
+	// 		n = n + 1 - nu
 
-			var rgb = this.picColor(n, n_max);
+	// 		var rgb = this.picColor(n, n_max);
 
-			this.fractal.img.data[(x * 4) + 0] = rgb[0]; //red
-			this.fractal.img.data[(x * 4) + 1] = rgb[1]; //green
-			this.fractal.img.data[(x * 4) + 2] = rgb[2]; //blue
-			this.fractal.img.data[(x * 4) + 3] = 255;  //alphas
-		}
-	}
+	// 		this.fractal.img.data[(x * 4) + 0] = rgb[0]; //red
+	// 		this.fractal.img.data[(x * 4) + 1] = rgb[1]; //green
+	// 		this.fractal.img.data[(x * 4) + 2] = rgb[2]; //blue
+	// 		this.fractal.img.data[(x * 4) + 3] = 255;  //alphas
+	// 	}
+	// }
 
 	picColor(n: number, n_max: number): [number, number, number] {
 		//phase shift colors

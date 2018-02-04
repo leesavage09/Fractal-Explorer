@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 
 import { AppDemo } from './app.demo';
 import { FractalComponent } from './fractal-component/fractal.component';
+import { ColoursliderComponent } from './colourslider/colourslider.component';
 
 
 @NgModule({
   declarations: [
     AppDemo,
-    FractalComponent
+    FractalComponent,
+    ColoursliderComponent
   ],
   imports: [
     BrowserModule, FormsModule

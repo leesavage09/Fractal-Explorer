@@ -33,7 +33,7 @@ export module Fractals {
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
 				this.notifiMaxZoomListeners();
 			}
-			this.complexPlain.makeAlternativeResolutionCanvas(0.5);
+			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.color.compile(this.iterations);
 			var self = this;
 			setTimeout(function () {
@@ -202,16 +202,6 @@ export module Fractals {
 		getRealNumber(pixelX: number): Number {
 			return General.mapInOut(pixelX, 0, this.drawableCanvas.width - 1, this.complexSquare.min.r, this.complexSquare.max.r);
 		}
-
-
-
-
-
-
-
-
-
-
 	}
 
 

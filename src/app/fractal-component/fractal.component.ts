@@ -5,6 +5,7 @@ import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
+import { ColoursliderComponent } from "../colourslider/colourslider.component";
 
 @Component({
   selector: "FractalComponent",
@@ -31,6 +32,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   @ViewChild('fullScreenControls') HTMLfullScreenControls: ElementRef;
   @ViewChild('eyeControls') HTMLeyeControls: ElementRef;
   @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
+  @ViewChild('gradientSlider') HTMLgradientSlider: ColoursliderComponent;
 
   private explorerWindowStyle: string;
 
@@ -273,9 +275,16 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   gradientFreqChange() {
     this.fractal.color.totalFrequency = this.gradientFreq;
+    this.HTMLgradientSlider.color = this.fractal.color;
     this.fractal.render();
   }
 
+  gpe(event) {
+    console.log(event);
+    this.fractal.color = event;
+    this.fractal.render();
+  }
+  
   gradientPhaseChange() {
     this.fractal.color.totalPhase = this.gradientPhase / this.gradientFreq;
     this.fractal.render();
@@ -362,50 +371,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   private changeColor(commandString: string) {
-    let commands = commandString.split(",");
-    for (let i = 0; i < commands.length; i++) {
-      let thisCommand = commands[i].split(":");
-
-      let command = thisCommand[0];
-      let value = thisCommand[1];
-
-      if (command == "rp") {
-        this.fractal.color.redPhase = parseInt(value);
-      }
-      else if (command == "gp") {
-        this.fractal.color.greenPhase = parseInt(value);
-      }
-      else if (command == "bp") {
-        this.fractal.color.bluePhase = parseInt(value);
-      }
-      if (command == "rf") {
-        this.fractal.color.redFrequency = parseInt(value);
-      }
-      else if (command == "gf") {
-        this.fractal.color.greenFrequency = parseInt(value);
-      }
-      else if (command == "bf") {
-        this.fractal.color.blueFrequency = parseInt(value);
-      }
-      if (command == "rw") {
-        this.fractal.color.redWidth = parseInt(value);
-      }
-      else if (command == "gw") {
-        this.fractal.color.greenWidth = parseInt(value);
-      }
-      else if (command == "bw") {
-        this.fractal.color.blueWidth = parseInt(value);
-      }
-      if (command == "rc") {
-        this.fractal.color.redColorCenter = parseInt(value);
-      }
-      else if (command == "gc") {
-        this.fractal.color.greenColorCenter = parseInt(value);
-      }
-      else if (command == "bc") {
-        this.fractal.color.blueColorCenter = parseInt(value);
-      }
-    }
+    this.fractal.color.changeColor(commandString);
+    this.HTMLgradientSlider.color = this.fractal.color;
   }
 
   private addTocuchOffsets(event) {
