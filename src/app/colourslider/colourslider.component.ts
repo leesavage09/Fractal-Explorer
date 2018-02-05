@@ -7,7 +7,6 @@ import { FractalColoring } from "../../fractal/fractalColouring";
   styleUrls: ['./colourslider.component.scss']
 })
 export class ColoursliderComponent implements OnInit {
-  //@Input() color: FractalColoring;
   @Output() colourPhaseChanged = new EventEmitter();
   @ViewChild('slider') HTMLslider: ElementRef;
   private trackingMove:boolean = false;
@@ -53,8 +52,8 @@ export class ColoursliderComponent implements OnInit {
   move(event) {
     if(!this.trackingMove) return;
     let offset  = this.startX-event.offsetX;
-    let elmWidth = this.HTMLslider.nativeElement.width;
-    let percent = offset/elmWidth;
+    let style = getComputedStyle(this.HTMLslider.nativeElement);
+    let percent = offset/parseInt( style.width);
     this.fractalColor.totalPhase = this.startPhase+percent*100
     this.updateImg();
     this.colourPhaseChanged.emit(this.fractalColor);

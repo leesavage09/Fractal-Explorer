@@ -280,7 +280,6 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   gpe(event) {
-    console.log(event);
     this.fractal.color = event;
     this.fractal.render();
   }

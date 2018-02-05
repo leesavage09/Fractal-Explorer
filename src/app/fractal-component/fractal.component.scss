@@ -103,14 +103,20 @@ $font-size-small: 14px !default;
 
         .slidecontainer {
             @include interactive;
-
-            height: $button-size;
             text-align: center;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+            padding-top: $button-size/6;
+            padding-bottom: $button-size/6;
             border-top: none;
         }
 
+        .gradientSlider{
+            display: block;
+            margin: auto; 
+            width: $button-size*2.5;
+            height:  $button-size/2;
+        }
 
         // #gradient-phase, #gradient-freq {
         //     height: $button-size / 1.5;
