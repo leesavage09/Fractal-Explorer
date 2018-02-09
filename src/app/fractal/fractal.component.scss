@@ -67,13 +67,6 @@ $font-size-small: 14px !default;
         cursor: grab;
     }
 
-    //#navigator-window {
-    //    width: $explorer-width / 4;
-    //    height: $explorer-height / 4;
-    //    border-style: solid;
-    //    border-width: 1px;
-    //}
-
     .alert {
         color: $color-text;
         background-color: $color-highlight-bg;
@@ -82,6 +75,7 @@ $font-size-small: 14px !default;
         border-radius: $corner-radius;
         visibility: hidden;
         pointer-events: all;
+        width: $explorer-width / 1.5;
 
         .btn {
             @include interactive;
@@ -93,52 +87,123 @@ $font-size-small: 14px !default;
         }
     }
 
+    .gradient-builder {
+        color: $color-text;
+        background-color: white;
+        padding: $padding;
+        visibility: hidden;
+        pointer-events: all;
+        position: absolute;
+        border: 1px;
+        border-color: black;
+        border-style: solid;
+        left: -1px;
+        top: -1px;
+        width: 60%;
+        height: 60%;
+
+        .btn {
+            @include interactive;
+            display: inline-block;
+            width: 80px;
+            height: 20px;
+            line-height: 20px;
+        }
+    }
+
     .controls {
         pointer-events: none;
         padding: $padding;
+        font-size: 0px;
 
         input, label, a, .btn {
             @include interactive;
         }
 
+        .btn.pop-out {
+            margin: 0px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            height: $button-size;
+            width: $button-size / 2;
+            border-right: 0px;
+        }
+
         .slidecontainer {
             @include interactive;
+
+            display: inline-block;
             text-align: center;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
-            padding-top: $button-size/6;
-            padding-bottom: $button-size/6;
-            border-top: none;
-        }
-
-        .gradientSlider{
-            display: block;
-            margin: auto; 
-            width: $button-size*2.5;
-            height:  $button-size/2;
-        }
-
-        // #gradient-phase, #gradient-freq {
-        //     height: $button-size / 1.5;
-        //     width: $select-width * 0.8;
-        //     margin: auto;
-        //     display: block;
-        //     border: none;
-        // }
-
-        #colour-select {
-            -moz-appearance: none;
-            -webkit-appearance: none;
-
-            @include interactive;
-
-            border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
-            text-align: left;
-            padding-left: $padding;
-            padding-right: $padding;
-            height: $button-size;
+            font-size: 0px;
+            //padding-top: $padding;
+            border-top: none;
             width: $select-width;
+            margin-left: auto;
+
+            #colour-select {
+                -moz-appearance: none;
+                -webkit-appearance: none;
+
+                @include interactive;
+
+                border-radius: 0;
+                text-align: left;
+                margin: 0px;
+                padding: 0px;
+                padding-left: $padding;
+                padding-right: $padding;
+                height: $button-size + 2;
+                width: $select-width + 2;
+            }
+
+            .btn {
+                margin-top: $padding;
+                margin-bottom: $padding;
+                height: $button-size / 2;
+                line-height: $button-size / 2;
+                width: auto;
+                padding: $font-size * 0.2;
+
+                &.freq {
+                    margin: 0px;
+                    height: $button-size / 4;
+                    line-height: $button-size / 4;
+                    
+                    &.less{
+                        border-top-right-radius: 0px;
+                        border-bottom-right-radius: 0px;
+                    }
+                    &.more{
+                        border-top-left-radius: 0px;
+                        border-bottom-left-radius: 0px;
+                    }  
+                }
+            }
+
+            .gradientSlider {
+                display: inline-block;
+                font-size: 0px;
+                width: $button-size * 2.5;
+                height: $button-size / 2;
+            }
+        }
+
+        #select-caret-down {
+            position: absolute;
+            right: 0px;
+            top: $padding;
+            height: $button-size;
+            line-height: $button-size + 2;
+            padding-right: $padding;
+            color: $colour-tool;
+            pointer-events: none;
+
+            i {
+                font-size: $font-size;
+            }
         }
 
         input[type=number]::-webkit-inner-spin-button,
@@ -149,16 +214,6 @@ $font-size-small: 14px !default;
 
         input[type=number] {
             -moz-appearance: textfield;
-        }
-
-        #select-caret-down {
-            position: absolute;
-            right: $padding;
-            top: $padding;
-            height: $button-size;
-            line-height: $button-size;
-            padding-right: $padding;
-            color: $colour-tool;
         }
 
         input:focus, select:focus {
@@ -179,7 +234,7 @@ $font-size-small: 14px !default;
         right: 0;
         top: 50%;
         transform: perspective(1px) translateY(-50%);
-        width: $explorer-width / 1.5;
+        
         margin: auto;
         z-index: 99;
     }
@@ -225,6 +280,10 @@ $font-size-small: 14px !default;
         top: 0;
         right: 0;
         text-align: right;
+        padding-right: 0px;
+
+        //width:$button-size/2;
+        overflow: hidden;
     }
 
     .bottom-left {

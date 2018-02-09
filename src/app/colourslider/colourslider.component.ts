@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef,Output, EventEmitter} from '@angular/core';
-import { FractalColoring } from "../../fractal/fractalColouring";
+
+//import { FractalColoring } from "../../fractal/fractalColouring";
+import { Color } from "../../helper/helper.module";
 
 @Component({
   selector: 'app-colourslider',
@@ -12,15 +14,16 @@ export class ColoursliderComponent implements OnInit {
   private trackingMove:boolean = false;
   private startX:number = null;
   private startPhase;
-  private fractalColor:FractalColoring;
+  private linearGradient:Color.LinearGradient;
   constructor() { }
 
   ngOnInit() {
   }
 
   @Input()
-  set color(c: FractalColoring) {
-    this.fractalColor = c;
+  set color(c: Color.LinearGradient) {
+    this.linearGradient = c;
+    c.subscribe(this.updateImg.bind(this));
     this.updateImg();
   }
 
@@ -28,10 +31,11 @@ export class ColoursliderComponent implements OnInit {
     let slider = this.HTMLslider.nativeElement;
     let img = slider.getContext("2d").getImageData(0, 0, slider.width, 1);
     for (var i = 0; i < slider.width; ++i) {
-      let rgb = this.fractalColor.picColor(i, slider.width);
-      img.data[(i * 4) + 0] = rgb[0];
-      img.data[(i * 4) + 1] = rgb[1];
-      img.data[(i * 4) + 2] = rgb[2];
+      let val = i/slider.width
+      let rgb = this.linearGradient.getColorAt(val);
+      img.data[(i * 4) + 0] = rgb.r;
+      img.data[(i * 4) + 1] = rgb.g;
+      img.data[(i * 4) + 2] = rgb.b;
       img.data[(i * 4) + 3] = 255;  //alphas
     }
     for (var i = 0; i < slider.height; ++i) {
@@ -42,7 +46,7 @@ export class ColoursliderComponent implements OnInit {
   start(event) {
     this.trackingMove = true;
     this.startX = event.offsetX;
-    this.startPhase = this.fractalColor.totalPhase;
+    this.startPhase = this.linearGradient.getPhase();
   }
 
   end(event) {
@@ -54,9 +58,10 @@ export class ColoursliderComponent implements OnInit {
     let offset  = this.startX-event.offsetX;
     let style = getComputedStyle(this.HTMLslider.nativeElement);
     let percent = offset/parseInt( style.width);
-    this.fractalColor.totalPhase = this.startPhase+percent*100
+    this.linearGradient.setPhase(this.startPhase+percent)
+    console.log(this.linearGradient.getPhase());
     this.updateImg();
-    this.colourPhaseChanged.emit(this.fractalColor);
+    this.colourPhaseChanged.emit(this.linearGradient);
   }
 
   touchMove(event) {

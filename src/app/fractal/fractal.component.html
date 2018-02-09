@@ -17,30 +17,30 @@
     </div>
 
     <div #colorControls class="controls top-right">
-      <select #colourSelect id="colour-select" (change)="onColorChanged($event)">
-        <option value="rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">B/W</option>
-        <option value="rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">Rainbow</option>
-        <option value="rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128">Blue/Gold</option>
-      </select>
-      <div id="select-caret-down">
-        <i class="fa fa-caret-down" aria-hidden="true"></i>
-      </div>
+      <a (click)="toggleColourMenu($event)" class="btn pop-out">
+        <i class="fa fa-caret-right" aria-hidden="true"></i>
+      </a>
+
       <div class="slidecontainer">
-        <app-colourslider class="gradientSlider" #gradientSlider (colourPhaseChanged)=gpe($event)> </app-colourslider>
+        <select #colourSelect id="colour-select" (change)="onColorChanged($event)">
+          <option value="rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">B/W</option>
+          <option value="rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128">Rainbow</option>
+          <option value="rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128">Blue/Gold</option>
+        </select>
+        <div id="select-caret-down">
+          <i class="fa fa-caret-down" aria-hidden="true"></i>
+        </div>
+        <a class="btn freq less" (click)="gradientFreqChange(-1)">-</a>
+        <app-colourslider class="gradientSlider" #gradientSlider (colourPhaseChanged)=gradientPhaseChange($event)> </app-colourslider>
+        <a class="btn freq more" (click)="gradientFreqChange(1)">+</a>
+        <a (click)="openGradientBuilder()" class="btn">Editor</a>
         <!-- <input [(ngModel)]="gradientPhase" (ngModelChange)="gradientPhaseChange()" type="range" min="0" max="100" value="0" class="slider" id="gradient-phase">
         <input [(ngModel)]="gradientFreq" (ngModelChange)="gradientFreqChange()" type="range" min="1" max="6" value="1" class="slider" id="gradient-freq">
        -->
       </div>
     </div>
 
-    <div #alert class="alert center" (wheel)="$event.preventDefault()">
-      <h4>Alert</h4>
-      <p>{{alertText}}</p>
-      <a (click)="closeAlert($event)" class="btn">
-        Ok
-        <i class="fa fa-check" aria-hidden="true"></i>
-      </a>
-    </div>
+
 
     <div class="controls bottom-right">
       <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
@@ -60,12 +60,21 @@
       </a>
 
     </div>
+
+    <div #alert class="alert center" (wheel)="$event.preventDefault()">
+      <h4>Alert</h4>
+      <p>{{alertText}}</p>
+      <a (click)="closeAlert($event)" class="btn">
+        Ok
+        <i class="fa fa-check" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div #gradientBuilder class="gradient-builder center" (wheel)="$event.preventDefault()">
+      <a (click)="closeGradientBuilder()" class="btn">Close</a>
+      <app-gradientbuilder #appGradientBuilder (gradientChanged)=gradientChanged($event)> </app-gradientbuilder>
+    </div>
+
+
   </div>
 </div>
-
-<!--
-  <div class="controls bottom-left">
-    <p>This is the width</p>
-    <canvas id="navigator-window"></canvas>
-  </div>
--->

@@ -1,13 +1,13 @@
 import { FractalColoring } from "../fractal/fractalColouring";
 import { ComplexNumber, ComplexSquare } from "../fractal/complexNumbers";
-import { General, EasingFunctions } from "../helper/helper.module";
+import { Color, General, EasingFunctions } from "../helper/helper.module";
 
 export module Fractals {
 
 	export class Fractal {
 		iterations: number = 85;
 		escapeRadius: number = 10;
-		color: FractalColoring;
+		color: Color.LinearGradient;
 		complexPlain: ComplexPlain;
 		img: ImageData;
 		private calculationFunction: Function;
@@ -16,10 +16,11 @@ export module Fractals {
 		private lastUpdate: number;
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
-		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function) {
+		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color:Color.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
-			this.color = new FractalColoring(this);
+			this.color = color;
+			this.color.subscribe(this.render.bind(this));
 		}
 
 		public renderIfVersionIsNew(v: number): void {
@@ -34,7 +35,8 @@ export module Fractals {
 				this.notifiMaxZoomListeners();
 			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
-			this.color.compile(this.iterations);
+
+			//this.color.compile(this.iterations);
 			var self = this;
 			setTimeout(function () {
 				self.scanLine(0, self.renderVersion);
@@ -49,7 +51,24 @@ export module Fractals {
 			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
 				var n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius);
-				this.color.compiledNormalizediterationcount(n[0], x, n[1], n[2]);
+				//this.color.compiledNormalizediterationcount(n[0], x, n[1], n[2]);
+
+				let num = General.mapInOut(n[0], 0, this.iterations, 0, 1);
+				//if (!this.color.getColorAt) return;
+
+				// if (num >= this.iterations) {
+				// 	this.img.data[(x * 4) + 0] = 0; //red
+				// 	this.img.data[(x * 4) + 1] = 0; //green
+				// 	this.img.data[(x * 4) + 2] = 0; //blue
+				// 	this.img.data[(x * 4) + 3] = 255;  //alphas
+				// }
+				// else {
+					let col = this.color.getColorAt(num);
+					this.img.data[(x * 4) + 0] = col.r;
+					this.img.data[(x * 4) + 1] = col.g;
+					this.img.data[(x * 4) + 2] = col.b;
+					this.img.data[(x * 4) + 3] = 255;  //alphas
+				//}
 			}
 			this.complexPlain.updateCanvas(y);
 

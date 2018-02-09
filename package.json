@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --aot --no-sourcemap",
+    "start": "ng serve --host 0.0.0.0 --open",
+    "startOSX": "ng serve --host 0.0.0.0 --aot --no-sourcemap",
     "build": "ng build --prod"
   },
   "private": true,

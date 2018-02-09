@@ -6,6 +6,9 @@ import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
 import { ColoursliderComponent } from "../colourslider/colourslider.component";
+import { GradientbuilderComponent } from '../gradientbuilder/gradientbuilder.component';
+
+import { Color } from "../../helper/helper.module";
 
 @Component({
   selector: "FractalComponent",
@@ -33,23 +36,21 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   @ViewChild('eyeControls') HTMLeyeControls: ElementRef;
   @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
   @ViewChild('gradientSlider') HTMLgradientSlider: ColoursliderComponent;
+  @ViewChild('gradientBuilder') HTMLgradientBuilder: ElementRef;
+  @ViewChild('appGradientBuilder') HTMLappGradientBuilder: GradientbuilderComponent;
 
   private explorerWindowStyle: string;
-
   private fractal: Fractals.Fractal;
-  //private fractalNavigator: Fractals.Fractal;
-
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
   private zoomGestureHappening: boolean = false;
-
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 
   alertText: string;
-  colorBW: string = "rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
-  colorRainbow: string = "rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
-  colorBlueGold: string = "rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128";
+  readonly colorBW: string = "rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
+  readonly colorRainbow: string = "rp:50,gp:91,bp:18,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
+  readonly colorBlueGold: string = "rp:45,gp:45,bp:0,rf:1,gf:1,bf:1,rw:127,gw:87,bw:127,rc:128,gc:87,bc:128";
   constructor() { }
 
   ngOnInit() {
@@ -93,19 +94,14 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     let htmlCanvas: HTMLCanvasElement = ctx.canvas;
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
-    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq);
+
+    let gradient = new Color.LinearGradient([new Color.LinearGradientStop(0, new Color.RGBcolor(0, 0, 0)), new Color.LinearGradientStop(0.9999999999999999, new Color.RGBcolor(255, 255, 255)), new Color.LinearGradientStop(1, new Color.RGBcolor(0, 0, 0))]);
+    this.HTMLgradientSlider.color = gradient;
+    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.iterations;
     this.fractal.setMaxZoomListener(this);
     this.changeColor(colorCommandString);
     this.fractal.render();
-    /*
-        canvas = <HTMLCanvasElement>document.getElementById(NewComponentComponent.htmlIdForNavigator);
-        ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-        ctx.canvas.width = canvas.offsetWidth;
-        ctx.canvas.height = canvas.offsetHeight;
-        this.fractalNavigator = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), FractalEquations.mandelbrot);
-        this.fractalNavigator.iterations = this.iterations = 30;
-        this.fractalNavigator.render();*/
   }
 
   /*
@@ -208,6 +204,30 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   /*
   * Form and button events
   */
+  toggleColourMenu(event) {
+
+  }
+
+  openGradientBuilder() {
+    this.HTMLgradientBuilder.nativeElement.style.visibility = "visible";
+    let c = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
+    this.HTMLappGradientBuilder.canvas = c;
+  }
+
+  closeGradientBuilder() {
+    if (getComputedStyle(this.HTMLgradientBuilder.nativeElement).visibility == "visible") {
+      this.HTMLgradientBuilder.nativeElement.style.visibility = "hidden";
+      this.HTMLexplorer.nativeElement.appendChild(this.HTMLfractal.nativeElement);
+      this.canvasSizeChanged()
+      return;
+    }
+  }
+
+  gradientChanged(event) {
+    this.fractal.color = event;
+    this.fractal.render();
+  }
+
   onColorChanged(event) {
     this.changeColor(event.target.value);
     this.fractal.render();
@@ -273,19 +293,12 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  gradientFreqChange() {
-    this.fractal.color.totalFrequency = this.gradientFreq;
-    this.HTMLgradientSlider.color = this.fractal.color;
-    this.fractal.render();
+  gradientFreqChange(val) {
+    this.fractal.color.setFrequency(this.fractal.color.getFrequency()+val);
   }
 
-  gpe(event) {
+  gradientPhaseChange(event) {
     this.fractal.color = event;
-    this.fractal.render();
-  }
-  
-  gradientPhaseChange() {
-    this.fractal.color.totalPhase = this.gradientPhase / this.gradientFreq;
     this.fractal.render();
   }
 
@@ -370,8 +383,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   private changeColor(commandString: string) {
-    this.fractal.color.changeColor(commandString);
-    this.HTMLgradientSlider.color = this.fractal.color;
+    console.log("NOT YET IMPLEMENTED");
+    //this.fractal.color.changeColor(commandString);
+    //this.HTMLgradientSlider.color = this.fractal.color;
   }
 
   private addTocuchOffsets(event) {
