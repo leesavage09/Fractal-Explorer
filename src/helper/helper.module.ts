@@ -185,7 +185,7 @@ export namespace Color {
 	}
 
 	export function rgbToHex(rgb: RGBcolor): string {
-		return "#" + this.componentToHex(rgb.r) + this.componentToHex(rgb.g) + this.componentToHex(rgb.b);
+		return "#" +  componentToHex(rgb.r) + componentToHex(rgb.g) + componentToHex(rgb.b);
 	}
 
 	function componentToHex(c: number): string {

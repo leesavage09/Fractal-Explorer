@@ -88,6 +88,7 @@ export class GradientPanelComponent implements OnInit {
     if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
+    this.colorActive.nativeElement.value = Color.rgbToHex(this.activeMarker.getColor())
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {
