@@ -100,7 +100,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.iterations;
     this.fractal.setMaxZoomListener(this);
-    this.changeColor(colorCommandString);
+    //this.changeColor(colorCommandString);
     this.fractal.render();
   }
 
@@ -223,8 +223,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  gradientChanged(event) {
-    this.fractal.color = event;
+  gradientChanged(c:Color.LinearGradient) {
+    this.fractal.color = c;
+    this.HTMLgradientSlider.color = c;
     this.fractal.render();
   }
 
@@ -295,6 +296,8 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   gradientFreqChange(val) {
     this.fractal.color.setFrequency(this.fractal.color.getFrequency()+val);
+    this.HTMLgradientSlider.color = this.fractal.color;
+    this.fractal.render();
   }
 
   gradientPhaseChange(event) {

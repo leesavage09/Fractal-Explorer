@@ -67,7 +67,7 @@ export namespace Color {
 		private arr: Array<LinearGradientStop>
 		private phase: number = 0;
 		private frequency: number = 1;
-		private subscribers:Array<Function> = new Array();
+		//private subscribers:Array<Function> = new Array();
 		constructor(arr: Array<LinearGradientStop>) {
 			arr.sort(function (a: LinearGradientStop, b: LinearGradientStop): number {
 				if (a.stop > b.stop) return 1
@@ -81,23 +81,23 @@ export namespace Color {
 			this.arr = arr;
 		}
 
-		public subscribe(callback:Function){
-			this.subscribers.push(callback);
-		}
+		// public subscribe(callback:Function){
+		// 	this.subscribers.push(callback);
+		// }
 
-		public unsubscribe(callback:Function){
-			this.subscribers.splice(this.subscribers.lastIndexOf(callback), 1);
-		}
+		// public unsubscribe(callback:Function){
+		// 	this.subscribers.splice(this.subscribers.lastIndexOf(callback), 1);
+		// }
 
-		private notify(){
-			for (let i = 0; i < this.subscribers.length; i++) {
-				this.subscribers[i]();
-			}
-		}
+		// private notify(){
+		// 	for (let i = 0; i < this.subscribers.length; i++) {
+		// 		this.subscribers[i]();
+		// 	}
+		// }
 
 		public addStop(stop: LinearGradientStop): void {
 			this.arr.push(stop);
-			this.notify();
+			//this.notify();
 		}
 
 		public getPhase(): number {
@@ -109,28 +109,25 @@ export namespace Color {
 		}
 
 		public setPhase(phase: number): void {
-			this.phase = phase
-			this.notify();
+			this.phase = phase*this.frequency
 		}
 
 		public setFrequency(frequency: number): void {
-			this.frequency = frequency
-			this.notify();
+			if (frequency<1) frequency = 1;
+			else this.frequency = Math.abs(frequency)
 		}
 
 		/*
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
 		public getColorAt(val: number): RGBcolor {
-			val = val + this.phase;
-			val = val * this.frequency
+			val = val * this.frequency + this.phase - 1
+			let trunc = Math.trunc(val);
+			val = Math.abs(val % 1)
+			if ((trunc % 2) == 0) val = Math.abs(1 - val)
+			if (val<0 || val > 1) throw Error("Val out of bounds "+val);
 
-			while (val > 1) {
-				val = val - 1
-			}
-			while (val < 0) {
-				val = val + 1
-			}
+
 			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
 
 			var colorInRange = []

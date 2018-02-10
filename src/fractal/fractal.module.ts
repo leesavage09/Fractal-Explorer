@@ -20,7 +20,7 @@ export module Fractals {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
 			this.color = color;
-			this.color.subscribe(this.render.bind(this));
+			//this.color.subscribe(this.render.bind(this));
 		}
 
 		public renderIfVersionIsNew(v: number): void {

@@ -23,7 +23,6 @@ export class ColoursliderComponent implements OnInit {
   @Input()
   set color(c: Color.LinearGradient) {
     this.linearGradient = c;
-    c.subscribe(this.updateImg.bind(this));
     this.updateImg();
   }
 
@@ -59,7 +58,6 @@ export class ColoursliderComponent implements OnInit {
     let style = getComputedStyle(this.HTMLslider.nativeElement);
     let percent = offset/parseInt( style.width);
     this.linearGradient.setPhase(this.startPhase+percent)
-    console.log(this.linearGradient.getPhase());
     this.updateImg();
     this.colourPhaseChanged.emit(this.linearGradient);
   }
