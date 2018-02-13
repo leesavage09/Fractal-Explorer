@@ -1,0 +1,66 @@
+#container{
+    width: 60%;
+    position: relative;
+}
+
+#histogram-canvas {
+    height: 60px;
+    width: 100%;
+    margin: auto;
+    border:solid;
+    border-width: 1px;
+}
+#gradient-canvas {
+    height: 30px;
+    width: 100%;
+    margin: auto;
+}
+#gradientSlider{
+    position: relative;
+    height: 20px;
+}
+#markerMin{
+    height:16px;
+    width: 16px;
+    position: absolute;
+    cursor: no-drop;
+    pointer-events: all;
+    left: -8px;
+    bottom:-8px;
+    background-color: black;
+    border-radius: 50px;
+    border-style: inset;
+    border: dotted;
+    border-width: 1px;
+    border-color: white;
+}
+#markerMid{
+    height:16px;
+    width: 16px;
+    position: absolute;
+    cursor: no-drop;
+    pointer-events: all;
+    left: 50px;
+    bottom:-8px;
+    background-color: white;
+    border-radius: 50px;
+    border-style: inset;
+    border: dotted;
+    border-width: 1px;
+    border-color: black;
+}
+#markerMax{
+    height:16px;
+    width: 16px;
+    position: absolute;
+    cursor: no-drop;
+    pointer-events: all;
+    right: -8px;
+    bottom:-8px;
+    background-color: black;
+    border-radius: 50px;
+    border-style: inset;
+    border: dotted;
+    border-width: 1px;
+    border-color: white;
+}

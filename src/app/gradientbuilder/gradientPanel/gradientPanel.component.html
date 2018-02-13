@@ -1,9 +1,10 @@
+<div>
+    <canvas #gradientDisplay id="gradient-display"></canvas>
 
-<canvas #gradientDisplay id="gradient-display"></canvas>
+    <div #StopMarkerSlider id="stop-markers" (window:resize)="windowResized()" (mousedown)="createStopMarker($event)" (window:mousemove)="move($event);">
+        <template #stopMarkers></template>
+    </div>
 
-<div #StopMarkerSlider id="stop-markers" (window:resize)="windowResized()" (mousedown)="createStopMarker($event)" (mousemove)="move($event);" (mouseleave)="dropMarker($event)">    
-    <template #stopMarkers></template>
+    <input style="visibility:hidden" #jscolor id="foo" (change)="setColorActive($event)" class="jscolor {closable:true,closeText:'Close'}" value="000000">
+    <a (click)="deleteActive($event)" class="btn">Delete</a>
 </div>
-
-<input #colorActive (change)="setColorActive($event)" type="color" name="favcolor" value="#ff0000">
-<a (click)="deleteActive($event)" class="btn" >Delete</a>

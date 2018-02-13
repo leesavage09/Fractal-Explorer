@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, ViewChild, ElementRef ,EventEmitter,Output} from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
 import { GradientPanelComponent } from './gradientPanel/gradientPanel.component';
 import { Element } from '@angular/compiler';
 
 import { Color } from "../../helper/helper.module";
+import { HistogramComponent } from "./histogram/histogram.component";
 
 @Component({
   selector: 'app-gradientbuilder',
@@ -11,8 +12,8 @@ import { Color } from "../../helper/helper.module";
 })
 export class GradientbuilderComponent implements OnInit {
   @ViewChild('canvas') rootDiv: ElementRef;
+  @ViewChild('histogram') appHistogram: HistogramComponent;
   @ViewChild('gradientpanel') StopMarkerSlider: GradientPanelComponent;
-  @Output() gradientChanged = new EventEmitter();
   fractalCanvas: HTMLCanvasElement
   constructor() { }
 
@@ -27,9 +28,11 @@ export class GradientbuilderComponent implements OnInit {
     this.rootDiv.nativeElement.appendChild(this.fractalCanvas);
   }
 
-  changed(event){
-    this.gradientChanged.emit(event);
+  @Input()
+  set fractal(frac: any) {
+    this.appHistogram.setFractal(frac)
+    this.StopMarkerSlider.setGradient(frac.color)
   }
 
-  
+
 }

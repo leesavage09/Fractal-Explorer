@@ -67,8 +67,17 @@ export namespace Color {
 		private arr: Array<LinearGradientStop>
 		private phase: number = 0;
 		private frequency: number = 1;
-		//private subscribers:Array<Function> = new Array();
-		constructor(arr: Array<LinearGradientStop>) {
+		private min: number = 0;
+		private mid: number = 0.5;
+		private max: number = 1;
+		private subscribers: Array<LinearGradientObserver> = new Array();
+		constructor(arr: Array<LinearGradientStop> = null) {
+			if (arr != null) {
+				this.replaceAllStops(arr)
+			}
+		}
+
+		public replaceAllStops(arr: Array<LinearGradientStop>) {
 			arr.sort(function (a: LinearGradientStop, b: LinearGradientStop): number {
 				if (a.stop > b.stop) return 1
 				if (a.stop < b.stop) return -1
@@ -81,23 +90,54 @@ export namespace Color {
 			this.arr = arr;
 		}
 
-		// public subscribe(callback:Function){
-		// 	this.subscribers.push(callback);
-		// }
+		public decodeJSON(json: string): void {
+			let obj = JSON.parse(json);
+			this.arr = obj.arr;
+			this.phase = obj.phase;
+			this.frequency = obj.frequency
+		}
 
-		// public unsubscribe(callback:Function){
-		// 	this.subscribers.splice(this.subscribers.lastIndexOf(callback), 1);
-		// }
+		public subscribe(observer: LinearGradientObserver) {
+			this.subscribers.push(observer);
+		}
 
-		// private notify(){
-		// 	for (let i = 0; i < this.subscribers.length; i++) {
-		// 		this.subscribers[i]();
-		// 	}
-		// }
+		public unsubscribe(observer: LinearGradientObserver) {
+			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
+		}
+
+		public notify(excludeObserver: LinearGradientObserver) {
+			for (let i = 0; i < this.subscribers.length; i++) {
+				if (excludeObserver != this.subscribers[i]) this.subscribers[i].linearGradientChanged();
+			}
+		}
+
+		public setPhase(phase: number): void {
+			this.phase = phase * this.frequency
+		}
+
+		public setFrequency(frequency: number): void {
+			if (frequency < 1) frequency = 1;
+			else this.frequency = Math.abs(frequency)
+		}
+
+		public setMin(n: number) {
+			this.min = n;
+		}
+
+		public setMid(n: number) {
+			this.mid = n;
+		}
+
+		public setMax(n: number) {
+			this.max = n;
+		}
 
 		public addStop(stop: LinearGradientStop): void {
 			this.arr.push(stop);
-			//this.notify();
+		}
+
+		public getStops(): Array<LinearGradientStop> {
+			return this.arr
 		}
 
 		public getPhase(): number {
@@ -108,24 +148,22 @@ export namespace Color {
 			return this.frequency
 		}
 
-		public setPhase(phase: number): void {
-			this.phase = phase*this.frequency
-		}
 
-		public setFrequency(frequency: number): void {
-			if (frequency<1) frequency = 1;
-			else this.frequency = Math.abs(frequency)
-		}
 
 		/*
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
 		public getColorAt(val: number): RGBcolor {
+			if (val < this.min) val = 0;
+			else if (val > this.max) val = 1;
+			else if (val <= this.mid) val = General.mapInOut(val, this.min, this.mid, 0, 0.5);
+			else if (val > this.mid) val = General.mapInOut(val, this.mid, this.max, 0.5, 1);
+
 			val = val * this.frequency + this.phase - 1
 			let trunc = Math.trunc(val);
 			val = Math.abs(val % 1)
 			if ((trunc % 2) == 0) val = Math.abs(1 - val)
-			if (val<0 || val > 1) throw Error("Val out of bounds "+val);
+			if (val < 0 || val > 1) throw Error("Val out of bounds " + val);
 
 
 			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
@@ -152,6 +190,10 @@ export namespace Color {
 				b: Math.round(firstColor.b * firstRatio + secondColor.b * secondRatio)
 			};
 		}
+	}
+
+	export interface LinearGradientObserver {
+		linearGradientChanged(): void
 	}
 
 	export class LinearGradientStop {
@@ -185,7 +227,7 @@ export namespace Color {
 	}
 
 	export function rgbToHex(rgb: RGBcolor): string {
-		return "#" +  componentToHex(rgb.r) + componentToHex(rgb.g) + componentToHex(rgb.b);
+		return "#" + componentToHex(rgb.r) + componentToHex(rgb.g) + componentToHex(rgb.b);
 	}
 
 	function componentToHex(c: number): string {

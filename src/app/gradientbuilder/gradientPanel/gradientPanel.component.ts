@@ -3,19 +3,19 @@ import { createElement } from '@angular/core/src/view/element';
 import { StopMarkerComponent } from './stop-marker/stop-marker.component';
 import { createComponent } from '@angular/compiler/src/core';
 
-import { Color } from "../../../helper/helper.module";
+import { Color, General } from "../../../helper/helper.module";
 
 @Component({
   selector: 'app-gradientpanel',
   templateUrl: './gradientPanel.component.html',
   styleUrls: ['./gradientPanel.component.scss']
 })
-export class GradientPanelComponent implements OnInit {
+export class GradientPanelComponent implements OnInit, Color.LinearGradientObserver {
   @ViewChild('stopMarkers', { read: ViewContainerRef }) stopMarkers;
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
-  @Output() gradientChanged = new EventEmitter();
+  @ViewChild('jscolor') jscolor: ElementRef;
 
   public maxCSSleft
 
@@ -25,21 +25,25 @@ export class GradientPanelComponent implements OnInit {
   private selectedMarker: StopMarkerComponent;
   private activeMarker: StopMarkerComponent;
   private gradient: Color.LinearGradient
+  private gradientDisplayMoving: boolean = false;
 
   constructor(r: ComponentFactoryResolver) {
     this.factory = r.resolveComponentFactory(StopMarkerComponent);
   }
 
   ngOnInit() {
-    this.maxCSSleft = getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", "")
+    this.maxCSSleft = parseInt(getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", ""))
   }
 
   /*
   * Events
   */
+  public linearGradientChanged() {
+    this.drawGradient();
+  }
 
   windowResized() {
-    this.maxCSSleft = getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", "")
+    this.maxCSSleft = parseInt(getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", ""))
     this.allMarkers.forEach(marker => {
       marker.windowResized();
     });
@@ -47,18 +51,46 @@ export class GradientPanelComponent implements OnInit {
 
   createStopMarker(event) {
     event.stopPropagation();
+    this.addStopMarker(null, event.offsetX, null)
+    this.gradient.notify(this);
+  }
+
+  addStopMarker(stop: number, cssLeft: number, color: Color.RGBcolor) {
     let componentRef: ComponentRef<StopMarkerComponent> = this.stopMarkers.createComponent(this.factory);
     componentRef.instance.regesterParent(this, componentRef)
-    componentRef.instance.setCSSLeft(event.offsetX);
+    if (cssLeft != null) componentRef.instance.setCSSLeft(cssLeft);
+    else if (stop != null) componentRef.instance.setStopValue(stop);
+    if (color) componentRef.instance.setColor(color);
     this.allMarkers.push(componentRef.instance);
     this.setActiveMarker(componentRef.instance);
     this.createGradient();
+
+  }
+
+  setGradient(g: Color.LinearGradient) {
+    if (g == undefined) return;
+    if (this.gradient != null) this.gradient.unsubscribe(this)
+    this.gradient = g;
+    this.drawGradient()
+    this.gradient.subscribe(this)
+  }
+
+  private drawGradient() {
+    this.deleteAllMarkers()
+
+    let arr: Array<Color.LinearGradientStop> = this.gradient.getStops()
+    for (let i = 0; i < arr.length; i++) {
+      const stop = arr[i];
+      let offset = General.mapInOut(stop.stop, 0, 1, 0, this.maxCSSleft);
+      this.addStopMarker(stop.stop, null, stop.color);
+    }
   }
 
   move(event) {
     if (this.selectedMarker != undefined) {
       this.selectedMarker.offsetCSSLeft(event.screenX);
       this.createGradient();
+      this.gradient.notify(this);
     }
   }
 
@@ -67,19 +99,32 @@ export class GradientPanelComponent implements OnInit {
   }
 
   setColorActive(event) {
-    let rgb = Color.hexToRGB(event.target.value);
+    let rgb = Color.hexToRGB(this.jscolor.nativeElement.jscolor.toHEXString())//event.target.value);
     this.activeMarker.setColor(rgb);
     this.createGradient();
+    this.gradient.notify(this);
   }
 
   deleteActive(event) {
     if (this.allMarkers.length <= 2) return;
-    this.allMarkers.splice(this.allMarkers.lastIndexOf(this.activeMarker), 1);
-    this.activeMarker.thisRef.destroy();
+    this.deleteMarker(this.activeMarker);
     this.setActiveMarker(this.allMarkers[0]);
     this.createGradient();
+    this.gradient.notify(this);
   }
 
+  deleteAllMarkers() {
+    for (let index = 0; index < this.allMarkers.length; index++) {
+      const marker = this.allMarkers[index];
+      marker.thisRef.destroy();
+    }
+    this.allMarkers = new Array()
+  }
+
+  deleteMarker(marker: StopMarkerComponent) {
+    this.allMarkers.splice(this.allMarkers.lastIndexOf(marker), 1);
+    marker.thisRef.destroy();
+  }
   /*
   * Public Methods
   */
@@ -88,15 +133,12 @@ export class GradientPanelComponent implements OnInit {
     if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
-    this.colorActive.nativeElement.value = Color.rgbToHex(this.activeMarker.getColor())
+    this.jscolor.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
+    console.log("nooo");
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {
-    if (this.selectedMarker == marker) this.selectedMarker = undefined
-    else {
-      this.startMouseX = x;
-      this.selectedMarker = marker;
-    }
+    this.selectedMarker = marker
   }
 
   private createGradient() {
@@ -104,7 +146,7 @@ export class GradientPanelComponent implements OnInit {
     this.allMarkers.forEach(marker => {
       gradient.push({ stop: marker.getStopValue(), color: marker.getColor() });
     });
-    this.gradient = new Color.LinearGradient(gradient);
+    this.gradient.replaceAllStops(gradient);
 
     let slider = this.gradientDisplay.nativeElement;
     let img = slider.getContext("2d").getImageData(0, 0, slider.width, 1);
@@ -120,7 +162,6 @@ export class GradientPanelComponent implements OnInit {
       slider.getContext("2d").putImageData(img, 0, i);
     }
 
-    this.gradientChanged.emit(this.gradient);
   }
 
 }

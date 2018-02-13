@@ -11,11 +11,13 @@ import { Color } from "../../../../helper/helper.module";
 })
 export class StopMarkerComponent {
   @ViewChild('marker') stopMarkers: ElementRef;
+  @ViewChild('jscolor') jscolor: ElementRef;
   public thisRef: ComponentRef<StopMarkerComponent>;
   private lastCSSLeft: number;
   private stopValue: number;
   private parent: GradientPanelComponent;
   private lastMouseX: number
+  private moveStarted: boolean = false
   private color: Color.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
   constructor() { }
 
@@ -28,7 +30,7 @@ export class StopMarkerComponent {
   * Events
   */
 
-  select(event): void {
+  mousedown(event): void {
     event.stopPropagation();
     this.lastMouseX = event.screenX;
     this.lastCSSLeft = this.getCSSLeft();
@@ -36,30 +38,53 @@ export class StopMarkerComponent {
     this.parent.setActiveMarker(this);
   }
 
-  removeSelect(event): void {
+  mouseup(event): void {
+    if (this.moveStarted) {
+      this.moveStarted = false
+      this.mouseupWindow()
+    } else {
+      (<any>document.getElementById('foo')).jscolor.show();
+    }
+  }
+
+  mouseupWindow() {
     event.stopPropagation();
     this.parent.dropMarker();
   }
 
   windowResized() {
-    let cssLeft = General.mapInOut(this.stopValue, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());
-    this.setCSSLeft(cssLeft);
+    this.setStopValue(this.stopValue);
   }
 
   /*
   * Public Methods
   */
 
-  offsetCSSLeft(x: number) {
+  offsetCSSLeft(x: number, loop: boolean = false) {
     let newCSSleft = x - this.lastMouseX + this.lastCSSLeft;
-    this.setCSSLeft(newCSSleft);
+    this.setCSSLeft(newCSSleft, loop);
   }
 
-  setCSSLeft(x: number) {
+  setStopValue(stop: number) {
+    let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());
+    this.setCSSLeft(cssLeft);
+  }
+
+  setCSSLeft(x: number, loop: boolean = false) {
+    this.moveStarted = true;
     let maxLeft = this.getMaxCSSLeft();
     let minLeft = this.getMinCSSLeft();
-    if (x >= maxLeft) x = maxLeft;
-    if (x <= minLeft) x = minLeft;
+
+    if (loop) {
+      let width = maxLeft - minLeft
+      while (x > maxLeft + width) x = x - maxLeft - width - this.getCSSWidth() / 2;
+      while (x < minLeft - width) x = x + maxLeft + width + this.getCSSWidth() / 2;
+    }
+    else {
+      if (x > maxLeft) x = maxLeft;
+      if (x < minLeft) x = minLeft;
+    }
+
 
     this.stopMarkers.nativeElement.style.left = x.toString() + "px";
     let cssLeft = this.getCSSLeft() + this.getCSSWidth() / 2;
@@ -93,6 +118,14 @@ export class StopMarkerComponent {
     return this.color;
   }
 
+  getMaxCSSLeft(): number {
+    return this.parent.maxCSSleft - Math.round(this.getCSSWidth() / 2)
+  }
+
+  getMinCSSLeft(): number {
+    return 0 - Math.round(this.getCSSWidth() / 2)
+  }
+
   /*
   * Private Methods
   */
@@ -106,12 +139,5 @@ export class StopMarkerComponent {
     return border + parseInt(getComputedStyle(this.stopMarkers.nativeElement).width.replace("px", ""));
   }
 
-  private getMaxCSSLeft(): number {
-    return this.parent.maxCSSleft - Math.round(this.getCSSWidth() / 2)
-  }
-
-  private getMinCSSLeft(): number {
-    return 0 - Math.round(this.getCSSWidth() / 2)
-  }
 
 }

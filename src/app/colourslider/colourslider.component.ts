@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, Input, ElementRef,Output, EventEmitter} from '@angular/core';
 
-//import { FractalColoring } from "../../fractal/fractalColouring";
 import { Color } from "../../helper/helper.module";
 
 @Component({
