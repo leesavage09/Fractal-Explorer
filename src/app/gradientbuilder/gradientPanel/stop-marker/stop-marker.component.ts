@@ -2,7 +2,7 @@ import { Component, OnInit, ComponentFactoryResolver, ComponentRef, ElementRef, 
 import { General } from "../../../../helper/helper.module";
 
 import { GradientPanelComponent } from '../gradientPanel.component';
-import { Color } from "../../../../helper/helper.module";
+import { FractalColor } from "../../../../fractal/fractalColouring";
 
 @Component({
   selector: 'app-stop-marker',
@@ -10,7 +10,7 @@ import { Color } from "../../../../helper/helper.module";
   styleUrls: ['./stop-marker.component.scss']
 })
 export class StopMarkerComponent {
-  @ViewChild('marker') stopMarkers: ElementRef;
+  @ViewChild('marker') stopMarker: ElementRef;
   @ViewChild('jscolor') jscolor: ElementRef;
   public thisRef: ComponentRef<StopMarkerComponent>;
   private lastCSSLeft: number;
@@ -18,7 +18,7 @@ export class StopMarkerComponent {
   private parent: GradientPanelComponent;
   private lastMouseX: number
   private moveStarted: boolean = false
-  private color: Color.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
+  private color: FractalColor.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
   constructor() { }
 
 
@@ -85,10 +85,14 @@ export class StopMarkerComponent {
       if (x < minLeft) x = minLeft;
     }
 
-
-    this.stopMarkers.nativeElement.style.left = x.toString() + "px";
+    this.stopMarker.nativeElement.style.left = x.toString() + "px";
     let cssLeft = this.getCSSLeft() + this.getCSSWidth() / 2;
     this.stopValue = General.mapInOut(cssLeft, 0, this.parent.maxCSSleft, 0, 1);
+  }
+
+  getScreenY() {
+    let y = this.stopMarker.nativeElement.getBoundingClientRect().top + (this.stopMarker.nativeElement.getBoundingClientRect().width / 2)
+    return y;
   }
 
   regesterParent(parent, componentRef): void {
@@ -98,10 +102,10 @@ export class StopMarkerComponent {
 
   styleActive(flag: boolean) {
     if (flag) {
-      this.stopMarkers.nativeElement.style.borderWidth = "2px"
+      this.stopMarker.nativeElement.style.borderWidth = "2px"
     }
     else {
-      this.stopMarkers.nativeElement.style.borderWidth = "0px"
+      this.stopMarker.nativeElement.style.borderWidth = "0px"
     }
   }
 
@@ -111,7 +115,7 @@ export class StopMarkerComponent {
 
   setColor(rgb: { r: number, g: number, b: number }) {
     this.color = rgb;
-    this.stopMarkers.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
+    this.stopMarker.nativeElement.style.backgroundColor = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"
   }
 
   getColor(): { r: number, g: number, b: number } {
@@ -131,12 +135,12 @@ export class StopMarkerComponent {
   */
 
   private getCSSLeft(): number {
-    return parseInt(this.stopMarkers.nativeElement.style.left.replace("px", ""));
+    return parseInt(this.stopMarker.nativeElement.style.left.replace("px", ""));
   }
 
   private getCSSWidth(): number {
-    let border = parseInt(getComputedStyle(this.stopMarkers.nativeElement).borderWidth) * 2;
-    return border + parseInt(getComputedStyle(this.stopMarkers.nativeElement).width.replace("px", ""));
+    let border = parseInt(getComputedStyle(this.stopMarker.nativeElement).borderWidth) * 2;
+    return border + parseInt(getComputedStyle(this.stopMarker.nativeElement).width.replace("px", ""));
   }
 
 

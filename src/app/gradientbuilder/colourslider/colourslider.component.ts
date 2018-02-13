@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 
-import { Color } from "../../helper/helper.module";
+import { FractalColor } from "../../../fractal/fractalColouring";
 
 @Component({
   selector: 'app-colourslider',
   templateUrl: './colourslider.component.html',
   styleUrls: ['./colourslider.component.scss']
 })
-export class ColoursliderComponent implements OnInit, Color.LinearGradientObserver {
+export class ColoursliderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('slider') HTMLslider: ElementRef;
   private trackingMove: boolean = false;
   private startX: number = null;
   private startPhase;
-  private linearGradient: Color.LinearGradient;
+  private linearGradient: FractalColor.LinearGradient;
   constructor() { }
 
   ngOnInit() {
@@ -21,7 +21,7 @@ export class ColoursliderComponent implements OnInit, Color.LinearGradientObserv
 
   
   @Input()
-  set color(c: Color.LinearGradient) {
+  set color(c: FractalColor.LinearGradient) {
     this.linearGradient = c;
     this.linearGradient.subscribe(this)
     this.updateImg();
@@ -74,7 +74,7 @@ export class ColoursliderComponent implements OnInit, Color.LinearGradientObserv
       img.data[(i * 4) + 0] = rgb.r;
       img.data[(i * 4) + 1] = rgb.g;
       img.data[(i * 4) + 2] = rgb.b;
-      img.data[(i * 4) + 3] = 255;  //alphas
+      img.data[(i * 4) + 3] = 255;
     }
     for (var i = 0; i < slider.height; ++i) {
       slider.getContext("2d").putImageData(img, 0, i);

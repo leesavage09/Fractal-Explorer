@@ -5,10 +5,9 @@ import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
-import { ColoursliderComponent } from "../colourslider/colourslider.component";
+import { ColoursliderComponent } from "../gradientbuilder/colourslider/colourslider.component";
 import { GradientbuilderComponent } from '../gradientbuilder/gradientbuilder.component';
-
-import { Color } from "../../helper/helper.module";
+import { FractalColor } from "../../fractal/fractalColouring";
 
 @Component({
   selector: "FractalComponent",
@@ -94,7 +93,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    let gradient = new Color.LinearGradient();//
+    let gradient = new FractalColor.LinearGradient();
     gradient.decodeJSON(this.colorBW)
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.iterations;
@@ -209,7 +208,6 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   openGradientBuilder() {
     this.HTMLgradientBuilder.nativeElement.style.visibility = "visible";
     let c = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
-    this.HTMLappGradientBuilder.canvas = c;
     this.HTMLappGradientBuilder.fractal = this.fractal;
     this.canvasSizeChanged();
   }
@@ -293,6 +291,11 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.fractal.getColor().notify(null);
   }
 
+  iterationsChanged() {
+    this.fractal.iterations = this.iterations;
+    this.fractal.render();
+  }
+
   /*
   * Callbacks from fractal explorer
   */
@@ -350,10 +353,6 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  private iterationsChanged() {
-    this.fractal.iterations = this.iterations;
-    this.fractal.render();
-  }
 
   private fullScreenWindow() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;

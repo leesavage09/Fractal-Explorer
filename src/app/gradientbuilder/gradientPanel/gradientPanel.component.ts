@@ -3,14 +3,15 @@ import { createElement } from '@angular/core/src/view/element';
 import { StopMarkerComponent } from './stop-marker/stop-marker.component';
 import { createComponent } from '@angular/compiler/src/core';
 
-import { Color, General } from "../../../helper/helper.module";
+import { FractalColor } from "../../../fractal/fractalColouring";
+import { General } from "../../../helper/helper.module";
 
 @Component({
   selector: 'app-gradientpanel',
   templateUrl: './gradientPanel.component.html',
   styleUrls: ['./gradientPanel.component.scss']
 })
-export class GradientPanelComponent implements OnInit, Color.LinearGradientObserver {
+export class GradientPanelComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('stopMarkers', { read: ViewContainerRef }) stopMarkers;
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
@@ -24,7 +25,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
   private allMarkers: Array<StopMarkerComponent> = new Array();
   private selectedMarker: StopMarkerComponent;
   private activeMarker: StopMarkerComponent;
-  private gradient: Color.LinearGradient
+  private gradient: FractalColor.LinearGradient
   private gradientDisplayMoving: boolean = false;
 
   constructor(r: ComponentFactoryResolver) {
@@ -38,7 +39,8 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
   /*
   * Events
   */
-  public linearGradientChanged() {
+ 
+  linearGradientChanged() {
     this.drawGradient();
   }
 
@@ -55,7 +57,41 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     this.gradient.notify(this);
   }
 
-  addStopMarker(stop: number, cssLeft: number, color: Color.RGBcolor) {
+  move(event) {
+    if (this.selectedMarker != undefined) {
+      let offsetY = Math.abs(this.selectedMarker.getScreenY()-event.clientY)
+      if (offsetY > 25 && this.allMarkers.length>1) {
+        this.deleteMarker(this.selectedMarker);
+        this.selectedMarker = undefined;
+      }   
+      else {
+        this.selectedMarker.offsetCSSLeft(event.screenX);
+      }
+      this.draw();
+      this.gradient.notify(this);   
+    }
+  }
+
+  setColorActive(event) {
+    let rgb = FractalColor.hexToRGB(this.jscolor.nativeElement.jscolor.toHEXString())//event.target.value);
+    this.activeMarker.setColor(rgb);
+    this.draw();
+    this.gradient.notify(this);
+  }
+
+
+
+
+  /*
+  * Public Methods
+  */
+
+
+  dropMarker() {
+    this.selectedMarker = undefined;
+  }
+
+  addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor) {
     let componentRef: ComponentRef<StopMarkerComponent> = this.stopMarkers.createComponent(this.factory);
     componentRef.instance.regesterParent(this, componentRef)
     if (cssLeft != null) componentRef.instance.setCSSLeft(cssLeft);
@@ -67,7 +103,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
 
   }
 
-  setGradient(g: Color.LinearGradient) {
+  setGradient(g: FractalColor.LinearGradient) {
     if (g == undefined) return;
     if (this.gradient != null) this.gradient.unsubscribe(this)
     this.gradient = g;
@@ -75,42 +111,15 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     this.gradient.subscribe(this)
   }
 
-  private drawGradient() {
-    this.deleteAllMarkers()
-
-    let arr: Array<Color.LinearGradientStop> = this.gradient.getStops()
-    for (let i = 0; i < arr.length; i++) {
-      const stop = arr[i];
-      let offset = General.mapInOut(stop.stop, 0, 1, 0, this.maxCSSleft);
-      this.addStopMarker(stop.stop, null, stop.color);
-    }
+  setActiveMarker(marker: StopMarkerComponent) {
+    if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
+    this.activeMarker = marker;
+    this.activeMarker.styleActive(true);
+    this.jscolor.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
   }
 
-  move(event) {
-    if (this.selectedMarker != undefined) {
-      this.selectedMarker.offsetCSSLeft(event.screenX);
-      this.draw();
-      this.gradient.notify(this);
-    }
-  }
-
-  dropMarker() {
-    this.selectedMarker = undefined;
-  }
-
-  setColorActive(event) {
-    let rgb = Color.hexToRGB(this.jscolor.nativeElement.jscolor.toHEXString())//event.target.value);
-    this.activeMarker.setColor(rgb);
-    this.draw();
-    this.gradient.notify(this);
-  }
-
-  deleteActive(event) {
-    if (this.allMarkers.length <= 2) return;
-    this.deleteMarker(this.activeMarker);
-    this.setActiveMarker(this.allMarkers[0]);
-    this.draw();
-    this.gradient.notify(this);
+  setSelectedMarker(marker: StopMarkerComponent, x) {
+    this.selectedMarker = marker
   }
 
   deleteAllMarkers() {
@@ -125,20 +134,10 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     this.allMarkers.splice(this.allMarkers.lastIndexOf(marker), 1);
     marker.thisRef.destroy();
   }
+
   /*
-  * Public Methods
+  * Private
   */
-
-  setActiveMarker(marker: StopMarkerComponent) {
-    if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
-    this.activeMarker = marker;
-    this.activeMarker.styleActive(true);
-    this.jscolor.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
-  }
-
-  setSelectedMarker(marker: StopMarkerComponent, x) {
-    this.selectedMarker = marker
-  }
 
   private draw() {
     let gradient = new Array();
@@ -151,7 +150,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     let img = slider.getContext("2d").getImageData(0, 0, slider.width, 1);
     for (var i = 0; i < slider.width; ++i) {
       let percent = i / slider.width;
-      let rgb = this.gradient.getColorAt(percent,{min:0,mid:0.5,max:1},1,0);
+      let rgb = this.gradient.getColorAt(percent, { min: 0, mid: 0.5, max: 1 }, 1, 0);
       img.data[(i * 4) + 0] = rgb.r;
       img.data[(i * 4) + 1] = rgb.g;
       img.data[(i * 4) + 2] = rgb.b;
@@ -161,6 +160,17 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
       slider.getContext("2d").putImageData(img, 0, i);
     }
 
+  }
+
+  private drawGradient() {
+    this.deleteAllMarkers()
+
+    let arr: Array<FractalColor.LinearGradientStop> = this.gradient.getStops()
+    for (let i = 0; i < arr.length; i++) {
+      const stop = arr[i];
+      let offset = General.mapInOut(stop.stop, 0, 1, 0, this.maxCSSleft);
+      this.addStopMarker(stop.stop, null, stop.color);
+    }
   }
 
 }

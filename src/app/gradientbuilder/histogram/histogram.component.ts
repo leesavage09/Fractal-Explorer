@@ -1,15 +1,16 @@
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
 import { Fractals } from "../../../fractal/fractal.module";
-import { Color, General } from "../../../helper/helper.module";
-import { ColoursliderComponent } from "../../colourslider/colourslider.component";
+import { FractalColor, FractalHistogram } from "../../../fractal/fractalColouring";
+import { General } from "../../../helper/helper.module";
+import { ColoursliderComponent } from "../colourslider/colourslider.component";
 
 @Component({
   selector: 'app-histogram',
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.scss']
 })
-export class HistogramComponent implements OnInit {
+export class HistogramComponent implements OnInit, FractalHistogram.HistogramObserver{
   @ViewChild('histogramCanvas') histogramCanvas: ElementRef;
   private fractal: Fractals.Fractal;
   @ViewChild('markerMin') markerMin: ElementRef;
@@ -30,17 +31,39 @@ export class HistogramComponent implements OnInit {
 
   setFractal(fractal: Fractals.Fractal) {
     this.fractal = fractal;
-    this.data = fractal.getHistogram();
-    
+    fractal.getHistogram().subscribe(this);
     this.HTMLgradientSlider.color = this.fractal.getColor();
 
-    this.drawHistogram();
-    this.updateGradient()
+    this.histogramChanged()
+    this.windowResized()
   }
 
   /*
   * Events
   */
+
+  windowResized() {
+    let cssMin = this.getMinCSSLeft(this.markerMin.nativeElement);
+    let cssMax = this.getMaxCSSLeft(this.markerMax.nativeElement);
+
+    let min = this.fractal.getColor().getMin()
+    min = General.mapInOut(min,0,1,cssMin,cssMax);
+    
+    let mid = this.fractal.getColor().getMid()
+    mid = General.mapInOut(mid,0,1,cssMin,cssMax);
+
+    let max = this.fractal.getColor().getMax()
+    max = General.mapInOut(max,0,1,cssMin,cssMax);
+
+    this.markerMin.nativeElement.style.left = min.toString() + "px";
+    this.markerMid.nativeElement.style.left = mid.toString() + "px";
+    this.markerMax.nativeElement.style.left = max.toString() + "px";
+  }
+
+  histogramChanged(){
+    this.data = this.fractal.getHistogram().getData()
+    this.drawHistogram();
+  }
 
   select(event) {
     this.movingMarker = event.target || event.srcElement || event.currentTarget;
@@ -81,8 +104,8 @@ export class HistogramComponent implements OnInit {
   private drawHistogram() {
     const ctx = <CanvasRenderingContext2D>this.histogramCanvas.nativeElement.getContext("2d");
 
-    const numBin = this.data.length-1
-  
+    const numBin = this.data.length - 1
+
     var total = 0;
     for (var i = 0; i < this.data.length; i++) {
       total += this.data[i];
@@ -97,9 +120,9 @@ export class HistogramComponent implements OnInit {
     for (var y = 0; y < ctx.canvas.height; ++y) {
       for (var x = 0; x < ctx.canvas.width; ++x) {
         let binNum = Math.trunc(x / widthBin)
-       
-        if ((y / hightCount) < this.data[binNum]) c = new Color.RGBcolor(0, 0, 0)
-        else c = new Color.RGBcolor(255, 255, 255)
+
+        if ((y / hightCount) < this.data[binNum]) c = new FractalColor.RGBcolor(0, 0, 0)
+        else c = new FractalColor.RGBcolor(255, 255, 255)
 
         img.data[(x * 4) + 0] = c.r;
         img.data[(x * 4) + 1] = c.g;
@@ -135,15 +158,15 @@ export class HistogramComponent implements OnInit {
   private getMinCSSLeft(marker: HTMLElement) {
     let start
     if (marker == this.markerMax.nativeElement) start = this.getCSSLeft(this.markerMid.nativeElement)
-    else if (marker == this.markerMid.nativeElement) start = this.getCSSLeft(this.markerMin.nativeElement)// - (this.getCSSWidth(this.movingMarker) / 2);
+    else if (marker == this.markerMid.nativeElement) start = this.getCSSLeft(this.markerMin.nativeElement)
     else start = 0 - this.getCSSWidth(marker);
     return start + (this.getCSSWidth(marker) / 2);
   }
 
   private getMaxCSSLeft(marker: HTMLElement): number {
     let start
-    if (marker == this.markerMin.nativeElement) start = this.getCSSLeft(this.markerMid.nativeElement)// - (this.getCSSWidth(this.movingMarker) / 2);
-    else if (marker == this.markerMid.nativeElement) start = this.getCSSLeft(this.markerMax.nativeElement)// - (this.getCSSWidth(this.movingMarker) / 2);
+    if (marker == this.markerMin.nativeElement) start = this.getCSSLeft(this.markerMid.nativeElement)
+    else if (marker == this.markerMid.nativeElement) start = this.getCSSLeft(this.markerMax.nativeElement)
     else start = this.getCSSWidth(this.container.nativeElement);
     return start - (this.getCSSWidth(marker) / 2);
   }

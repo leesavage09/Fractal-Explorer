@@ -1,13 +1,13 @@
-import { FractalColoring } from "../fractal/fractalColouring";
+import { FractalColor, FractalHistogram } from "../fractal/fractalColouring";
 import { ComplexNumber, ComplexSquare } from "../fractal/complexNumbers";
-import { Color, General, EasingFunctions } from "../helper/helper.module";
+import { General, EasingFunctions } from "../helper/helper.module";
 
 export module Fractals {
 
-	export class Fractal implements Color.LinearGradientObserver {
+	export class Fractal implements FractalColor.LinearGradientObserver {
 		iterations: number = 85;
 		escapeRadius: number = 10;
-		private color: Color.LinearGradient;
+		private color: FractalColor.LinearGradient;
 		complexPlain: ComplexPlain;
 		img: ImageData;
 		private calculationFunction: Function;
@@ -16,8 +16,8 @@ export module Fractals {
 		private lastUpdate: number;
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
-		private histogram: Array<number>
-		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color: Color.LinearGradient) {
+		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
+		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
 			this.color = color;
@@ -40,25 +40,20 @@ export module Fractals {
 				this.notifiMaxZoomListeners();
 			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
-			this.startHistogram();
+			this.histogram.startHistogram(this.iterations + 1);
 			var self = this;
 			setTimeout(function () {
 				self.scanLine(0, self.renderVersion);
 			}, 0);
 		}
 
-		public getColor(): Color.LinearGradient {
+		public getColor(): FractalColor.LinearGradient {
 			return this.color;
-		}
-
-		private startHistogram() {
-			this.histogram = Array.from(Array(this.iterations + 1), () => 0);
 		}
 
 		public getHistogram() {
 			return this.histogram
 		}
-
 		private scanLine(y: number, version: number): void {
 			if (this.renderVersion != version) return;
 			this.img = this.complexPlain.getScanLineImage();
@@ -79,12 +74,12 @@ export module Fractals {
 					n = n + 1 - nu
 				}
 				let trunc = Math.floor(n);
-				this.histogram[trunc] = this.histogram[trunc] + 1
+				this.histogram.incrementData(trunc)
 
 				if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
 				n = General.mapInOut(n, 0, this.iterations, 0.0, 1.0);
 				let col = this.color.getColorAt(n);
-				if (n == 1) col = new Color.RGBcolor(0, 0, 0)
+				if (n == 1) col = new FractalColor.RGBcolor(0, 0, 0)
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;
 				this.img.data[(x * 4) + 2] = col.b;
@@ -113,6 +108,7 @@ export module Fractals {
 					self.scanLine(0, version);
 				}, 1);
 			}
+			else this.histogram.notify(null);
 		}
 
 		public getAnimator(): FractalNavigationAnimator {
@@ -247,7 +243,7 @@ export module Fractals {
 
 	export class FractalNavigationAnimator {
 		fractal: Fractal;
-		driftAnimationTime: number = 1500;//800
+		driftAnimationTime: number = 800;
 		zoomAnimationTime: number = 200;
 		panAnimationIsRunning: boolean = false;
 		zoomAnimationIsRunning: boolean = false;
@@ -441,7 +437,7 @@ export module Fractals {
 			let scale = (delta / deltaTime);
 			let quadScale = EasingFunctions.easeInOutQuad(scale)
 			if (scale > 1) {
-				scale = 1; //last frame
+				scale = 1;
 				this.currentMagnification = this.targetMagnification;
 			}
 			else if (this.targetMagnification > 1) {
