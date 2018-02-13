@@ -16,7 +16,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
-  @ViewChild('jscolor') jscolor: ElementRef;
+  private jscolor = (<any>document.getElementById('jscolor'))
 
   public maxCSSleft
 
@@ -73,7 +73,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   }
 
   setColorActive(event) {
-    let rgb = FractalColor.hexToRGB(this.jscolor.nativeElement.jscolor.toHEXString())//event.target.value);
+    let rgb = FractalColor.hexToRGB(this.jscolor.jscolor.toHEXString())//event.target.value);
     this.activeMarker.setColor(rgb);
     this.draw();
     this.gradient.notify(this);
@@ -115,7 +115,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
     if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
-    this.jscolor.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
+    this.jscolor.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {

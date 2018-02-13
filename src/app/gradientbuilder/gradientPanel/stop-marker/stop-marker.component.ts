@@ -43,7 +43,7 @@ export class StopMarkerComponent {
       this.moveStarted = false
       this.mouseupWindow()
     } else {
-      (<any>document.getElementById('foo')).jscolor.show();
+      (<any>document.getElementById('jscolor')).jscolor.show();
     }
   }
 

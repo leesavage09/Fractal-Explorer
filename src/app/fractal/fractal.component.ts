@@ -36,8 +36,10 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
   @ViewChild('gradientBuilder') HTMLgradientBuilder: ElementRef;
   @ViewChild('appGradientBuilder') HTMLappGradientBuilder: GradientbuilderComponent;
+  @ViewChild('jscolor') jscolor: ElementRef;
 
   private explorerWindowStyle: string;
+  private jscolorWindowStyle: string;
   private fractal: Fractals.Fractal;
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
@@ -270,18 +272,21 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   toggelFullScreen() {
-    let div = <HTMLDivElement>this.HTMLexplorer.nativeElement;
+    let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
+    let jscolorDiv = <HTMLDivElement>this.jscolor.nativeElement;
 
     if (this.explorerWindowIsMaximised) {
       this.explorerWindowIsMaximised = false;
       this.exitNativeFullScreen()
-      div.setAttribute("style", this.explorerWindowStyle);
+      jscolorDiv.setAttribute("style", this.jscolorWindowStyle);
+      explorerDiv.setAttribute("style", this.explorerWindowStyle);
       this.canvasSizeChanged();
 
     } else {
       this.explorerWindowIsMaximised = true;
       this.requestNativeFullScreen();
-      this.explorerWindowStyle = div.getAttribute("style");
+      this.jscolorWindowStyle = jscolorDiv.getAttribute("style");
+      this.explorerWindowStyle = explorerDiv.getAttribute("style");
       this.fullScreenWindow();
     }
   }
@@ -356,9 +361,18 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   private fullScreenWindow() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
+    let jscolorDiv = <HTMLDivElement>this.jscolor.nativeElement;
+    let windowWidth = window.innerWidth
+    let windowHeight = window.innerHeight
+    let jscolorLeft = windowWidth / 2 - 308 / 2;
+    let jscolorTop = windowHeight / 2 - 210 / 2;
+
     explorerDiv.setAttribute("style", "position: fixed; top: 0px; left: 0px; border: none; z-index: 999;");
-    explorerDiv.style.width = window.innerWidth.toString() + "px";
-    explorerDiv.style.height = window.innerHeight.toString() + "px";
+    explorerDiv.style.width = windowWidth.toString() + "px";
+    explorerDiv.style.height = windowHeight.toString() + "px";
+
+    jscolorDiv.style.top = jscolorTop.toString() + "px";
+    jscolorDiv.style.left = jscolorLeft.toString() + "px";
     this.canvasSizeChanged();
   }
 

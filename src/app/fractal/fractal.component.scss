@@ -49,6 +49,18 @@ $font-size-small: 14px !default;
     user-select: none;
 }
 
+#jscolor {
+    visibility: hidden;
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    top: $explorer-height / 2 - 210 / 2;
+    left: $explorer-width / 2 - 308 / 2;
+}
+
 #explorer {
     height: $explorer-height;
     position: relative;
@@ -104,6 +116,7 @@ $font-size-small: 14px !default;
 
         .btn {
             @include interactive;
+
             display: inline-block;
             width: 80px;
             height: 20px;
@@ -170,15 +183,16 @@ $font-size-small: 14px !default;
                     margin: 0px;
                     height: $button-size / 4;
                     line-height: $button-size / 4;
-                    
-                    &.less{
+
+                    &.less {
                         border-top-right-radius: 0px;
                         border-bottom-right-radius: 0px;
                     }
-                    &.more{
+
+                    &.more {
                         border-top-left-radius: 0px;
                         border-bottom-left-radius: 0px;
-                    }  
+                    }
                 }
             }
 
@@ -233,7 +247,6 @@ $font-size-small: 14px !default;
         right: 0;
         top: 50%;
         transform: perspective(1px) translateY(-50%);
-        
         margin: auto;
         z-index: 99;
     }

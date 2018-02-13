@@ -1,6 +1,7 @@
 <div class={{theme}}>
   <div #explorer id="explorer">
 
+    <input #jscolor id="jscolor" (change)="HTMLappGradientBuilder.gradientPanel.setColorActive($event)" class="jscolor {closable:true, closeText:'Close',width:250,  height:150, }" value="000000">
     <canvas #fractal id="fractal" (window:resize)="windowResized()" (mousedown)="startDrag($event)" (mouseup)="endDrag($event)" (mousemove)="mouseMove($event)" (mouseleave)="endDrag($event)" (wheel)="wheel($event)" (touchstart)="touchStartDrag($event)" (touchmove)="touchMove($event)" (touchend)="touchEndDrag($event)">
     </canvas>
 
@@ -69,7 +70,7 @@
 
     <div #gradientBuilder class="gradient-builder center" (wheel)="$event.preventDefault()">
       <a (click)="closeGradientBuilder()" class="btn">Close</a>
-      <app-gradientbuilder #appGradientBuilder > </app-gradientbuilder>
+      <app-gradientbuilder #appGradientBuilder> </app-gradientbuilder>
     </div>
 
 

@@ -14,14 +14,14 @@ import { Fractals } from '../../fractal/fractal.module';
 export class GradientbuilderComponent {
   @ViewChild('canvas') rootDiv: ElementRef;
   @ViewChild('histogram') appHistogram: HistogramComponent;
-  @ViewChild('gradientpanel') StopMarkerSlider: GradientPanelComponent;
+  @ViewChild('gradientpanel') gradientPanel: GradientPanelComponent;
   fractalCanvas: HTMLCanvasElement
   constructor() { }
 
   @Input()
   set fractal(frac: Fractals.Fractal) {
     this.appHistogram.setFractal(frac)
-    this.StopMarkerSlider.setGradient(frac.getColor())
+    this.gradientPanel.setGradient(frac.getColor())
   }
 
 }
