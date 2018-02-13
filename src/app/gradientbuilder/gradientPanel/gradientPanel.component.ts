@@ -16,7 +16,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
-  private jscolor = (<any>document.getElementById('jscolor'))
+  private jscolor = (<any>document.getElementById('jscolor'));
 
   public maxCSSleft
 
@@ -39,7 +39,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   /*
   * Events
   */
- 
+
   linearGradientChanged() {
     this.drawGradient();
   }
@@ -59,16 +59,16 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
 
   move(event) {
     if (this.selectedMarker != undefined) {
-      let offsetY = Math.abs(this.selectedMarker.getScreenY()-event.clientY)
-      if (offsetY > 25 && this.allMarkers.length>1) {
+      let offsetY = Math.abs(this.selectedMarker.getScreenY() - event.clientY)
+      if (offsetY > 25 && this.allMarkers.length > 1) {
         this.deleteMarker(this.selectedMarker);
         this.selectedMarker = undefined;
-      }   
+      }
       else {
         this.selectedMarker.offsetCSSLeft(event.screenX);
       }
       this.draw();
-      this.gradient.notify(this);   
+      this.gradient.notify(this);
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-import { GradientPanelComponent } from './gradientPanel/gradientPanel.component';
 import { Element } from '@angular/compiler';
 
+import { GradientPanelComponent } from './gradientPanel/gradientPanel.component';
 import { FractalColor } from "../../fractal/fractalColouring";
 import { HistogramComponent } from "./histogram/histogram.component";
 import { Fractals } from '../../fractal/fractal.module';
@@ -12,7 +12,6 @@ import { Fractals } from '../../fractal/fractal.module';
   styleUrls: ['./gradientbuilder.component.scss']
 })
 export class GradientbuilderComponent {
-  @ViewChild('canvas') rootDiv: ElementRef;
   @ViewChild('histogram') appHistogram: HistogramComponent;
   @ViewChild('gradientpanel') gradientPanel: GradientPanelComponent;
   fractalCanvas: HTMLCanvasElement

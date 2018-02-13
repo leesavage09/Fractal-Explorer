@@ -8,6 +8,8 @@ import { ComplexNumber } from "../../fractal/complexNumbers";
 import { ColoursliderComponent } from "../gradientbuilder/colourslider/colourslider.component";
 import { GradientbuilderComponent } from '../gradientbuilder/gradientbuilder.component';
 import { FractalColor } from "../../fractal/fractalColouring";
+import { GradientPanelComponent } from '../gradientbuilder/gradientPanel/gradientPanel.component';
+import { HistogramComponent } from "../gradientbuilder/histogram/histogram.component";
 
 @Component({
   selector: "FractalComponent",
@@ -36,7 +38,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
   @ViewChild('gradientBuilder') HTMLgradientBuilder: ElementRef;
   @ViewChild('appGradientBuilder') HTMLappGradientBuilder: GradientbuilderComponent;
-  @ViewChild('jscolor') jscolor: ElementRef;
+  @ViewChild('jscolor') HTMLjscolor: ElementRef;
+  @ViewChild('gradientpanel') HTMLgradientpanel: GradientPanelComponent;
+  @ViewChild('histogram') HTMLhistogram: HistogramComponent;
 
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
@@ -100,7 +104,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.iterations;
     this.fractal.setMaxZoomListener(this);
-    this.fractal.render();
+     this.fractal.render();
   }
 
   /*
@@ -116,6 +120,9 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     else if (this.explorerWindowIsMaximised) {
       this.fullScreenWindow();
     }
+//TODO find better lifcycle init
+    this.HTMLgradientpanel.setGradient(this.fractal.getColor());
+    this.HTMLhistogram.setFractal(this.fractal);
   }
 
   /*
@@ -225,7 +232,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   onColorChanged(event) {
     this.changeColor(event.target.value);
-    this.fractal.render();
+    this.fractal.getColor().notify(null);
   }
 
   closeAlert(event) {
@@ -273,7 +280,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   toggelFullScreen() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
-    let jscolorDiv = <HTMLDivElement>this.jscolor.nativeElement;
+    let jscolorDiv = <HTMLDivElement>this.HTMLjscolor.nativeElement;
 
     if (this.explorerWindowIsMaximised) {
       this.explorerWindowIsMaximised = false;
@@ -361,7 +368,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
 
   private fullScreenWindow() {
     let explorerDiv = <HTMLDivElement>this.HTMLexplorer.nativeElement;
-    let jscolorDiv = <HTMLDivElement>this.jscolor.nativeElement;
+    let jscolorDiv = <HTMLDivElement>this.HTMLjscolor.nativeElement;
     let windowWidth = window.innerWidth
     let windowHeight = window.innerHeight
     let jscolorLeft = windowWidth / 2 - 308 / 2;

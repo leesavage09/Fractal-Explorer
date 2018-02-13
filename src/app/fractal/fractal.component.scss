@@ -129,6 +129,10 @@ $font-size-small: 14px !default;
         padding: $padding;
         font-size: 0px;
 
+        app-gradientpanel, app-histogram {
+            pointer-events: all;
+        }
+
         input, label, a, .btn {
             @include interactive;
         }
