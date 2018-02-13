@@ -211,6 +211,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     let c = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
     this.HTMLappGradientBuilder.canvas = c;
     this.HTMLappGradientBuilder.fractal = this.fractal;
+    this.canvasSizeChanged();
   }
 
   closeGradientBuilder() {
@@ -302,7 +303,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   }
 
   /*
-  * Helper Functions \/
+  * Private Functions \/
   */
 
   private changingIterations(i) {
@@ -349,7 +350,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     }
   }
 
-  iterationsChanged() {
+  private iterationsChanged() {
     this.fractal.iterations = this.iterations;
     this.fractal.render();
   }

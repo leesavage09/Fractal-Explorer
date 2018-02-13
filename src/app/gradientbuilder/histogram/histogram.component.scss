@@ -1,5 +1,4 @@
 #container{
-    width: 60%;
     position: relative;
 }
 
@@ -11,13 +10,13 @@
     border-width: 1px;
 }
 #gradient-canvas {
-    height: 30px;
+    height: 80px;
     width: 100%;
     margin: auto;
 }
 #gradientSlider{
     position: relative;
-    height: 20px;
+    height: 40px;
 }
 #markerMin{
     height:16px;

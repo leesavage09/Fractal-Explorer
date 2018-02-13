@@ -153,13 +153,17 @@ export namespace Color {
 		/*
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
-		public getColorAt(val: number): RGBcolor {
-			if (val < this.min) val = 0;
-			else if (val > this.max) val = 1;
-			else if (val <= this.mid) val = General.mapInOut(val, this.min, this.mid, 0, 0.5);
-			else if (val > this.mid) val = General.mapInOut(val, this.mid, this.max, 0.5, 1);
+		public getColorAt(val: number, levels: { min: number, mid: number, max: number } = null, frequency: number = null, phase: number = null): RGBcolor {
+			if (levels == null) levels = { min: this.min, mid: this.mid, max: this.max }
+			if (frequency == null) frequency = this.frequency
+			if (phase == null) phase = this.phase
 
-			val = val * this.frequency + this.phase - 1
+			if (val < levels.min) val = 0;
+			else if (val > levels.max) val = 1;
+			else if (val <= levels.mid) val = General.mapInOut(val, levels.min, levels.mid, 0, 0.5);
+			else if (val > levels.mid) val = General.mapInOut(val, levels.mid, levels.max, 0.5, 1);
+
+			val = val * frequency + phase - 1
 			let trunc = Math.trunc(val);
 			val = Math.abs(val % 1)
 			if ((trunc % 2) == 0) val = Math.abs(1 - val)

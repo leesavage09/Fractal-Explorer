@@ -63,7 +63,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     if (color) componentRef.instance.setColor(color);
     this.allMarkers.push(componentRef.instance);
     this.setActiveMarker(componentRef.instance);
-    this.createGradient();
+    this.draw();
 
   }
 
@@ -89,7 +89,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
   move(event) {
     if (this.selectedMarker != undefined) {
       this.selectedMarker.offsetCSSLeft(event.screenX);
-      this.createGradient();
+      this.draw();
       this.gradient.notify(this);
     }
   }
@@ -101,7 +101,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
   setColorActive(event) {
     let rgb = Color.hexToRGB(this.jscolor.nativeElement.jscolor.toHEXString())//event.target.value);
     this.activeMarker.setColor(rgb);
-    this.createGradient();
+    this.draw();
     this.gradient.notify(this);
   }
 
@@ -109,7 +109,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     if (this.allMarkers.length <= 2) return;
     this.deleteMarker(this.activeMarker);
     this.setActiveMarker(this.allMarkers[0]);
-    this.createGradient();
+    this.draw();
     this.gradient.notify(this);
   }
 
@@ -134,14 +134,13 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
     this.jscolor.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
-    console.log("nooo");
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {
     this.selectedMarker = marker
   }
 
-  private createGradient() {
+  private draw() {
     let gradient = new Array();
     this.allMarkers.forEach(marker => {
       gradient.push({ stop: marker.getStopValue(), color: marker.getColor() });
@@ -152,7 +151,7 @@ export class GradientPanelComponent implements OnInit, Color.LinearGradientObser
     let img = slider.getContext("2d").getImageData(0, 0, slider.width, 1);
     for (var i = 0; i < slider.width; ++i) {
       let percent = i / slider.width;
-      let rgb = this.gradient.getColorAt(percent);
+      let rgb = this.gradient.getColorAt(percent,{min:0,mid:0.5,max:1},1,0);
       img.data[(i * 4) + 0] = rgb.r;
       img.data[(i * 4) + 1] = rgb.g;
       img.data[(i * 4) + 2] = rgb.b;

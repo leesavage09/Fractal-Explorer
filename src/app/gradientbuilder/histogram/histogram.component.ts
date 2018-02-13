@@ -81,9 +81,8 @@ export class HistogramComponent implements OnInit {
   private drawHistogram() {
     const ctx = <CanvasRenderingContext2D>this.histogramCanvas.nativeElement.getContext("2d");
 
-    const numBin = this.data.length
-    const maxCount = Math.max(...this.data)
-
+    const numBin = this.data.length-1
+  
     var total = 0;
     for (var i = 0; i < this.data.length; i++) {
       total += this.data[i];
@@ -94,12 +93,14 @@ export class HistogramComponent implements OnInit {
     const hightCount = ctx.canvas.height / (avg)
 
     const img = ctx.getImageData(0, 0, ctx.canvas.width, 1);
-
+    let c
     for (var y = 0; y < ctx.canvas.height; ++y) {
       for (var x = 0; x < ctx.canvas.width; ++x) {
         let binNum = Math.trunc(x / widthBin)
-        let c = new Color.RGBcolor(255, 255, 255)
+       
         if ((y / hightCount) < this.data[binNum]) c = new Color.RGBcolor(0, 0, 0)
+        else c = new Color.RGBcolor(255, 255, 255)
+
         img.data[(x * 4) + 0] = c.r;
         img.data[(x * 4) + 1] = c.g;
         img.data[(x * 4) + 2] = c.b;

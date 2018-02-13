@@ -4,6 +4,7 @@ import { Element } from '@angular/compiler';
 
 import { Color } from "../../helper/helper.module";
 import { HistogramComponent } from "./histogram/histogram.component";
+import { Fractals } from '../../fractal/fractal.module';
 
 @Component({
   selector: 'app-gradientbuilder',
@@ -29,9 +30,9 @@ export class GradientbuilderComponent implements OnInit {
   }
 
   @Input()
-  set fractal(frac: any) {
+  set fractal(frac: Fractals.Fractal) {
     this.appHistogram.setFractal(frac)
-    this.StopMarkerSlider.setGradient(frac.color)
+    this.StopMarkerSlider.setGradient(frac.getColor())
   }
 
 
