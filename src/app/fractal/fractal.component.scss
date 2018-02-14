@@ -98,6 +98,7 @@ $font-size-small: 14px !default;
             height: 0px;
             flex-grow: 1;
             display: none;
+            overflow: hidden;
         }
 
         #colorPullDown-btn {
@@ -128,6 +129,10 @@ $font-size-small: 14px !default;
             align-items: stretch;
             display: block;
             cursor: grab;
+
+            &:active:hover {
+                cursor: grabbing;
+            }
         }
     }
 

@@ -2,7 +2,7 @@
     height:16px;
     width: 16px;
     position: absolute;
-    cursor: no-drop;
+    cursor: grab;
     pointer-events: all;
     left: 50px;
     top:0px;
@@ -11,5 +11,9 @@
     border-style: inset;
     border: dotted;
     border-width: 0px;
-    border-color: black;    
+    border-color: black;   
+    
+    &:active:hover{
+        cursor: grabbing;
+    }
 }

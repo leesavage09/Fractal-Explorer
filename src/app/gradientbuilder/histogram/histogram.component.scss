@@ -1,14 +1,18 @@
 @mixin marker {
-    bottom: -8px;
+    bottom: 0px;
     height: 16px;
     width: 16px;
     position: absolute;
-    cursor: no-drop;
+    cursor: grab;
     pointer-events: all;
     border-radius: 50px;
     border-style: inset;
     border: dotted;
     border-width: 1px;
+
+    &:active:hover{
+        cursor: grabbing;
+    }
 }
 
 #container {
