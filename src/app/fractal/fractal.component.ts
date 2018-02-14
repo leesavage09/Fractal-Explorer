@@ -57,7 +57,7 @@ export class FractalComponent implements OnInit, MaxZoomListner {
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 
   alertText: string;
-  readonly colorBW: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":255,"g":255,"b":255}},{"stop":1,"color":{"r":0,"g":0,"b":0}}]}'//"rp:0,gp:0,bp:0,rf:1,gf:1,bf:1,rw:127,gw:127,bw:127,rc:128,gc:128,bc:128";
+  readonly colorBW: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":255,"g":0,"b":0}},{"stop":0.166,"color":{"r":255,"g":100,"b":0}},{"stop":0.332,"color":{"r":249,"g":255,"b":0}},{"stop":0.498,"color":{"r":0,"g":255,"b":13}},{"stop":0.664,"color":{"r":0,"g":67,"b":255}},{"stop":0.830,"color":{"r":133,"g":0,"b":255}},{"stop":1,"color":{"r":255,"g":0,"b":215}}]}'
   readonly colorBlueGold: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":0,"g":51,"b":255}},{"stop":0.8041666666666667,"color":{"r":255,"g":200,"b":0}},{"stop":1,"color":{"r":255,"g":115,"b":0}}]}';
   constructor() { }
@@ -417,6 +417,12 @@ export class FractalComponent implements OnInit, MaxZoomListner {
     let cp = this.fractal.complexPlain;
     cp.replaceView(cp.getSquare().center.r, cp.getSquare().center.i, cp.getSquare().width, canvas);
     this.fractal.render();
+
+    if (this.HTMLhistogramdiv.nativeElement.style.display != "none") {
+      this.HTMLhistogram.setFractal(this.fractal);
+      this.HTMLgradient.setGradient(this.fractal.getColor());
+    }
+    
   }
 
   private changeColor(commandString: string) {
