@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef, Output, EventEmitter } from '@angular/core';
 
 import { FractalColor } from "../../../fractal/fractalColouring";
+import { General } from "../../../helper/helper.module";
 
 @Component({
   selector: 'app-colourslider',
@@ -12,19 +13,23 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
   private trackingMove: boolean = false;
   private startX: number = null;
   private startPhase;
-  private linearGradient: FractalColor.LinearGradient;
+  private linearGradient: FractalColor.LinearGradient = null;
   constructor() { }
 
   ngOnInit() {
+    this.windowResized()
   }
 
 
-  
+
   @Input()
   set color(c: FractalColor.LinearGradient) {
+    if (this.linearGradient != null) this.linearGradient.unsubscribe(this)
     this.linearGradient = c;
-    this.linearGradient.subscribe(this)
-    this.updateImg();
+    if (this.linearGradient != null) {
+      this.linearGradient.subscribe(this)
+      this.windowResized();
+    }
   }
 
 
@@ -32,6 +37,12 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
   /*
   * Events
   */
+
+  windowResized() {
+    if (this.linearGradient == null) return;
+    General.resizeCanvasToFillParent(this.HTMLslider.nativeElement);
+    this.updateImg();
+  }
 
   linearGradientChanged() {
     this.updateImg();

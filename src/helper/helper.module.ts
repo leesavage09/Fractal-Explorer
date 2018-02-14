@@ -20,6 +20,15 @@ export module General {
 			}
 		}
 	}
+
+	export function resizeCanvasToFillParent(canvas){
+		var rect = canvas.parentNode.getBoundingClientRect();
+		canvas.width = rect.width;
+		canvas.height = rect.height;
+	
+		canvas.style.width = rect.width.toString() + "px";;
+		canvas.style.height = rect.height.toString() + "px";;
+	}
 }
 
 /*

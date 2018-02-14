@@ -69,14 +69,66 @@ $font-size-small: 14px !default;
     border-width: 1px;
     background-color: $color-canvas-bg;
     z-index: initial;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
     @include prevent-drag-selection;
 
-    #fractal {
-        height: 100%;
+    #colorPullDown {
+        background-color: $color-tool-bg;
+        padding: 0px;
+        border: solid;
+        border-style: inset;
+        border-color: $colour-tool;
+        border-width: 0px;
+        border-radius: $corner-radius;
+        height: 0px;
+        display: flex;
+        flex-direction: column-reverse;
+        position: relative;
+
+        #gradientpanel {
+            height: 0px;
+            flex-grow: 1;
+            display: none;
+        }
+
+        #histogrampanel {
+            height: 0px;
+            flex-grow: 1;
+            display: none;
+        }
+
+        #colorPullDown-btn {
+            @include interactive;
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -$button-size / 2;
+            margin: auto;
+            width: $button-size * 2;
+            height: $button-size / 2;
+            line-height: $button-size / 2;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }
+    }
+
+    #fractalContainer {
+        height: $explorer-height;
         width: 100%;
-        display: block;
-        cursor: grab;
+        flex-grow: 1;
+        display: flex;
+
+        #fractal {
+            height: 100%;
+            width: 100%;
+            align-items: stretch;
+            display: block;
+            cursor: grab;
+        }
     }
 
     .alert {
@@ -146,66 +198,18 @@ $font-size-small: 14px !default;
             border-right: 0px;
         }
 
-        .slidecontainer {
+        #colour-select {
+            -moz-appearance: none;
+            -webkit-appearance: none;
+
             @include interactive;
 
-            display: inline-block;
-            text-align: center;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            font-size: 0px;
-            border-top: none;
-            width: $select-width;
-            margin-left: auto;
-
-            #colour-select {
-                -moz-appearance: none;
-                -webkit-appearance: none;
-
-                @include interactive;
-
-                border-radius: 0;
-                text-align: left;
-                margin: 0px;
-                padding: 0px;
-                padding-left: $padding;
-                padding-right: $padding;
-                height: $button-size + 2;
-                width: $select-width + 2;
-            }
-
-            .btn {
-                margin-top: $padding;
-                margin-bottom: $padding;
-                height: $button-size / 2;
-                line-height: $button-size / 2;
-                width: auto;
-                padding: $font-size * 0.2;
-
-                &.freq {
-                    margin: 0px;
-                    height: $button-size / 4;
-                    line-height: $button-size / 4;
-
-                    &.less {
-                        border-top-right-radius: 0px;
-                        border-bottom-right-radius: 0px;
-                    }
-
-                    &.more {
-                        border-top-left-radius: 0px;
-                        border-bottom-left-radius: 0px;
-                    }
-                }
-            }
-
-            .gradientSlider {
-                display: inline-block;
-                font-size: 0px;
-                width: $button-size * 2.5;
-                height: $button-size / 2;
-            }
+            text-align: left;
+            padding: 0px;
+            padding-left: $padding;
+            padding-right: $padding;
+            height: $button-size + 2;
+            width: $select-width + 2;
         }
 
         #select-caret-down {
@@ -214,7 +218,7 @@ $font-size-small: 14px !default;
             top: $padding;
             height: $button-size;
             line-height: $button-size + 2;
-            padding-right: $padding;
+            padding-right: $padding * 2;
             color: $colour-tool;
             pointer-events: none;
 
@@ -295,9 +299,6 @@ $font-size-small: 14px !default;
         position: absolute;
         top: 0;
         right: 0;
-        text-align: right;
-        padding-right: 0px;
-        overflow: hidden;
     }
 
     .bottom-left {

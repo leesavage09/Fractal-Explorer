@@ -1,65 +1,64 @@
-#container{
-    position: relative;
+@mixin marker {
+    bottom: -8px;
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    cursor: no-drop;
+    pointer-events: all;
+    border-radius: 50px;
+    border-style: inset;
+    border: dotted;
+    border-width: 1px;
 }
 
-#histogram-canvas {
-    height: 60px;
-    width: 100%;
-    margin: auto;
-    border:solid;
-    border-width: 1px;
-}
-#gradient-canvas {
-    height: 80px;
-    width: 100%;
-    margin: auto;
-}
-#gradientSlider{
+#container {
     position: relative;
-    height: 40px;
-}
-#markerMin{
-    height:16px;
-    width: 16px;
-    position: absolute;
-    cursor: no-drop;
-    pointer-events: all;
-    left: -8px;
-    bottom:-8px;
-    background-color: black;
-    border-radius: 50px;
-    border-style: inset;
-    border: dotted;
-    border-width: 1px;
-    border-color: white;
-}
-#markerMid{
-    height:16px;
-    width: 16px;
-    position: absolute;
-    cursor: no-drop;
-    pointer-events: all;
-    left: 50px;
-    bottom:-8px;
-    background-color: white;
-    border-radius: 50px;
-    border-style: inset;
-    border: dotted;
-    border-width: 1px;
-    border-color: black;
-}
-#markerMax{
-    height:16px;
-    width: 16px;
-    position: absolute;
-    cursor: no-drop;
-    pointer-events: all;
-    right: -8px;
-    bottom:-8px;
-    background-color: black;
-    border-radius: 50px;
-    border-style: inset;
-    border: dotted;
-    border-width: 1px;
-    border-color: white;
+    font-size: 0px;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+
+    #histogram-canvas-container {
+        width: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 20px;
+
+        #histogram-canvas {
+            border: none;
+            height: 1px;
+            width: 1px;
+            margin: auto;
+        }
+    }
+
+    #gradientSlider {
+        height: 20px;
+        width: 100%;
+        flex-shrink: 1;
+    }
+
+    #markerMin {
+        @include marker;
+
+        left: -8px;
+        background-color: black;
+        border-color: white;
+    }
+
+    #markerMid {
+        @include marker;
+
+        left: 50px;
+        background-color: white;
+        border-color: black;
+    }
+
+    #markerMax {
+        @include marker;
+
+        right: -8px;
+        background-color: black;
+        border-color: white;
+    }
 }

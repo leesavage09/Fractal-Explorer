@@ -10,9 +10,9 @@ import { ColoursliderComponent } from "../colourslider/colourslider.component";
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.scss']
 })
-export class HistogramComponent implements OnInit, FractalHistogram.HistogramObserver{
+export class HistogramComponent implements OnInit, FractalHistogram.HistogramObserver {
   @ViewChild('histogramCanvas') histogramCanvas: ElementRef;
-  private fractal: Fractals.Fractal;
+  private fractal: Fractals.Fractal = null;
   @ViewChild('markerMin') markerMin: ElementRef;
   @ViewChild('markerMid') markerMid: ElementRef;
   @ViewChild('markerMax') markerMax: ElementRef;
@@ -30,12 +30,16 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
 
 
   setFractal(fractal: Fractals.Fractal) {
+    if (this.fractal != null) this.fractal.getHistogram().unsubscribe(this);
     this.fractal = fractal;
-    fractal.getHistogram().subscribe(this);
-    this.HTMLgradientSlider.color = this.fractal.getColor();
-
-    this.histogramChanged()
-    this.windowResized()
+    if (this.fractal != null) {
+      fractal.getHistogram().subscribe(this);
+      this.HTMLgradientSlider.color = this.fractal.getColor();
+      this.windowResized()
+    }
+    else {
+      this.HTMLgradientSlider.color = null;
+    }
   }
 
   /*
@@ -43,24 +47,29 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   */
 
   windowResized() {
+    if (this.fractal == undefined) return;
+    General.resizeCanvasToFillParent(this.histogramCanvas.nativeElement);
+
     let cssMin = this.getMinCSSLeft(this.markerMin.nativeElement);
     let cssMax = this.getMaxCSSLeft(this.markerMax.nativeElement);
 
     let min = this.fractal.getColor().getMin()
-    min = General.mapInOut(min,0,1,cssMin,cssMax);
-    
+    min = General.mapInOut(min, 0, 1, cssMin, cssMax);
+
     let mid = this.fractal.getColor().getMid()
-    mid = General.mapInOut(mid,0,1,cssMin,cssMax);
+    mid = General.mapInOut(mid, 0, 1, cssMin, cssMax);
 
     let max = this.fractal.getColor().getMax()
-    max = General.mapInOut(max,0,1,cssMin,cssMax);
+    max = General.mapInOut(max, 0, 1, cssMin, cssMax);
 
     this.markerMin.nativeElement.style.left = min.toString() + "px";
     this.markerMid.nativeElement.style.left = mid.toString() + "px";
     this.markerMax.nativeElement.style.left = max.toString() + "px";
+
+    this.histogramChanged()
   }
 
-  histogramChanged(){
+  histogramChanged() {
     this.data = this.fractal.getHistogram().getData()
     this.drawHistogram();
   }

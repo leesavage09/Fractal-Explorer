@@ -1,12 +1,5 @@
-<canvas #slider 
-
-(mousedown)="start($event)" 
-(mouseup)="end($event)" 
-(mousemove)="move($event)" 
-(mouseleave)="end($event)" 
-
-(touchstart)="start($event)" 
-(touchmove)="touchMove($event)" 
-(touchend)="end($event)"
-
-></canvas>
+<div id="container">
+    <div id="canvas-container">
+        <canvas #slider (window:resize)="windowResized()" (mousedown)="start($event)" (mouseup)="end($event)" (mousemove)="move($event)" (mouseleave)="end($event)" (touchstart)="start($event)" (touchmove)="touchMove($event)" (touchend)="end($event)"></canvas>
+    </div>
+</div>

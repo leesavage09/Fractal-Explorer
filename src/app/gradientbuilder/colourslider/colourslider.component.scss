@@ -1,8 +1,17 @@
-canvas {
-    width:100%;
-    height:100%;
-    display: inline-block;
-    position: relative;
-    top: 0px;
-    cursor: col-resize;
+#container {
+    display: flex;
+    flex-direction: column;
+
+    #canvas-container {
+        width: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 20px;
+
+        canvas {
+            height: 1px;
+            width: 1px;
+            cursor: col-resize;
+        }
+    }
 }

@@ -48,7 +48,9 @@ export namespace FractalColor {
 
 		public notify(excludeObserver: LinearGradientObserver) {
 			for (let i = 0; i < this.subscribers.length; i++) {
-				if (excludeObserver != this.subscribers[i]) this.subscribers[i].linearGradientChanged();
+				if (excludeObserver != this.subscribers[i]) {
+					this.subscribers[i].linearGradientChanged();
+				}
 			}
 		}
 
@@ -107,6 +109,8 @@ export namespace FractalColor {
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
 		public getColorAt(val: number, levels: { min: number, mid: number, max: number } = null, frequency: number = null, phase: number = null): RGBcolor {
+			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
+
 			if (levels == null) levels = { min: this.min, mid: this.mid, max: this.max }
 			if (frequency == null) frequency = this.frequency
 			if (phase == null) phase = this.phase
@@ -122,8 +126,6 @@ export namespace FractalColor {
 			if ((trunc % 2) == 0) val = Math.abs(1 - val)
 			if (val < 0 || val > 1) throw Error("Val out of bounds " + val);
 
-
-			if (this.arr.length < 1) return { r: 0, g: 0, b: 0 };
 
 			var colorInRange = []
 			for (var i = 0, len = this.arr.length; i < len; i++) {
@@ -224,8 +226,8 @@ export namespace FractalHistogram {
 			return this.histogram
 		}
 
-		public incrementData(i:number) {
-			this.histogram[i] = this.histogram[i]+1;
+		public incrementData(i: number) {
+			this.histogram[i] = this.histogram[i] + 1;
 		}
 
 

@@ -16,6 +16,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
+  @ViewChild('gradientDisplayContainer') gradientDisplayContainer: ElementRef;
   private jscolor = (<any>document.getElementById('jscolor'));
 
   public maxCSSleft
@@ -25,7 +26,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   private allMarkers: Array<StopMarkerComponent> = new Array();
   private selectedMarker: StopMarkerComponent;
   private activeMarker: StopMarkerComponent;
-  private gradient: FractalColor.LinearGradient
+  private gradient: FractalColor.LinearGradient = null;
   private gradientDisplayMoving: boolean = false;
 
   constructor(r: ComponentFactoryResolver) {
@@ -33,7 +34,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   }
 
   ngOnInit() {
-    this.maxCSSleft = parseInt(getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", ""))
+    this.windowResized();
   }
 
   /*
@@ -45,10 +46,13 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
   }
 
   windowResized() {
+    if (this.gradient == undefined) return;
+    General.resizeCanvasToFillParent(this.gradientDisplay.nativeElement);
     this.maxCSSleft = parseInt(getComputedStyle(this.StopMarkerSlider.nativeElement).width.replace("px", ""))
     this.allMarkers.forEach(marker => {
       marker.windowResized();
     });
+    this.drawGradient();
   }
 
   createStopMarker(event) {
@@ -91,7 +95,7 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
     this.selectedMarker = undefined;
   }
 
-  addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor) {
+  addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor, draw: boolean = true) {
     let componentRef: ComponentRef<StopMarkerComponent> = this.stopMarkers.createComponent(this.factory);
     componentRef.instance.regesterParent(this, componentRef)
     if (cssLeft != null) componentRef.instance.setCSSLeft(cssLeft);
@@ -99,23 +103,22 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
     if (color) componentRef.instance.setColor(color);
     this.allMarkers.push(componentRef.instance);
     this.setActiveMarker(componentRef.instance);
-    this.draw();
+    if (draw) this.draw();
 
   }
 
   setGradient(g: FractalColor.LinearGradient) {
-    if (g == undefined) return;
     if (this.gradient != null) this.gradient.unsubscribe(this)
     this.gradient = g;
-    this.drawGradient()
-    this.gradient.subscribe(this)
+    if (this.gradient != null) this.gradient.subscribe(this)
+    this.windowResized();
   }
 
   setActiveMarker(marker: StopMarkerComponent) {
     if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
-    this.jscolor.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
+    if (this.jscolor.jscolor != undefined) this.jscolor.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {
@@ -169,8 +172,9 @@ export class GradientPanelComponent implements OnInit, FractalColor.LinearGradie
     for (let i = 0; i < arr.length; i++) {
       const stop = arr[i];
       let offset = General.mapInOut(stop.stop, 0, 1, 0, this.maxCSSleft);
-      this.addStopMarker(stop.stop, null, stop.color);
+      this.addStopMarker(stop.stop, null, stop.color, false);
     }
+    this.draw();
   }
 
 }
