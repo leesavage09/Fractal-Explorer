@@ -2,7 +2,7 @@ import { FractalColor, FractalHistogram } from "../fractal/fractalColouring";
 import { ComplexNumber, ComplexSquare } from "../fractal/complexNumbers";
 import { General, EasingFunctions } from "../helper/helper.module";
 
-export module Fractals {
+export namespace Fractals {
 
 	export class Fractal implements FractalColor.LinearGradientObserver {
 		iterations: number = 85;
@@ -17,6 +17,7 @@ export module Fractals {
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
+		private compiledColor: Array<FractalColor.RGBcolor>
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
@@ -41,6 +42,7 @@ export module Fractals {
 			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations + 1);
+			this.compiledColor = this.color.getCompiledColor(this.iterations);
 			var self = this;
 			setTimeout(function () {
 				self.scanLine(0, self.renderVersion);
@@ -62,24 +64,13 @@ export module Fractals {
 
 			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
-				var res = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius);
+				let n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius,this.compiledColor);
+				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
+			
+				this.histogram.incrementData(Math.floor(n))
 
-				let n = res[0];
-				let Zr = res[1]
-				let Zi = res[2]
-				if (n >= this.iterations) n = this.iterations;
-				else {
-					var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
-					var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
-					n = n + 1 - nu
-				}
-				let trunc = Math.floor(n);
-				this.histogram.incrementData(trunc)
-
-				if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
-				n = General.mapInOut(n, 0, this.iterations, 0.0, 1.0);
-				let col = this.color.getColorAt(n);
-				if (n == 1) col = new FractalColor.RGBcolor(0, 0, 0)
+				let col = FractalColor.LinearGradient.smoothColorFromCompiledColor(n,this.compiledColor);
+				
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;
 				this.img.data[(x * 4) + 2] = col.b;
@@ -139,6 +130,10 @@ export module Fractals {
 				this.maxZoomListner.maxZoomReached();
 			}
 		}
+	}
+
+	export interface MaxZoomListner {
+		maxZoomReached();
 	}
 
 	/*
@@ -571,6 +566,3 @@ export module Fractals {
 
 }
 
-export interface MaxZoomListner {
-	maxZoomReached();
-}

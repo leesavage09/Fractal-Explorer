@@ -1,4 +1,4 @@
-export module FractalEquations {
+export namespace FractalEquations {
 
 	export function burningShip(Cr: number, Ci: number, i: number, e: number): [number, number, number] {
 		var Zr = 0;
@@ -81,6 +81,34 @@ export module FractalEquations {
 		}
 		return [n, Zr, Zi];
 	}
+
+
+	export function smoothMandelbrot(Cr: number, Ci: number, i: number, e: number): number {
+		var Zr = 0;
+		var Zi = 0;
+		var Tr = 0;
+		var Ti = 0;
+		var n = 0;
+
+		// Z*Z+C
+		for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
+			Tr = Zr * Zr - Zi * Zi + Cr;
+			Ti = Zr * Zi + Zr * Zi + Ci;
+
+			Zr = Tr;
+			Zi = Ti;
+		}
+
+		//smooth 
+		if (n >= i) n = i;
+		else {
+			var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
+			var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
+			n = n + 1 - nu
+		}
+		return n;
+	}
+
 
 }
 

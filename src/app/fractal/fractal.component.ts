@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 
-import { Fractals, MaxZoomListner } from "../../fractal/fractal.module";
+import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
@@ -16,13 +16,13 @@ import { HistogramComponent } from "../gradientbuilder/histogram/histogram.compo
   templateUrl: "./fractal.component.html",
   styleUrls: ["./fractalThemes.component.scss"]
 })
-export class FractalComponent implements OnInit, MaxZoomListner {
+export class FractalComponent implements OnInit, Fractals.MaxZoomListner {
   @Input() width: string;
   @Input() height: string;
   @Input() equation: string;
   @Input() theme: string;
   @Input() color: string;
-  @Input() iterations: number = 30;
+  @Input() iterations: number = 500;
   @Input() gradientPhase: number = 0;
   @Input() gradientFreq: number = 1;
   @Input() complexCenter: string;
@@ -93,12 +93,12 @@ export class FractalComponent implements OnInit, MaxZoomListner {
       }
     }
 
-    let fractalEq = FractalEquations.mandelbrot;
-    if (this.equation != undefined) {
-      if (this.equation == "burningShip") {
-        fractalEq = FractalEquations.burningShip;
-      }
-    }
+    let fractalEq = FractalEquations.smoothMandelbrot;
+    // if (this.equation != undefined) {
+    //   if (this.equation == "burningShip") {
+    //     fractalEq = FractalEquations.burningShip;
+    //   }
+    // }
 
     let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");

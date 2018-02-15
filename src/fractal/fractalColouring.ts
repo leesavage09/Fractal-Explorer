@@ -105,6 +105,31 @@ export namespace FractalColor {
 
 
 
+		public static smoothColorFromCompiledColor(n: number, a: Array<RGBcolor>) {
+			let trunc = Math.floor(n);
+			if (n == a.length - 1) return new RGBcolor(0, 0, 0)
+			if (n < 0) return new RGBcolor(0, 0, 0)
+			else {
+				let r = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].r, a[trunc + 1].r))
+				let g = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].g, a[trunc + 1].g))
+				let b = Math.round(General.mapInOut(n, trunc, trunc + 1, a[trunc].b, a[trunc + 1].b))
+				return new RGBcolor(r, g, b);
+			}
+		}
+
+		public getCompiledColor(maxValue: number): Array<RGBcolor> {
+			let array = new Array(maxValue + 1)
+			let currentColorVal = 0;
+			for (let i = 0; i < array.length; i++) {
+				let colorValue = General.mapInOut(currentColorVal, 0, maxValue - 1, 0, 1);
+				array[i] = i == maxValue ? new RGBcolor(0, 0, 0) : this.getColorAt(colorValue);
+				currentColorVal++;
+			}
+			return array;
+		}
+
+
+
 		/*
 		* Returns the colour in the gradiant for a val bettween 0 and 1
 		*/
