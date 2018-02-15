@@ -30,12 +30,12 @@ export class StopMarkerComponent {
   * Events
   */
 
-  touchStart(event){
+  touchStart(event) {
     event.screenX = event.targetTouches[0].screenX
     this.mousedown(event);
   }
 
-  touchEnd(event){
+  touchEnd(event) {
     this.mouseup(event)
   }
 
@@ -77,6 +77,15 @@ export class StopMarkerComponent {
   setStopValue(stop: number) {
     let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());
     this.setCSSLeft(cssLeft);
+  }
+
+  setCSSLeftTop(x: number, y: number) {
+    this.stopMarker.nativeElement.style.left = x.toString() + "px";
+    this.stopMarker.nativeElement.style.top = y.toString() + "px";
+  }
+
+  resetCSSTop() {
+    this.stopMarker.nativeElement.style.top = "auto";
   }
 
   setCSSLeft(x: number, loop: boolean = false) {
@@ -139,18 +148,17 @@ export class StopMarkerComponent {
     return 0 - Math.round(this.getCSSWidth() / 2)
   }
 
-  /*
-  * Private Methods
-  */
-
-  private getCSSLeft(): number {
-    return parseInt(this.stopMarker.nativeElement.style.left.replace("px", ""));
+  setCSSclass(s: string) {
+    this.stopMarker.nativeElement.className = s
   }
 
-  private getCSSWidth(): number {
+  getCSSWidth(): number {
     let border = parseInt(getComputedStyle(this.stopMarker.nativeElement).borderWidth) * 2;
     return border + parseInt(getComputedStyle(this.stopMarker.nativeElement).width.replace("px", ""));
   }
 
+  getCSSLeft(): number {
+    return parseInt(this.stopMarker.nativeElement.style.left.replace("px", ""));
+  }
 
 }

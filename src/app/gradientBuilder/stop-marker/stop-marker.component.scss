@@ -1,19 +1,30 @@
-#marker{
-    height:16px;
+#marker {
+    height: 16px;
     width: 16px;
     position: absolute;
-    cursor: grab;
     pointer-events: all;
     left: 50px;
-    top:0px;
+    top: 0px;
     background-color: black;
     border-radius: 50px;
     border-style: inset;
     border: dotted;
     border-width: 0px;
-    border-color: black;   
-    
-    &:active:hover{
+    border-color: black;
+}
+
+.in-use {
+    cursor: grab;
+
+    &:active:hover {
         cursor: grabbing;
+    }
+}
+
+.dropping {
+    cursor: no-drop;
+
+    &:active:hover {
+        cursor: no-drop;
     }
 }

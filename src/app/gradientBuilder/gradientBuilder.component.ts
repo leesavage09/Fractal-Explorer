@@ -25,6 +25,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   private factory: ComponentFactory<StopMarkerComponent>;
   private allMarkers: Array<StopMarkerComponent> = new Array();
   private selectedMarker: StopMarkerComponent;
+  private selectedMarkerIsPoped: boolean = false;
   private activeMarker: StopMarkerComponent;
   private gradient: FractalColor.LinearGradient = null;
   private gradientDisplayMoving: boolean = false;
@@ -63,18 +64,25 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
 
   touchMove(event) {
     event.clientY = event.targetTouches[0].clientY
+    event.clientX = event.targetTouches[0].clientX
     event.screenX = event.targetTouches[0].screenX
     this.move(event);
   }
 
   move(event) {
     if (this.selectedMarker != undefined) {
-      let offsetY = Math.abs(this.selectedMarker.getScreenY() - event.clientY)
+      let offsetY = Math.abs(this.getScreenY() - event.clientY)
       if (offsetY > 25 && this.allMarkers.length > 1) {
-        this.deleteMarker(this.selectedMarker);
-        this.selectedMarker = undefined;
+        this.popMarker();
+      }
+
+      if (offsetY > 25 && this.selectedMarkerIsPoped) {
+        let x = event.clientX - this.getScreenLeft() - this.selectedMarker.getCSSWidth() / 2
+        let y = event.clientY - this.getScreenTop() - this.selectedMarker.getCSSWidth() / 2
+        this.selectedMarker.setCSSLeftTop(x, y);
       }
       else {
+        this.unpopMarker();
         this.selectedMarker.offsetCSSLeft(event.screenX);
       }
       this.draw();
@@ -98,7 +106,12 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
 
 
   dropMarker() {
+    if (this.selectedMarker == null) return;
+    if (this.selectedMarkerIsPoped) {
+      this.selectedMarker.thisRef.destroy();
+    }
     this.selectedMarker = undefined;
+    this.selectedMarkerIsPoped = false;
   }
 
   addStopMarker(stop: number, cssLeft: number, color: FractalColor.RGBcolor, draw: boolean = true) {
@@ -129,6 +142,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
 
   setSelectedMarker(marker: StopMarkerComponent, x) {
     this.selectedMarker = marker
+    this.selectedMarkerIsPoped = false;
   }
 
   deleteAllMarkers() {
@@ -139,14 +153,46 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.allMarkers = new Array()
   }
 
-  deleteMarker(marker: StopMarkerComponent) {
-    this.allMarkers.splice(this.allMarkers.lastIndexOf(marker), 1);
-    marker.thisRef.destroy();
-  }
 
   /*
   * Private
   */
+
+  private popMarker() {
+    if (!this.selectedMarkerIsPoped) {
+      this.selectedMarkerIsPoped = true;
+      this.selectedMarker.setCSSclass("dropping")
+      this.allMarkers.splice(this.allMarkers.lastIndexOf(this.selectedMarker), 1);
+      this.draw();
+      this.gradient.notify(this)
+    }
+  }
+
+  private unpopMarker() {
+    if (this.selectedMarkerIsPoped) {
+      this.selectedMarkerIsPoped = false;
+      this.selectedMarker.setCSSclass("in-use")
+      this.selectedMarker.resetCSSTop();
+      this.allMarkers.push(this.selectedMarker);
+      this.draw();
+      this.gradient.notify(this);
+    }
+  }
+
+  private getScreenY() {
+    let y = this.StopMarkerSlider.nativeElement.getBoundingClientRect().top + (this.StopMarkerSlider.nativeElement.getBoundingClientRect().height / 2)
+    return y;
+  }
+
+  private getScreenTop() {
+    let y = this.StopMarkerSlider.nativeElement.getBoundingClientRect().top
+    return y;
+  }
+
+  private getScreenLeft() {
+    let y = this.StopMarkerSlider.nativeElement.getBoundingClientRect().left
+    return y;
+  }
 
   private draw() {
     let gradient = new Array();
