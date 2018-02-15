@@ -74,16 +74,31 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
     this.drawHistogram();
   }
 
-  select(event) {
+
+  touchStart(event) {
+    event.screenX = event.targetTouches[0].screenX
+    this.mousedown(event);
+  }
+
+  mousedown(event) {
     this.movingMarker = event.target || event.srcElement || event.currentTarget;
     this.startX = event.screenX
   }
 
-  removeSelect(event) {
+  touchEnd(event) {
+    this.mouseup(event)
+  }
+
+  mouseup(event) {
     this.movingMarker = null;
   }
 
-  move(event) {
+  touchMove(event) {
+    event.screenX = event.targetTouches[0].screenX
+    this.mousemove(event);
+  }
+
+  mousemove(event) {
     if (this.movingMarker == null) return;
 
     let offset = event.screenX - this.startX
