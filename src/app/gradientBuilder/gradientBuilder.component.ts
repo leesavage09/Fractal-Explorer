@@ -61,6 +61,12 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.gradient.notify(this);
   }
 
+  touchMove(event) {
+    event.clientY = event.targetTouches[0].clientY
+    event.screenX = event.targetTouches[0].screenX
+    this.move(event);
+  }
+
   move(event) {
     if (this.selectedMarker != undefined) {
       let offsetY = Math.abs(this.selectedMarker.getScreenY() - event.clientY)

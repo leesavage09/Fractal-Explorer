@@ -30,6 +30,15 @@ export class StopMarkerComponent {
   * Events
   */
 
+  touchStart(event){
+    event.screenX = event.targetTouches[0].screenX
+    this.mousedown(event);
+  }
+
+  touchEnd(event){
+    this.mouseup(event)
+  }
+
   mousedown(event): void {
     event.stopPropagation();
     this.lastMouseX = event.screenX;
