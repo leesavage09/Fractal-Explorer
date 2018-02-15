@@ -1,8 +1,8 @@
 import { Component, OnInit, ComponentFactoryResolver, ComponentRef, ElementRef, Output, EventEmitter, ViewChild } from '@angular/core';
-import { General } from "../../../../helper/helper.module";
+import { General } from "../../../helper/helper.module";
 
-import { GradientPanelComponent } from '../gradientPanel.component';
-import { FractalColor } from "../../../../fractal/fractalColouring";
+import { GradientBuilderComponent } from '../gradientBuilder.component';
+import { FractalColor } from "../../../fractal/fractalColouring";
 
 @Component({
   selector: 'app-stop-marker',
@@ -15,7 +15,7 @@ export class StopMarkerComponent {
   public thisRef: ComponentRef<StopMarkerComponent>;
   private lastCSSLeft: number;
   private stopValue: number;
-  private parent: GradientPanelComponent;
+  private parent: GradientBuilderComponent;
   private lastMouseX: number
   private moveStarted: boolean = false
   private color: FractalColor.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };

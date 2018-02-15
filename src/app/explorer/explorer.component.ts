@@ -5,18 +5,17 @@ import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { CompiledStylesheet } from "@angular/compiler";
 import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
-import { ColoursliderComponent } from "../gradientbuilder/colourslider/colourslider.component";
-import { GradientbuilderComponent } from '../gradientbuilder/gradientbuilder.component';
+import { ColoursliderComponent } from "../histogram/colourslider/colourslider.component";
 import { FractalColor } from "../../fractal/fractalColouring";
-import { GradientPanelComponent } from '../gradientbuilder/gradientPanel/gradientPanel.component';
-import { HistogramComponent } from "../gradientbuilder/histogram/histogram.component";
+import { GradientBuilderComponent } from '../gradientBuilder/gradientBuilder.component';
+import { HistogramComponent } from "../histogram/histogram.component";
 
 @Component({
-  selector: "FractalComponent",
-  templateUrl: "./fractal.component.html",
-  styleUrls: ["./fractalThemes.component.scss"]
+  selector: "ExplorerComponent",
+  templateUrl: "./explorer.component.html",
+  styleUrls: ["./explorerThemes.component.scss"]
 })
-export class FractalComponent implements OnInit, Fractals.MaxZoomListner {
+export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @Input() width: string;
   @Input() height: string;
   @Input() equation: string;
@@ -37,10 +36,9 @@ export class FractalComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('eyeControls') HTMLeyeControls: ElementRef;
   @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
   @ViewChild('gradientBuilder') HTMLgradientBuilder: ElementRef;
-  @ViewChild('appGradientBuilder') HTMLappGradientBuilder: GradientbuilderComponent;
   @ViewChild('jscolor') HTMLjscolor: ElementRef;
   @ViewChild('histogram') HTMLhistogram: HistogramComponent;
-  @ViewChild('gradient') HTMLgradient: GradientPanelComponent;
+  @ViewChild('gradient') HTMLgradient: GradientBuilderComponent;
   @ViewChild('colorPullDown') HTMLcolorPullDown: ElementRef;
   @ViewChild('histogramdiv') HTMLhistogramdiv: ElementRef;
   @ViewChild('gradientdiv') HTMLgradientdiv: ElementRef;
@@ -240,22 +238,6 @@ export class FractalComponent implements OnInit, Fractals.MaxZoomListner {
 
   }
 
-  openGradientBuilder() {
-    this.HTMLgradientBuilder.nativeElement.style.visibility = "visible";
-    let c = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
-    this.HTMLappGradientBuilder.fractal = this.fractal;
-    this.canvasSizeChanged();
-  }
-
-  closeGradientBuilder() {
-    if (getComputedStyle(this.HTMLgradientBuilder.nativeElement).visibility == "visible") {
-      this.HTMLgradientBuilder.nativeElement.style.visibility = "hidden";
-      this.HTMLexplorer.nativeElement.appendChild(this.HTMLfractal.nativeElement);
-      this.canvasSizeChanged()
-      return;
-    }
-  }
-
   onColorChanged(event) {
     this.changeColor(event.target.value);
     this.fractal.getColor().notify(null);
@@ -288,15 +270,15 @@ export class FractalComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   toggelEye() {
-    if (this.HTMLeyeControls.nativeElement.className == FractalComponent.htmlClassForFaEyeOpen) {
-      this.HTMLeyeControls.nativeElement.className = FractalComponent.htmlClassForFaEyeClosed;
+    if (this.HTMLeyeControls.nativeElement.className == ExplorerComponent.htmlClassForFaEyeOpen) {
+      this.HTMLeyeControls.nativeElement.className = ExplorerComponent.htmlClassForFaEyeClosed;
       this.HTMLfullScreenControls.nativeElement.style.visibility = "visible";
       this.HTMLzoomControls.nativeElement.style.visibility = "visible";
       this.HTMLcolorControls.nativeElement.style.visibility = "visible";
       this.HTMLiterationControls.nativeElement.style.visibility = "visible";
     }
     else {
-      this.HTMLeyeControls.nativeElement.className = FractalComponent.htmlClassForFaEyeOpen;
+      this.HTMLeyeControls.nativeElement.className = ExplorerComponent.htmlClassForFaEyeOpen;
       this.HTMLfullScreenControls.nativeElement.style.visibility = "hidden";
       this.HTMLzoomControls.nativeElement.style.visibility = "hidden";
       this.HTMLcolorControls.nativeElement.style.visibility = "hidden";

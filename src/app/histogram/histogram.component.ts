@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
-import { Fractals } from "../../../fractal/fractal.module";
-import { FractalColor, FractalHistogram } from "../../../fractal/fractalColouring";
-import { General } from "../../../helper/helper.module";
-import { ColoursliderComponent } from "../colourslider/colourslider.component";
+import { Fractals } from "../../fractal/fractal.module";
+import { FractalColor, FractalHistogram } from "../../fractal/fractalColouring";
+import { General } from "../../helper/helper.module";
+import { ColoursliderComponent } from "./colourslider/colourslider.component";
 
 @Component({
   selector: 'app-histogram',

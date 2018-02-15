@@ -156,31 +156,6 @@ $font-size-small: 14px !default;
         }
     }
 
-    .gradient-builder {
-        color: $color-text;
-        background-color: white;
-        padding: $padding;
-        visibility: hidden;
-        pointer-events: all;
-        position: absolute;
-        border: 1px;
-        border-color: black;
-        border-style: solid;
-        left: -1px;
-        top: -1px;
-        width: 60%;
-        height: 60%;
-
-        .btn {
-            @include interactive;
-
-            display: inline-block;
-            width: 80px;
-            height: 20px;
-            line-height: 20px;
-        }
-    }
-
     .controls {
         pointer-events: none;
         padding: $padding;

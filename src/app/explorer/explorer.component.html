@@ -15,7 +15,7 @@
 
       </div>
       <div #gradientdiv id="gradientpanel">
-        <app-gradientpanel #gradient></app-gradientpanel>
+        <app-gradientbuilder #gradient></app-gradientbuilder>
       </div>
     </div>
 
@@ -77,11 +77,6 @@
         <i class="fa fa-check" aria-hidden="true"></i>
       </a>
     </div>
-
-    <div #gradientBuilder class="gradient-builder center" (wheel)="$event.preventDefault()">
-      <a (click)="closeGradientBuilder()" class="btn">Close</a>
-    </div>
-
 
   </div>
 </div>

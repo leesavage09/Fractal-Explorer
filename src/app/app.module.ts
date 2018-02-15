@@ -4,21 +4,19 @@ import { FormsModule } from '@angular/forms';
 
 
 import { AppDemo } from './app.demo';
-import { FractalComponent } from './fractal/fractal.component';
-import { ColoursliderComponent } from './gradientbuilder/colourslider/colourslider.component';
-import { GradientbuilderComponent } from './gradientbuilder/gradientbuilder.component';
-import { GradientPanelComponent } from './gradientbuilder/gradientPanel/gradientPanel.component';
-import { StopMarkerComponent } from './gradientbuilder/gradientPanel/stop-marker/stop-marker.component';
-import { HistogramComponent } from './gradientbuilder/histogram/histogram.component';
+import { ExplorerComponent } from './explorer/explorer.component';
+import { ColoursliderComponent } from './histogram/colourslider/colourslider.component';
+import { GradientBuilderComponent } from './gradientBuilder/gradientBuilder.component';
+import { StopMarkerComponent } from './gradientBuilder/stop-marker/stop-marker.component';
+import { HistogramComponent } from './histogram/histogram.component';
 
 @NgModule({
   entryComponents: [ StopMarkerComponent ],
   declarations: [
     AppDemo,
-    FractalComponent,
+    ExplorerComponent,
     ColoursliderComponent,
-    GradientbuilderComponent,
-    GradientPanelComponent,
+    GradientBuilderComponent,
     StopMarkerComponent,
     HistogramComponent
   ],

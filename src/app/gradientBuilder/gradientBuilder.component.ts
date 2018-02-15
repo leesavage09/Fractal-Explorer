@@ -3,15 +3,15 @@ import { createElement } from '@angular/core/src/view/element';
 import { StopMarkerComponent } from './stop-marker/stop-marker.component';
 import { createComponent } from '@angular/compiler/src/core';
 
-import { FractalColor } from "../../../fractal/fractalColouring";
-import { General } from "../../../helper/helper.module";
+import { FractalColor } from "../../fractal/fractalColouring";
+import { General } from "../../helper/helper.module";
 
 @Component({
-  selector: 'app-gradientpanel',
-  templateUrl: './gradientPanel.component.html',
-  styleUrls: ['./gradientPanel.component.scss']
+  selector: 'app-gradientbuilder',
+  templateUrl: './gradientBuilder.component.html',
+  styleUrls: ['./gradientBuilder.component.scss']
 })
-export class GradientPanelComponent implements OnInit, FractalColor.LinearGradientObserver {
+export class GradientBuilderComponent implements OnInit, FractalColor.LinearGradientObserver {
   @ViewChild('stopMarkers', { read: ViewContainerRef }) stopMarkers;
   @ViewChild('StopMarkerSlider') StopMarkerSlider: ElementRef;
   @ViewChild('colorActive') colorActive: ElementRef;
