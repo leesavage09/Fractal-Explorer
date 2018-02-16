@@ -7,7 +7,9 @@
     <div #colorPullDown id="colorPullDown">
 
       <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
-        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
+        <i #colorPullDownCaret1 class="fa fa-caret-down" aria-hidden="true"></i>
+        <i class="fa fa-paint-brush" aria-hidden="true"></i>
+        <i #colorPullDownCaret2 class="fa fa-caret-down" aria-hidden="true"></i>
       </div>
 
       <div #histogramdiv id="histogrampanel">
@@ -21,52 +23,66 @@
 
     <div #fractalContainer id="fractalContainer">
       <canvas #fractal id="fractal" (window:resize)="windowResized()" (mousedown)="startDrag($event)" (mouseup)="endDrag($event)" (mousemove)="mouseMove($event)" (mouseleave)="endDrag($event)" (wheel)="wheel($event)" (touchstart)="touchStartDrag($event)" (touchmove)="touchMove($event)" (touchend)="touchEndDrag($event)"></canvas>
-      <div #iterationControls class="controls top-left">
-        <div class="btn-group" data-toggle="buttons">
-          <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-            <i class="fa fa-minus" aria-hidden="true"></i>
-          </a>
-          <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
-          <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-          </a>
+    </div>
+
+    <div #colorControls class="controls top-left">
+      <div class="select-container">
+        <select #colourSelect class="select" id="colour-select" (change)="onColorChanged($event)">
+          <option value={{colorBlueGold}}>Blue/Gold</option>
+          <option value={{colorBW}}>B/W</option>
+          <option value={{colorRainbow}}>Rainbow</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i>f
+            <sub>(x)</sub>
+          </i>
         </div>
       </div>
+    </div>
 
-      <div #colorControls class="controls top-right">
 
-        <div class="slidecontainer">
-          <select #colourSelect id="colour-select" (change)="onColorChanged($event)">
-            <option value={{colorBlueGold}}>Blue/Gold</option>
-            <option value={{colorBW}}>B/W</option>
-            <option value={{colorRainbow}}>Rainbow</option>
-          </select>
-          <div id="select-caret-down">
-            <i class="fa fa-caret-down" aria-hidden="true"></i>
-          </div>
+    <div #colorControls class="controls top-right">
+      <div class="select-container">
+        <select #colourSelect class="select" id="colour-select" dir="rtl" (change)="onColorChanged($event)">
+          <option value={{colorBlueGold}}>Blue/Gold</option>
+          <option value={{colorBW}}>B/W</option>
+          <option value={{colorRainbow}}>Rainbow</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i class="fa fa-paint-brush" aria-hidden="true"></i>
         </div>
       </div>
+    </div>
 
-
-
-      <div class="controls bottom-right">
-        <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
-          <a (click)="zoomInClick($event)" class="btn">
-            <i class="fa fa-plus" aria-hidden="true"></i>
-          </a>
-          <a (click)="zoomOutClick($event)" class="btn">
-            <i class="fa fa-minus" aria-hidden="true"></i>
-          </a>
-        </div>
-
-        <a #fullScreenControls (click)="toggelFullScreen()" class="btn">
-          <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+    <div #iterationControls class="controls bottom-left">
+      <div class="btn-group" data-toggle="buttons">
+        <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
         </a>
-        <a (click)="toggelEye()" class="btn eye">
-          <i #eyeControls class="fa fa-eye-slash" aria-hidden="true"></i>
+        <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
+        <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
         </a>
-
       </div>
+    </div>
+
+    <div class="controls bottom-right">
+      <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
+        <a (click)="zoomInClick($event)" class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+        <a (click)="zoomOutClick($event)" class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+      </div>
+
+      <a #fullScreenControls (click)="toggelFullScreen()" class="btn">
+        <i class="fa fa-arrows-alt" aria-hidden="true"></i>
+      </a>
+      <a (click)="toggelEye()" class="btn eye">
+        <i #eyeControls class="fa fa-eye-slash" aria-hidden="true"></i>
+      </a>
+
     </div>
 
     <div #alert class="alert center" (wheel)="$event.preventDefault()">

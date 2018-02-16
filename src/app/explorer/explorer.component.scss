@@ -178,32 +178,39 @@ $font-size-small: 14px !default;
             border-right: 0px;
         }
 
-        #colour-select {
-            -moz-appearance: none;
-            -webkit-appearance: none;
+        .select-container {
+            position: relative;
+            display: inline-block;
 
-            @include interactive;
+            .select {
+                -moz-appearance: none;
+                -webkit-appearance: none;
 
-            text-align: left;
-            padding: 0px;
-            padding-left: $padding;
-            padding-right: $padding;
-            height: $button-size + 2;
-            width: $select-width + 2;
-        }
+                @include interactive;
 
-        #select-caret-down {
-            position: absolute;
-            right: 0px;
-            top: $padding;
-            height: $button-size;
-            line-height: $button-size + 2;
-            padding-right: $padding * 2;
-            color: $colour-tool;
-            pointer-events: none;
+                padding: $padding;
+                height: $button-size;
+                width: $button-size;
+                font-size: 0px;
 
-            i {
-                font-size: $font-size;
+                option {
+                    font-size: $font-size;
+                }
+            }
+
+            .select-icon {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                padding-top: $padding + 2;
+                padding-left: $padding + 2;
+                line-height: $font-size - $padding / 2;
+                color: $colour-tool;
+                pointer-events: none;
+
+                i {
+                    font-size: $font-size;
+                }
             }
         }
 
@@ -243,10 +250,24 @@ $font-size-small: 14px !default;
         position: absolute;
         top: 0;
         left: 0;
+    }
+
+    .top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .bottom-left {
+        position: absolute;
+        bottom: 0;
+        left: 0;
 
         .btn {
             margin: 0px;
             vertical-align: top;
+            height: $button-size / 2;
+            line-height: $button-size / 2;
         }
 
         :first-child {
@@ -270,21 +291,9 @@ $font-size-small: 14px !default;
             padding-left: $font-size;
             padding-right: $font-size;
             width: $iterations-width;
-            height: $button-size;
+            height: $button-size / 2;
             border-radius: 0px;
         }
-    }
-
-    .top-right {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
-    .bottom-left {
-        position: absolute;
-        bottom: 0;
-        left: 0;
     }
 
     .bottom-right {

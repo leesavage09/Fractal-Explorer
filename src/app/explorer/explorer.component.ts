@@ -42,7 +42,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('colorPullDown') HTMLcolorPullDown: ElementRef;
   @ViewChild('histogramdiv') HTMLhistogramdiv: ElementRef;
   @ViewChild('gradientdiv') HTMLgradientdiv: ElementRef;
-  @ViewChild('colorPullDownCaret') HTMLcolorPullDownCaret: ElementRef;
+  @ViewChild('colorPullDownCaret1') HTMLcolorPullDownCaret1: ElementRef;
+  @ViewChild('colorPullDownCaret2') HTMLcolorPullDownCaret2: ElementRef;
 
   private explorerCSSHeight;
   private explorerWindowStyle: string;
@@ -221,7 +222,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLcolorPullDown.nativeElement.style.height = 0;
       this.HTMLhistogramdiv.nativeElement.style.display = "none";
       this.HTMLgradientdiv.nativeElement.style.display = "none";
-      this.HTMLcolorPullDownCaret.nativeElement.setAttribute("class", "fa fa-caret-down");
+      this.HTMLcolorPullDownCaret1.nativeElement.setAttribute("class", "fa fa-caret-down");
+      this.HTMLcolorPullDownCaret2.nativeElement.setAttribute("class", "fa fa-caret-down");
 
     } else {
       this.HTMLcolorPullDown.nativeElement.style.height = this.explorerCSSHeight;
@@ -229,7 +231,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLgradientdiv.nativeElement.style.display = "block";
       this.HTMLgradient.setGradient(this.fractal.getColor());
       this.HTMLhistogram.setFractal(this.fractal);
-      this.HTMLcolorPullDownCaret.nativeElement.setAttribute("class", "fa fa-caret-up");
+      this.HTMLcolorPullDownCaret1.nativeElement.setAttribute("class", "fa fa-caret-up");
+      this.HTMLcolorPullDownCaret2.nativeElement.setAttribute("class", "fa fa-caret-up");
     }
     this.canvasSizeChanged();
   }
