@@ -27,10 +27,10 @@
 
     <div #colorControls class="controls top-left">
       <div class="select-container">
-        <select #colourSelect class="select" id="colour-select" (change)="onColorChanged($event)">
-          <option value={{colorBlueGold}}>Blue/Gold</option>
-          <option value={{colorBW}}>B/W</option>
-          <option value={{colorRainbow}}>Rainbow</option>
+        <select #eqSelect class="select" id="eq-select" (change)="onEqChanged($event)">
+          <option value="smoothMandelbrot">Mandelbrot</option>
+          <option value="smoothBurningShip">Burning Ship</option>
+          <option value="smoothJulia">Smooth Julia</option>
         </select>
         <div class="select-icon" id="select-caret-down">
           <i>f

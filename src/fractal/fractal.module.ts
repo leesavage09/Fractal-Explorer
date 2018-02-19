@@ -31,6 +31,10 @@ export namespace Fractals {
 			}
 		}
 
+		public setCalculationFunction(f: Function){
+			this.calculationFunction = f;			
+		}
+
 		public linearGradientChanged() {
 			this.render();
 		}
@@ -41,7 +45,7 @@ export namespace Fractals {
 				this.notifiMaxZoomListeners();
 			}
 			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
-			this.histogram.startHistogram(this.iterations + 1);
+			this.histogram.startHistogram(this.iterations);
 			this.compiledColor = this.color.getCompiledColor(this.iterations);
 			var self = this;
 			setTimeout(function () {
@@ -92,6 +96,7 @@ export namespace Fractals {
 				}
 			}
 			else if (!this.complexPlain.drawableAndViewAreEqual()) {
+				this.histogram.notify(null);
 				this.complexPlain.makeAlternativeResolutionCanvas(1);
 				this.lastUpdate = (new Date).getTime();
 				var self = this;

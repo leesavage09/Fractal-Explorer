@@ -21,7 +21,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @Input() equation: string;
   @Input() theme: string;
   @Input() color: string;
-  @Input() iterations: number = 500;
+  @Input() iterations: number = 50;
   @Input() gradientPhase: number = 0;
   @Input() gradientFreq: number = 1;
   @Input() complexCenter: string;
@@ -112,6 +112,9 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal.iterations = this.iterations;
     this.fractal.setMaxZoomListener(this);
     this.fractal.render();
+
+    this.explorerWindowIsMaximised = true;
+    this.fullScreenWindow()
   }
 
   /*
@@ -132,6 +135,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   /*
   * Mouse wheel and trackpad events
   */
+
   wheel(event) {
     event.preventDefault();
     if (event.deltaY < 0) {
@@ -145,6 +149,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   /*
   * Touch Screen Events
   */
+
   touchStartDrag(event) {
     event.preventDefault();
     event = this.addTocuchOffsets(event);
@@ -198,6 +203,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   /*
   * Mouse pointer events
   */
+
   startDrag(event) {
     this.removeAllSelections();
     this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
@@ -234,15 +240,28 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLcolorPullDownCaret1.nativeElement.setAttribute("class", "fa fa-caret-up");
       this.HTMLcolorPullDownCaret2.nativeElement.setAttribute("class", "fa fa-caret-up");
     }
-    this.canvasSizeChanged();
+    this.explorerSizeChanged();
   }
 
-  toggleColourMenu(event) {
-
+  onEqChanged(event) {
+    let eqString = event.target.value;
+    if (eqString == "smoothMandelbrot") {
+      this.fractal.complexPlain.replaceView(-0.8,0,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+      this.fractal.setCalculationFunction(FractalEquations.smoothMandelbrot);
+    } 
+    else if (eqString == "smoothBurningShip") {
+      this.fractal.complexPlain.replaceView(-0.5,-0.5,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+      this.fractal.setCalculationFunction(FractalEquations.smoothBurningShip);
+    }
+    else if (eqString == "smoothJulia") {
+      this.fractal.complexPlain.replaceView(0,0,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+      this.fractal.setCalculationFunction(FractalEquations.smoothJulia);
+    }
+    this.fractal.render();
   }
 
   onColorChanged(event) {
-    this.changeColor(event.target.value);
+    this.fractal.getColor().decodeJSON(event.target.value);
     this.fractal.getColor().notify(null);
   }
 
@@ -298,7 +317,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.exitNativeFullScreen()
       jscolorDiv.setAttribute("style", this.jscolorWindowStyle);
       explorerDiv.setAttribute("style", this.explorerWindowStyle);
-      this.canvasSizeChanged();
+      this.explorerSizeChanged();
     }
     else {
       this.explorerWindowIsMaximised = true;
@@ -322,6 +341,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   /*
   * Callbacks from fractal explorer
   */
+
   maxZoomReached() {
     this.fractal.deleteMaxZoomListener();
     this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
@@ -391,10 +411,10 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
     jscolorDiv.style.top = jscolorTop.toString() + "px";
     jscolorDiv.style.left = jscolorLeft.toString() + "px";
-    this.canvasSizeChanged();
+    this.explorerSizeChanged();
   }
 
-  private canvasSizeChanged() {
+  private explorerSizeChanged() {
     let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.canvas.width = canvas.offsetWidth;
@@ -403,16 +423,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     cp.replaceView(cp.getSquare().center.r, cp.getSquare().center.i, cp.getSquare().width, canvas);
     this.fractal.render();
 
-    if (this.HTMLhistogramdiv.nativeElement.style.display != "none") {
-      this.HTMLhistogram.setFractal(this.fractal);
-      this.HTMLgradient.setGradient(this.fractal.getColor());
-    }
-    
-  }
-
-  private changeColor(commandString: string) {
-    this.fractal.getColor().decodeJSON(commandString);
-    this.fractal.render();
   }
 
   private addTocuchOffsets(event) {

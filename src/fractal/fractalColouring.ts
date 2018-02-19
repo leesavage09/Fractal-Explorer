@@ -244,14 +244,15 @@ export namespace FractalHistogram {
 		}
 
 		public startHistogram(len: number) {
-			this.histogram = Array.from(Array(len + 1), () => 0);
+			this.histogram = Array.from(Array(len), () => 0);
 		}
 
 		public getData() {
-			return this.histogram
+			return this.histogram.slice(1, this.histogram.length-1);
 		}
 
 		public incrementData(i: number) {
+			if (this.subscribers.length<1) return;
 			this.histogram[i] = this.histogram[i] + 1;
 		}
 

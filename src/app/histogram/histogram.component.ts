@@ -128,18 +128,18 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   private drawHistogram() {
     const ctx = <CanvasRenderingContext2D>this.histogramCanvas.nativeElement.getContext("2d");
 
-    const numBin = this.data.length - 2
+    const numBin = this.data.length - 1
 
     var total = 0;
-    for (var i = 0; i < this.data.length; i++) {
+    for (var i = 1; i <= this.data.length; i++) {
       //if (this.data[i]>total) total = this.data[i]
       total += this.data[i];
     }
     var avg = total / this.data.length;
-    //let max = Math.max(...this.data);
+    let max = Math.max(...this.data);
 
     const widthBin = ctx.canvas.width / numBin
-    const hightCount = ctx.canvas.height / avg
+    const hightCount = ctx.canvas.height / (max*1.1)
 
     const img = ctx.getImageData(0, 0, ctx.canvas.width, 1);
     let c

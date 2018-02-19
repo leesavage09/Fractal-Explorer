@@ -90,13 +90,62 @@ export namespace FractalEquations {
 		var Ti = 0;
 		var n = 0;
 
-		// Z*Z+C
+		// Z^2+C
 		for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
-			Tr = Zr * Zr - Zi * Zi + Cr;
+			Tr = Zr * Zr - Zi * Zi  + Cr;
 			Ti = Zr * Zi + Zr * Zi + Ci;
 
 			Zr = Tr;
 			Zi = Ti;
+		}
+
+		//smooth 
+		if (n >= i) n = i;
+		else {
+			var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
+			var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
+			n = n + 1 - nu
+		}
+		return n;
+	}
+
+	export function smoothBurningShip(Cr: number, Ci: number, i: number, e: number): number {
+		var Zr = 0;
+		var Zi = 0;
+
+		var Tr = 0;
+		for (var n = 0; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
+			Tr = Zr * Zr - Zi * Zi + Cr
+			Zi = Math.abs(2 * Zr * Zi + Ci)
+			Zr = Math.abs(Tr)
+		}
+		//return [n, Zr, Zi];
+
+		//smooth 
+		if (n >= i) n = i;
+		else {
+			var log_zn = Math.log(Zr * Zr + Zi * Zi) / 2
+			var nu = Math.log(log_zn / Math.log(2)) / Math.log(2)
+			n = n + 1 - nu
+		}
+		return n;
+	}
+
+	export function smoothJulia(Cr: number, Ci: number, i: number, e: number): number {
+		var Zr = Cr;
+		var Zi = Ci;
+		var Tr = 0;
+		var Ti = 0;
+		Cr = -0.8;
+		Ci = 0.156;
+
+		var n = 0;
+		for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
+			Tr = ((Zr * Zr) - (Zi * Zi));
+			Ti = ((Zr * Zi) + (Zi * Zr));
+
+			Zr = Tr + Cr;
+			Zi = Ti + Ci;
 		}
 
 		//smooth 
