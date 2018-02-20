@@ -8,6 +8,9 @@ $padding: 10px !default;
 $explorer-width: 400px !default;
 $explorer-height: 300px !default;
 
+$julia-picker-width: 250px !default;
+$julia-picker-height: 200px !default;
+
 $colour-tool: rgb(100, 100, 100) !default;
 $color-tool-bg: white !default;
 $color-canvas-bg: rgb(0, 29, 0) !default;
@@ -117,22 +120,51 @@ $font-size-small: 14px !default;
         }
     }
 
+    .juliaPullOut {
+        position: relative;
+
+        .juliaPicker {
+            display: inline-block;
+
+            @include interactive;
+
+            font-size: 0px;
+            line-height: 0px;
+            border-bottom-left-radius: 0px;
+            border-top-left-radius: 0px;
+            overflow: hidden;
+            width: $julia-picker-width;
+            height:$julia-picker-height;
+        }
+
+        #juliaPullOut-btn {
+            position: absolute;
+            
+            right: -$button-size / 2;
+            margin: auto;
+            display: inline-block;
+
+            @include interactive;
+
+            width: $button-size / 2;
+            height: $button-size * 2;
+            line-height: $button-size * 2;
+            border-bottom-left-radius: 0px;
+            border-top-left-radius: 0px;
+
+            top: $julia-picker-height/2 - $button-size;
+        }
+    }
+
     #fractalContainer {
         height: $explorer-height;
         width: 100%;
         flex-grow: 1;
         display: flex;
 
-        #fractal {
+        #mainFractalView {
             height: 100%;
             width: 100%;
-            align-items: stretch;
-            display: block;
-            cursor: grab;
-
-            &:active:hover {
-                cursor: grabbing;
-            }
         }
     }
 
@@ -244,6 +276,13 @@ $font-size-small: 14px !default;
         transform: perspective(1px) translateY(-50%);
         margin: auto;
         z-index: 99;
+    }
+
+    .center-left {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: perspective(1px) translateY(-50%);
     }
 
     .top-left {

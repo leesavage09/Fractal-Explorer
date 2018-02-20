@@ -9,6 +9,8 @@ import { ColoursliderComponent } from "../histogram/colourslider/colourslider.co
 import { FractalColor } from "../../fractal/fractalColouring";
 import { GradientBuilderComponent } from '../gradientBuilder/gradientBuilder.component';
 import { HistogramComponent } from "../histogram/histogram.component";
+import { JuliaPickerComponent } from "../juliaPicker/juliaPicker.component";
+import { FractalViewComponent } from '../fractalView/fractalView.component';
 
 @Component({
   selector: "ExplorerComponent",
@@ -27,7 +29,10 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @Input() complexCenter: string;
   @Input() complexWidth: string;
   @ViewChild('explorer') HTMLexplorer: ElementRef;
-  @ViewChild('fractal') HTMLfractal: ElementRef;
+  @ViewChild('mainFractalView') mainFractalView: FractalViewComponent;
+  @ViewChild('juliaPicker') HTMLjuliaPicker: JuliaPickerComponent;
+  @ViewChild('juliaPickerDiv') HTMLjuliaPickerDiv: ElementRef;
+  @ViewChild('juliaPullOut') HTMLjuliaPullOut: ElementRef;
   @ViewChild('alert') HTMLalert: ElementRef;
   @ViewChild('iterationControls') HTMLiterationControls: ElementRef;
   @ViewChild('colorControls') HTMLcolorControls: ElementRef;
@@ -49,6 +54,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
   private fractal: Fractals.Fractal;
+  private juliaFractal: Fractals.Fractal;
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
   private zoomGestureHappening: boolean = false;
@@ -99,9 +105,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     //   }
     // }
 
-    let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
+    let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-    let htmlCanvas: HTMLCanvasElement = ctx.canvas;
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
@@ -111,7 +116,20 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.iterations;
     this.fractal.setMaxZoomListener(this);
+
+    this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
+
+
+    this.HTMLjuliaPicker.init(gradient, this.iterations);
+    this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
+    this.HTMLjuliaPullOut.nativeElement.style.visibility = "hidden"
+
+
+   
+
+
+
 
     this.explorerWindowIsMaximised = true;
     this.fullScreenWindow()
@@ -132,94 +150,16 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-  /*
-  * Mouse wheel and trackpad events
-  */
 
-  wheel(event) {
-    event.preventDefault();
-    if (event.deltaY < 0) {
-      this.fractal.getAnimator().zoomStart(event.offsetX, event.offsetY, 1.4, 200);
+  toggleJuliaPullOut() {
+    if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
+      this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
+      this.HTMLjuliaPicker.getFractal().sizeChanged();
     }
-    else if (event.deltaY > 0) {
-      this.fractal.getAnimator().zoomStart(event.offsetX, event.offsetY, 0.6, 200);
+    else if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
+      this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px"
     }
   }
-
-  /*
-  * Touch Screen Events
-  */
-
-  touchStartDrag(event) {
-    event.preventDefault();
-    event = this.addTocuchOffsets(event);
-    if (event.touches.length === 2) {
-      this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY, false);
-      this.zoomGestureHappening = true;
-      //this.fractal.getAnimator().dragCancel();
-      var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-      let minX = Math.min(event.touches[0].clientX, event.touches[1].clientX);
-      let minY = Math.min(event.touches[0].clientY, event.touches[1].clientY);
-      let centerX = minX + (Math.abs(event.touches[0].clientX - event.touches[1].clientX) / 2);
-      let centerY = minY + (Math.abs(event.touches[0].clientY - event.touches[1].clientY) / 2);
-      var realTarget = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
-      centerX = centerX - (<any>realTarget.getBoundingClientRect()).left;
-      centerY = centerY - (<any>realTarget.getBoundingClientRect()).top;
-      this.fractal.getAnimator().zoomByScaleStart(dist, centerX, centerY)
-    }
-    else {
-      this.startDrag(event)
-    }
-  }
-
-  touchMove(event) {
-    event.preventDefault();
-    if (this.zoomGestureHappening) {
-      var dist = Math.abs(Math.hypot(event.touches[0].clientX - event.touches[1].clientX, event.touches[0].clientY - event.touches[1].clientY));
-      this.fractal.getAnimator().zoomByScale(dist);
-      return;
-    }
-    event = this.addTocuchOffsets(event);
-    if (document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY) === this.HTMLfractal.nativeElement) {
-      this.mouseMove(event);
-      return;
-    }
-    this.endDrag(event);
-  }
-
-  touchEndDrag(event) {
-    event.preventDefault();
-    if (this.zoomGestureHappening) {
-      this.zoomGestureHappening = false;
-      this.fractal.getAnimator().zoomByScaleEnd();
-    }
-    else {
-      event = this.addTocuchOffsets(event);
-      this.endDrag(event);
-    }
-
-  }
-
-  /*
-  * Mouse pointer events
-  */
-
-  startDrag(event) {
-    this.removeAllSelections();
-    this.fractal.getAnimator().dragStart(event.offsetX, event.offsetY);
-  }
-
-  endDrag(event) {
-    this.fractal.getAnimator().dragEnd(event.offsetX, event.offsetY);
-  }
-
-  mouseMove(event) {
-    this.fractal.getAnimator().dragMove(event.offsetX, event.offsetY);
-  }
-
-  /*
-  * Form and button events
-  */
 
   toggleColorPullDown(event) {
     if (this.HTMLhistogramdiv.nativeElement.style.display == "block") {
@@ -240,22 +180,27 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLcolorPullDownCaret1.nativeElement.setAttribute("class", "fa fa-caret-up");
       this.HTMLcolorPullDownCaret2.nativeElement.setAttribute("class", "fa fa-caret-up");
     }
-    this.explorerSizeChanged();
+    this.mainFractalView.sizeChanged();
   }
 
   onEqChanged(event) {
     let eqString = event.target.value;
     if (eqString == "smoothMandelbrot") {
-      this.fractal.complexPlain.replaceView(-0.8,0,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(FractalEquations.smoothMandelbrot);
-    } 
+    }
     else if (eqString == "smoothBurningShip") {
-      this.fractal.complexPlain.replaceView(-0.5,-0.5,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+      this.fractal.complexPlain.replaceView(-0.5, -0.5, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(FractalEquations.smoothBurningShip);
     }
-    else if (eqString == "smoothJulia") {
-      this.fractal.complexPlain.replaceView(0,0,3,<HTMLCanvasElement>this.HTMLfractal.nativeElement)
+    
+    if (eqString == "smoothJulia") {
+      this.fractal.complexPlain.replaceView(0, 0, 20, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(FractalEquations.smoothJulia);
+      this.HTMLjuliaPullOut.nativeElement.style.visibility = "visible"
+    }
+    else {
+      this.HTMLjuliaPullOut.nativeElement.style.visibility = "hidden"
     }
     this.fractal.render();
   }
@@ -282,12 +227,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   zoomOutClick(event) {
-    let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
+    let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     this.fractal.getAnimator().zoomStart(canvas.offsetWidth / 2, canvas.offsetHeight / 2, 0.5, 200);
   }
 
   zoomInClick(event) {
-    let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
+    let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     this.fractal.getAnimator().zoomStart(canvas.offsetWidth / 2, canvas.offsetHeight / 2, 2, 200);
   }
 
@@ -317,7 +262,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.exitNativeFullScreen()
       jscolorDiv.setAttribute("style", this.jscolorWindowStyle);
       explorerDiv.setAttribute("style", this.explorerWindowStyle);
-      this.explorerSizeChanged();
+      this.mainFractalView.sizeChanged();
     }
     else {
       this.explorerWindowIsMaximised = true;
@@ -335,6 +280,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
   iterationsChanged() {
     this.fractal.iterations = this.iterations;
+    this.HTMLjuliaPicker.setIterations(this.iterations);
     this.fractal.render();
   }
 
@@ -346,6 +292,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal.deleteMaxZoomListener();
     this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
     this.HTMLalert.nativeElement.style.visibility = "visible";
+  }
+
+  juliaNumberChanged(event: ComplexNumber) {
+    FractalEquations.JuliaReal = event.r;
+    FractalEquations.juliaImaginary = event.i;
+    this.fractal.render();
   }
 
   /*
@@ -411,34 +363,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
     jscolorDiv.style.top = jscolorTop.toString() + "px";
     jscolorDiv.style.left = jscolorLeft.toString() + "px";
-    this.explorerSizeChanged();
-  }
-
-  private explorerSizeChanged() {
-    let canvas = <HTMLCanvasElement>this.HTMLfractal.nativeElement;
-    let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-    ctx.canvas.width = canvas.offsetWidth;
-    ctx.canvas.height = canvas.offsetHeight;
-    let cp = this.fractal.complexPlain;
-    cp.replaceView(cp.getSquare().center.r, cp.getSquare().center.i, cp.getSquare().width, canvas);
-    this.fractal.render();
-
-  }
-
-  private addTocuchOffsets(event) {
-    var touch = event.touches[0] || event.changedTouches[0];
-    event.offsetX = touch.clientX - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).left;
-    event.offsetY = touch.clientY - (<any>this.HTMLfractal.nativeElement.getBoundingClientRect()).top;
-    return event;
-  }
-
-  private removeAllSelections() {
-    let doc = <any>document;
-    if (doc.selection) {
-      doc.selection.empty();
-    } else if (window.getSelection) {
-      window.getSelection().removeAllRanges();
-    }
+    this.mainFractalView.sizeChanged();
   }
 
 }

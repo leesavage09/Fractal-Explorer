@@ -132,7 +132,6 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
 
     var total = 0;
     for (var i = 1; i <= this.data.length; i++) {
-      //if (this.data[i]>total) total = this.data[i]
       total += this.data[i];
     }
     var avg = total / this.data.length;

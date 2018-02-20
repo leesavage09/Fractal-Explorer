@@ -1,5 +1,8 @@
 export namespace FractalEquations {
 
+	export var JuliaReal:number = 0;
+	export var juliaImaginary:number = 0;
+
 	export function burningShip(Cr: number, Ci: number, i: number, e: number): [number, number, number] {
 		var Zr = 0;
 		var Zi = 0;
@@ -92,7 +95,7 @@ export namespace FractalEquations {
 
 		// Z^2+C
 		for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
-			Tr = Zr * Zr - Zi * Zi  + Cr;
+			Tr = Zr * Zr - Zi * Zi + Cr;
 			Ti = Zr * Zi + Zr * Zi + Ci;
 
 			Zr = Tr;
@@ -119,7 +122,6 @@ export namespace FractalEquations {
 			Zi = Math.abs(2 * Zr * Zi + Ci)
 			Zr = Math.abs(Tr)
 		}
-		//return [n, Zr, Zi];
 
 		//smooth 
 		if (n >= i) n = i;
@@ -136,8 +138,8 @@ export namespace FractalEquations {
 		var Zi = Ci;
 		var Tr = 0;
 		var Ti = 0;
-		Cr = -0.8;
-		Ci = 0.156;
+		Cr = JuliaReal;
+		Ci = juliaImaginary;
 
 		var n = 0;
 		for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {

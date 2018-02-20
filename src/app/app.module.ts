@@ -9,6 +9,8 @@ import { ColoursliderComponent } from './histogram/colourslider/colourslider.com
 import { GradientBuilderComponent } from './gradientBuilder/gradientBuilder.component';
 import { StopMarkerComponent } from './gradientBuilder/stop-marker/stop-marker.component';
 import { HistogramComponent } from './histogram/histogram.component';
+import { JuliaPickerComponent } from './juliaPicker/juliaPicker.component';
+import { FractalViewComponent } from './fractalView/fractalView.component';
 
 @NgModule({
   entryComponents: [ StopMarkerComponent ],
@@ -18,7 +20,9 @@ import { HistogramComponent } from './histogram/histogram.component';
     ColoursliderComponent,
     GradientBuilderComponent,
     StopMarkerComponent,
-    HistogramComponent
+    HistogramComponent,
+    JuliaPickerComponent,
+    FractalViewComponent
   ],
   imports: [
     BrowserModule, FormsModule

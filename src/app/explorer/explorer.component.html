@@ -1,5 +1,5 @@
 <div class={{theme}}>
-  <div #explorer id="explorer">
+  <div #explorer id="explorer" (window:resize)="windowResized()">
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {closable:true, closeText:'Close',width:250,  height:150, }" value="000000">
 
@@ -21,8 +21,23 @@
       </div>
     </div>
 
+
+    <div #juliaPullOut class="juliaPullOut center-left">
+
+
+
+      <div id="juliaPullOut-btn" (click)="toggleJuliaPullOut()">
+        <i #colorPullDownCaret2 class="fa fa-caret-right" aria-hidden="true"></i>
+      </div>
+
+      <div #juliaPickerDiv class="juliaPicker">
+        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
+      </div>
+
+    </div>
+
     <div #fractalContainer id="fractalContainer">
-      <canvas #fractal id="fractal" (window:resize)="windowResized()" (mousedown)="startDrag($event)" (mouseup)="endDrag($event)" (mousemove)="mouseMove($event)" (mouseleave)="endDrag($event)" (wheel)="wheel($event)" (touchstart)="touchStartDrag($event)" (touchmove)="touchMove($event)" (touchend)="touchEndDrag($event)"></canvas>
+      <app-fractalView id="mainFractalView" #mainFractalView></app-fractalView>
     </div>
 
     <div #colorControls class="controls top-left">

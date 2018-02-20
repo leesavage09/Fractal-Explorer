@@ -31,8 +31,8 @@ export namespace Fractals {
 			}
 		}
 
-		public setCalculationFunction(f: Function){
-			this.calculationFunction = f;			
+		public setCalculationFunction(f: Function) {
+			this.calculationFunction = f;
 		}
 
 		public linearGradientChanged() {
@@ -68,13 +68,13 @@ export namespace Fractals {
 
 			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
-				let n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius,this.compiledColor);
+				let n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius, this.compiledColor);
 				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
-			
+
 				this.histogram.incrementData(Math.floor(n))
 
-				let col = FractalColor.LinearGradient.smoothColorFromCompiledColor(n,this.compiledColor);
-				
+				let col = FractalColor.LinearGradient.smoothColorFromCompiledColor(n, this.compiledColor);
+
 				this.img.data[(x * 4) + 0] = col.r;
 				this.img.data[(x * 4) + 1] = col.g;
 				this.img.data[(x * 4) + 2] = col.b;
@@ -155,8 +155,24 @@ export namespace Fractals {
 		private drawableCanvas: HTMLCanvasElement;
 		private scanLine: ImageData;
 		private viewCanvas: HTMLCanvasElement;
+		private subscribers: Array<ComplexPlainObserver> = new Array();
+
 		constructor(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
 			this.replaceView(realCenter, imaginaryCenter, realWidth, canvas);
+		}
+
+		public subscribe(observer: ComplexPlainObserver) {
+			this.subscribers.push(observer);
+		}
+
+		public unsubscribe(observer: ComplexPlainObserver) {
+			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
+		}
+
+		public notify() {
+			for (let i = 0; i < this.subscribers.length; i++) {
+				this.subscribers[i].changed();
+			}
 		}
 
 		replaceView(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
@@ -167,6 +183,7 @@ export namespace Fractals {
 			this.complexSquare = new ComplexSquare(center, width, height);
 			this.viewCanvas = canvas;
 			this.makeAlternativeResolutionCanvas(1);
+			this.notify();
 		}
 
 		updateCanvas(y: number): void {
@@ -237,6 +254,11 @@ export namespace Fractals {
 		getRealNumber(pixelX: number): Number {
 			return General.mapInOut(pixelX, 0, this.drawableCanvas.width - 1, this.complexSquare.min.r, this.complexSquare.max.r);
 		}
+	}
+
+
+	export interface ComplexPlainObserver {
+		changed();
 	}
 
 
