@@ -53,8 +53,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('downloadReadyAlert') HTMLdownloadReadyAlert: ElementRef;
   @ViewChild('saveSelect') HTMLsaveSelect: ElementRef;
   @ViewChild('saveIcon') HTMLsaveIcon: ElementRef;
-  @ViewChild('saveIconDiv') HTMLsaveIconDiv: ElementRef;
-  @ViewChild('saveIconLoading') HTMLsaveIconLoading: ElementRef;
+  @ViewChild('shareSelect') HTMLshareSelect: ElementRef;
+  @ViewChild('shareButton') HTMLshareButton: ElementRef;
 
   private explorerCSSHeight;
   private explorerWindowStyle: string;
@@ -147,19 +147,15 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
   download() {
     this.HTMLdownloadReadyAlert.nativeElement.style.visibility = "hidden";
-    this.HTMLsaveIconDiv.nativeElement.setAttribute("class", "select-icon");
+    this.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save");
     this.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
     this.HTMLsaveSelect.nativeElement.disabled = false;
-    this.HTMLsaveIconLoading.nativeElement.style.display = "none";
-    this.HTMLsaveIcon.nativeElement.style.display = "block";
   }
 
   save(event) {
-    this.HTMLsaveIconDiv.nativeElement.setAttribute("class", "select-icon disabled");
+    this.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save disabled");
     this.HTMLsaveSelect.nativeElement.setAttribute("class", "select disabled");
     this.HTMLsaveSelect.nativeElement.disabled = true;
-    this.HTMLsaveIconLoading.nativeElement.style.display = "block";
-    this.HTMLsaveIcon.nativeElement.style.display = "none";
     let width = 1920
     let height = 1080
     switch (event.target.value) {
@@ -191,13 +187,47 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
         changed(fractal: Fractals.Fractal) {
           fractal.unsubscribe(element.base)
           this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg");
-          this.explorer.downloadReady()          
+          this.explorer.downloadReady()
         }
       }
     }
     let img = this.mainFractalView.downloadImage(width, height, element.base);
 
     (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
+  }
+
+  share(event) {
+    let content = "http://leesavage.co.uk/";
+    let service = null
+
+    switch (event.target.value) {
+      case "facebook":
+        service = "http://www.facebook.com/sharer.php?u=" + content
+        break;
+      case "fb-messenger":
+        service = "fb-messenger:share/?link=" + content
+        break;
+      case "whatsapp":
+        service = "whatsapp://send?text=" + content
+        break;
+      case "twitter":
+        service = "https://twitter.com/share?url=" + content
+        break;
+      case "linkedin":
+        service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
+        break;
+      case "plus.google":
+        service = "https://plus.google.com/share?url=" + content
+        break;
+      case "mailto":
+        service = "mailto:?Body=" + content;
+        break;
+    }
+
+    if (service != null) window.open(service);
+    else window.open(content);
+
+    (<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
 
   windowResized() {
@@ -212,7 +242,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
 
-  toggleJuliaPullOut() {    
+  toggleJuliaPullOut() {
     if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
       if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.iterations);
@@ -308,6 +338,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLcolorPullDown.nativeElement.style.visibility = "visible";
       this.HTMLjuliaPullOut.nativeElement.style.visibility = "visible";
       this.HTMLsaveButton.nativeElement.style.visibility = "visible";
+      this.HTMLshareButton.nativeElement.style.visibility = "visible";
     }
     else {
       this.HTMLeyeControls.nativeElement.className = ExplorerComponent.htmlClassForFaEyeOpen;
@@ -318,8 +349,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.closeAllPullOuts();
       this.HTMLcolorPullDown.nativeElement.style.visibility = "hidden";
       this.HTMLsaveButton.nativeElement.style.visibility = "hidden";
-
       this.HTMLjuliaPullOut.nativeElement.style.visibility = "hidden";
+      this.HTMLshareButton.nativeElement.style.visibility = "hidden";
     }
   }
 

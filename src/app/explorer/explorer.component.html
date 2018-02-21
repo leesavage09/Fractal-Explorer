@@ -23,25 +23,33 @@
     </div>
 
     <div class="controls bottom-left">
+      <div #shareButton  class="select-container">
+        <select #shareSelect class="select" id="eq-select" (change)="share($event)">
+          <option value="non-option" disabled>Share Options</option>
+          <option value="link">Open In Browser</option>
+          <option value="mailto">Email</option>
+          <option value="facebook">Facebook</option>
+          <option value="fb-messenger">Facebook Messenger</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="twitter">Twitter</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="plus.google">Google +</option>
+        </select>
+        <div  class="select-icon" id="select-caret-down">
+          <i  class="fa fa-share-alt" aria-hidden="true"></i>
+        </div>
+      </div>
       <div #saveButton class="select-container">
         <select #saveSelect class="select" id="eq-select" (change)="save($event)">
-          <option value="non-option" disabled>Download Format</option>
+          <option value="non-option">Save JPG</option>
           <option value="HD 1920×1080">HD 1920×1080</option>
           <option value="2K 2048×1080">2K 2048×1080</option>
           <option value="4K 4096×2160">4K 4096×2160</option>
           <option value="8k 7680×4320">8k 7680×4320</option>
           <option value="16k 15360×8640">16k 15360×8640</option>
         </select>
-        <div #saveIconDiv class="select-icon" id="select-caret-down">
-            <div #saveIconLoading style="color: #9784ed; display:none" class="la-ball-grid-pulse la-sm">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-         <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
+        <div class="select-icon" id="select-caret-down">
+          <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
         </div>
       </div>
     </div>
@@ -127,11 +135,12 @@
     <div #downloadReadyAlert class="alert center" (wheel)="$event.preventDefault()">
       <h4>Your Download Is Ready</h4>
       <a href="{{imageToDownload}}" (click)="download()" class="btn" download="fractal.jpg">
-        Download <i class="fa fa-save" aria-hidden="true"></i>
+        Download
+        <i class="fa fa-save" aria-hidden="true"></i>
       </a>
 
-      <a  (click)="download()" class="btn">
-        Cancel 
+      <a (click)="download()" class="btn">
+        Cancel
       </a>
     </div>
 
