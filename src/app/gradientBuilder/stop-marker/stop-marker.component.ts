@@ -21,7 +21,7 @@ export class StopMarkerComponent {
   private color: FractalColor.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
   constructor() { }
 
-
+  
   ngOnInit() {
     this.setColor(this.color);
   }
@@ -75,7 +75,7 @@ export class StopMarkerComponent {
   }
 
   setStopValue(stop: number) {
-    let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());
+    let cssLeft = General.mapInOut(stop, 0, 1, this.getMinCSSLeft(), this.getMaxCSSLeft());  
     this.setCSSLeft(cssLeft);
   }
 

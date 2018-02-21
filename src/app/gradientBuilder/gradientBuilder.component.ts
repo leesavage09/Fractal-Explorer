@@ -223,7 +223,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     let arr: Array<FractalColor.LinearGradientStop> = this.gradient.getStops()
     for (let i = 0; i < arr.length; i++) {
       const stop = arr[i];
-      let offset = General.mapInOut(stop.stop, 0, 1, 0, this.maxCSSleft);
       this.addStopMarker(stop.stop, null, stop.color, false);
     }
     this.draw();

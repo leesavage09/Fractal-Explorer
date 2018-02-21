@@ -6,10 +6,22 @@
     .picker {
         border-radius: 10px;
         position: absolute;
-        background-color: red;
-        width: 16px;
-        height: 16px;
+        background-color:rgba($color: #fff, $alpha: 0.5);
+
+        border: black;
+        border-width: 1px;
+        border-style: solid;
+        width: 32px;
+        height: 32px;
         cursor: grab;
+
+        i{
+            border-radius: 10px;
+            font-size: 32px;
+            line-height: 32px;
+            color: black;
+            box-shadow: 2px -2px 1px 1px rgba($color: #000, $alpha: 0.5);
+        }
 
         &:active:hover {
             cursor: grabbing;

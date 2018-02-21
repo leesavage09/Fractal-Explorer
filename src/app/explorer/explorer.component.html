@@ -3,84 +3,6 @@
 
     <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {closable:true, closeText:'Close',width:250,  height:150, }" value="000000">
 
-
-    <div #colorPullDown id="colorPullDown">
-
-      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
-        <i #colorPullDownCaret1 class="fa fa-caret-down" aria-hidden="true"></i>
-        <i class="fa fa-paint-brush" aria-hidden="true"></i>
-        <i #colorPullDownCaret2 class="fa fa-caret-down" aria-hidden="true"></i>
-      </div>
-
-      <div #histogramdiv id="histogrampanel">
-        <app-histogram #histogram></app-histogram>
-
-      </div>
-      <div #gradientdiv id="gradientpanel">
-        <app-gradientbuilder #gradient></app-gradientbuilder>
-      </div>
-    </div>
-
-
-    <div #juliaPullOut class="juliaPullOut center-left">
-
-
-
-      <div id="juliaPullOut-btn" (click)="toggleJuliaPullOut()">
-        <i #colorPullDownCaret2 class="fa fa-caret-right" aria-hidden="true"></i>
-      </div>
-
-      <div #juliaPickerDiv class="juliaPicker">
-        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
-      </div>
-
-    </div>
-
-    <div #fractalContainer id="fractalContainer">
-      <app-fractalView id="mainFractalView" #mainFractalView></app-fractalView>
-    </div>
-
-    <div #colorControls class="controls top-left">
-      <div class="select-container">
-        <select #eqSelect class="select" id="eq-select" (change)="onEqChanged($event)">
-          <option value="smoothMandelbrot">Mandelbrot</option>
-          <option value="smoothBurningShip">Burning Ship</option>
-          <option value="smoothJulia">Smooth Julia</option>
-        </select>
-        <div class="select-icon" id="select-caret-down">
-          <i>f
-            <sub>(x)</sub>
-          </i>
-        </div>
-      </div>
-    </div>
-
-
-    <div #colorControls class="controls top-right">
-      <div class="select-container">
-        <select #colourSelect class="select" id="colour-select" dir="rtl" (change)="onColorChanged($event)">
-          <option value={{colorBlueGold}}>Blue/Gold</option>
-          <option value={{colorBW}}>B/W</option>
-          <option value={{colorRainbow}}>Rainbow</option>
-        </select>
-        <div class="select-icon" id="select-caret-down">
-          <i class="fa fa-paint-brush" aria-hidden="true"></i>
-        </div>
-      </div>
-    </div>
-
-    <div #iterationControls class="controls bottom-left">
-      <div class="btn-group" data-toggle="buttons">
-        <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-          <i class="fa fa-minus" aria-hidden="true"></i>
-        </a>
-        <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
-        <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
-          <i class="fa fa-plus" aria-hidden="true"></i>
-        </a>
-      </div>
-    </div>
-
     <div class="controls bottom-right">
       <div #zoomControls class="btn-group-vertical" data-toggle="buttons">
         <a (click)="zoomInClick($event)" class="btn">
@@ -100,12 +22,116 @@
 
     </div>
 
+    <div class="controls bottom-left">
+      <div #saveButton class="select-container">
+        <select #saveSelect class="select" id="eq-select" (change)="save($event)">
+          <option value="non-option" disabled>Download Format</option>
+          <option value="HD 1920×1080">HD 1920×1080</option>
+          <option value="2K 2048×1080">2K 2048×1080</option>
+          <option value="4K 4096×2160">4K 4096×2160</option>
+          <option value="8k 7680×4320">8k 7680×4320</option>
+          <option value="16k 15360×8640">16k 15360×8640</option>
+        </select>
+        <div #saveIconDiv class="select-icon" id="select-caret-down">
+            <div #saveIconLoading style="color: #9784ed; display:none" class="la-ball-grid-pulse la-sm">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+         <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div #juliaPullOut class="juliaPullOut center-left">
+
+      <div id="juliaPullOut-btn" (click)="toggleJuliaPullOut()">
+        <i #colorPullDownCaret2 class="fa fa-caret-right" aria-hidden="true"></i>
+      </div>
+
+      <div #juliaPickerDiv class="juliaPicker">
+        <app-juliaPicker #juliaPicker (numberChanged)="juliaNumberChanged($event)"></app-juliaPicker>
+      </div>
+
+    </div>
+
+    <div #colorPullDown id="colorPullDown">
+      <div id="colorPullDown-btn" (click)="toggleColorPullDown($event)">
+        <i #colorPullDownCaret class="fa fa-caret-down" aria-hidden="true"></i>
+      </div>
+
+      <div #histogramdiv id="histogrampanel">
+        <app-histogram #histogram></app-histogram>
+
+      </div>
+      <div #gradientdiv id="gradientpanel">
+        <app-gradientbuilder #gradient></app-gradientbuilder>
+      </div>
+    </div>
+
+    <div #colorControls class="controls top-right">
+      <div class="select-container">
+        <select #eqSelect class="select" id="eq-select" dir="rtl" (change)="onEqChanged($event)">
+          <option value="non-option" disabled>Choose Colour</option>
+          <option value="smoothMandelbrot">Mandelbrot</option>
+          <option value="smoothBurningShip">Burning Ship</option>
+          <option value="smoothJulia">Julia</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i>f
+            <sub>(x)</sub>
+          </i>
+        </div>
+      </div>
+      <div class="select-container ">
+        <select #colourSelect class="select" id="colour-select" dir="rtl" (change)="onColorChanged($event)">
+          <option value="non-option" disabled>Choose equation</option>
+          <option value={{colorBlueGold}}>Blue/Gold</option>
+          <option value={{colorBW}}>B/W</option>
+          <option value={{colorRainbow}}>Rainbow</option>
+        </select>
+        <div class="select-icon" id="select-caret-down">
+          <i class="fa fa-paint-brush" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div #iterationControls class="controls top-left">
+      <div class="btn-group shaddow-high" data-toggle="buttons">
+        <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-minus" aria-hidden="true"></i>
+        </a>
+        <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
+        <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+
+    <div #fractalContainer id="fractalContainer">
+      <app-fractalView id="mainFractalView" #mainFractalView></app-fractalView>
+    </div>
+
     <div #alert class="alert center" (wheel)="$event.preventDefault()">
       <h4>Alert</h4>
       <p>{{alertText}}</p>
       <a (click)="closeAlert($event)" class="btn">
         Ok
         <i class="fa fa-check" aria-hidden="true"></i>
+      </a>
+    </div>
+
+    <div #downloadReadyAlert class="alert center" (wheel)="$event.preventDefault()">
+      <h4>Your Download Is Ready</h4>
+      <a href="{{imageToDownload}}" (click)="download()" class="btn" download="fractal.jpg">
+        Download <i class="fa fa-save" aria-hidden="true"></i>
+      </a>
+
+      <a  (click)="download()" class="btn">
+        Cancel 
       </a>
     </div>
 

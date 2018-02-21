@@ -12,17 +12,32 @@ export namespace Fractals {
 		img: ImageData;
 		private calculationFunction: Function;
 		private renderVersion: number = 0;
-		private updateTimeout: number = 100
-		private lastUpdate: number;
+		public updateTimeout: number = 100
+		private lastUpdate: number = (new Date).getTime();
 		private animator: FractalNavigationAnimator;
 		private maxZoomListner: MaxZoomListner;
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
 		private compiledColor: Array<FractalColor.RGBcolor>
+		private subscribers: Array<ChangeObserver> = new Array();
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
 			this.color = color;
 			this.color.subscribe(this);
+		}
+
+		public subscribe(observer: ChangeObserver) {
+			this.subscribers.push(observer);
+		}
+
+		public unsubscribe(observer: ChangeObserver) {
+			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
+		}
+
+		public notify() {
+			for (let i = 0; i < this.subscribers.length; i++) {
+				this.subscribers[i].changed(this);
+			}
 		}
 
 		public renderIfVersionIsNew(v: number): void {
@@ -35,16 +50,20 @@ export namespace Fractals {
 			this.calculationFunction = f;
 		}
 
+		public getCalculationFunction() {
+			return this.calculationFunction;
+		}
+
 		public linearGradientChanged() {
 			this.render();
 		}
 
-		public render(): void {
+		public render(fullRes:boolean = false): void {
 			this.stopRendering();
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
 				this.notifiMaxZoomListeners();
 			}
-			this.complexPlain.makeAlternativeResolutionCanvas(0.2);
+			if (!fullRes) this.complexPlain.makeAlternativeResolutionCanvas(0.2);
 			this.histogram.startHistogram(this.iterations);
 			this.compiledColor = this.color.getCompiledColor(this.iterations);
 			var self = this;
@@ -72,7 +91,6 @@ export namespace Fractals {
 				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
 
 				this.histogram.incrementData(Math.floor(n))
-
 				let col = FractalColor.LinearGradient.smoothColorFromCompiledColor(n, this.compiledColor);
 
 				this.img.data[(x * 4) + 0] = col.r;
@@ -86,7 +104,7 @@ export namespace Fractals {
 				var now = (new Date).getTime();
 				if ((now - this.lastUpdate) >= this.updateTimeout) {
 					this.lastUpdate = now;
-					var self = this;
+					var self = this;			
 					setTimeout(function () {
 						self.scanLine(y + 1, version);
 					}, 1);// using timeout 1 to force thread to yeald so we can update UI
@@ -104,7 +122,10 @@ export namespace Fractals {
 					self.scanLine(0, version);
 				}, 1);
 			}
-			else this.histogram.notify(null);
+			else {
+				this.notify();
+				this.histogram.notify(null);
+			}
 		}
 
 		public getAnimator(): FractalNavigationAnimator {
@@ -155,24 +176,9 @@ export namespace Fractals {
 		private drawableCanvas: HTMLCanvasElement;
 		private scanLine: ImageData;
 		private viewCanvas: HTMLCanvasElement;
-		private subscribers: Array<ComplexPlainObserver> = new Array();
 
 		constructor(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
 			this.replaceView(realCenter, imaginaryCenter, realWidth, canvas);
-		}
-
-		public subscribe(observer: ComplexPlainObserver) {
-			this.subscribers.push(observer);
-		}
-
-		public unsubscribe(observer: ComplexPlainObserver) {
-			this.subscribers.splice(this.subscribers.lastIndexOf(observer), 1);
-		}
-
-		public notify() {
-			for (let i = 0; i < this.subscribers.length; i++) {
-				this.subscribers[i].changed();
-			}
 		}
 
 		replaceView(realCenter: number, imaginaryCenter: number, realWidth: number, canvas: HTMLCanvasElement) {
@@ -183,7 +189,6 @@ export namespace Fractals {
 			this.complexSquare = new ComplexSquare(center, width, height);
 			this.viewCanvas = canvas;
 			this.makeAlternativeResolutionCanvas(1);
-			this.notify();
 		}
 
 		updateCanvas(y: number): void {
@@ -257,8 +262,8 @@ export namespace Fractals {
 	}
 
 
-	export interface ComplexPlainObserver {
-		changed();
+	export interface ChangeObserver {
+		changed(fractal:Fractal);
 	}
 
 

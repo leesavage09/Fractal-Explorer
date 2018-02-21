@@ -8,7 +8,7 @@ import { Fractals } from "../../fractal/fractal.module";
   templateUrl: "./fractalView.component.html",
   styleUrls: ["./fractalView.component.scss"]
 })
-export class FractalViewComponent implements OnInit, Fractals.ComplexPlainObserver {
+export class FractalViewComponent implements Fractals.ChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;
   @Output() viewChanged = new EventEmitter();
   private fractal: Fractals.Fractal;
@@ -16,12 +16,6 @@ export class FractalViewComponent implements OnInit, Fractals.ComplexPlainObserv
 
   constructor() { }
 
-  ngOnInit() {
-    let canvas = <HTMLCanvasElement>this.HTMLcanvas.nativeElement;
-    let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
-    ctx.canvas.width = canvas.offsetWidth;
-    ctx.canvas.height = canvas.offsetHeight;
-  }
 
   /*
   * Public 
@@ -29,7 +23,8 @@ export class FractalViewComponent implements OnInit, Fractals.ComplexPlainObserv
 
   public setFractal(fractal: Fractals.Fractal) {
     this.fractal = fractal;
-    this.fractal.complexPlain.subscribe(this);
+    this.fractal.subscribe(this);
+    this.sizeChanged()
   }
 
   public changed() {
@@ -48,6 +43,28 @@ export class FractalViewComponent implements OnInit, Fractals.ComplexPlainObserv
     let cp = this.fractal.complexPlain;
     cp.replaceView(cp.getSquare().center.r, cp.getSquare().center.i, cp.getSquare().width, canvas);
     this.fractal.render();
+  }
+
+  public downloadImage(width: number, height: number,callback:Fractals.ChangeObserver) {
+    let oldCp = this.fractal.complexPlain;
+
+    let canvas = <HTMLCanvasElement>document.createElement('canvas');
+    let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.canvas.width = width
+    ctx.canvas.height = height
+
+    let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
+    let fractal = new Fractals.Fractal(cp, this.fractal.getCalculationFunction(), this.fractal.getColor());
+    fractal.iterations = this.fractal.iterations;
+    fractal.updateTimeout = 10;
+    fractal.getColor().unsubscribe(fractal);
+    
+
+    fractal.subscribe(callback)
+    fractal.render(true);
   }
 
 

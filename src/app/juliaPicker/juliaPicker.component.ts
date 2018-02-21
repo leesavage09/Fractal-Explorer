@@ -22,6 +22,7 @@ export class JuliaPickerComponent {
   private data: Array<number>;
   private startX: number;
   private startY: number;
+  public hasInit:boolean = false
   constructor() {
   }
 
@@ -36,6 +37,7 @@ export class JuliaPickerComponent {
     this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), FractalEquations.smoothMandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
+    this.hasInit = true;
   }
 
   public getFractal(): FractalViewComponent {
