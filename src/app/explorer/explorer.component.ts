@@ -262,7 +262,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     var host = location.protocol + "//" + window.location.hostname + ":" + location.port + "/?"
 
     let theme = this.theme
-    let equation = this.fractal.getCalculationFunction().constructor.name
+    let equation = this.fractal.getCalculationFunction().getName();
     let color = this.fractal.getColor().encodeJSON()
     let iterations = this.fractal.iterations.toString()
     let complexCenter = this.fractal.complexPlain.getSquare().center.toString();

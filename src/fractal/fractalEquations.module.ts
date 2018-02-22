@@ -39,6 +39,9 @@ export namespace FractalEquations {
 		copy(): equation {
 			return new Mandelbrot()
 		}
+		getName():string{
+			return "Mandelbrot";
+		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
 			var Zi = 0;
@@ -69,6 +72,9 @@ export namespace FractalEquations {
 	export class Tricorn implements FractalEquations.equation {
 		copy(): equation {
 			return new Tricorn()
+		}
+		getName():string{
+			return "Tricorn";
 		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
@@ -101,6 +107,9 @@ export namespace FractalEquations {
 	export class MandelbrotPow4 implements FractalEquations.equation {
 		copy(): equation {
 			return new MandelbrotPow4()
+		}
+		getName():string{
+			return "MandelbrotPow4";
 		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
@@ -140,6 +149,9 @@ export namespace FractalEquations {
 	export class MandelbrotPow6 implements FractalEquations.equation {
 		copy(): equation {
 			return new MandelbrotPow6()
+		}
+		getName():string{
+			return "MandelbrotPow6";
 		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
@@ -186,6 +198,9 @@ export namespace FractalEquations {
 		copy(): equation {
 			return new BurningShip()
 		}
+		getName():string{
+			return "BurningShip";
+		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
 			var Zi = 0;
@@ -213,6 +228,9 @@ export namespace FractalEquations {
 		public juliaImaginary: number = 0;
 		copy(): equation {
 			return new Julia()
+		}
+		getName():string{
+			return "Julia";
 		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = Cr;
@@ -244,6 +262,7 @@ export namespace FractalEquations {
 
 	export interface equation {
 		copy(): equation
+		getName():string;
 		calculate(Cr: number, Ci: number, i: number, e: number): number
 	}
 }
