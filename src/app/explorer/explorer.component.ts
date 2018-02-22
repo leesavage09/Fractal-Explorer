@@ -91,6 +91,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLjuliaPullOut.nativeElement.style.display = "none"
     this.HTMLgradient.setColorPicker(this.HTMLjscolor);
 
+    this.HTMLcolorPullDown.nativeElement.style.height = "0px";
+    
     this.HTMLexplorer.nativeElement.style.width = this.width.toString();
     this.HTMLexplorer.nativeElement.style.height = this.height.toString();
     this.explorerCSSHeight = getComputedStyle(this.HTMLexplorer.nativeElement).height;
@@ -349,7 +351,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     if (this.HTMLhistogramdiv.nativeElement.style.display == "block") {
       this.HTMLgradient.setGradient(null);
       this.HTMLhistogram.setFractal(null);
-      this.HTMLcolorPullDown.nativeElement.style.height = 0;
+      this.HTMLcolorPullDown.nativeElement.style.height = "0px";
       this.HTMLhistogramdiv.nativeElement.style.display = "none";
       this.HTMLgradientdiv.nativeElement.style.display = "none";
       this.HTMLcolorPullDownCaret.nativeElement.setAttribute("class", "fa fa-caret-down");

@@ -204,8 +204,11 @@ export class HistogramComponent implements OnInit, FractalHistogram.HistogramObs
   }
 
   private getCSSWidth(marker: HTMLElement): number {
-    let border = parseInt(getComputedStyle(marker).borderWidth) * 2;
-    return border + parseInt(getComputedStyle(marker).width.replace("px", ""));
+    let left = getComputedStyle(marker).borderLeftWidth;
+    let right = getComputedStyle(marker).borderRightWidth;
+    let border =  parseInt(left)+parseInt(right);
+    let width = parseInt(getComputedStyle(marker).width.replace("px", ""));
+    return border + width    
   }
 
   private getCSSLeft(marker: HTMLElement): number {

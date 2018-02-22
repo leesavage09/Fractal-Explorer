@@ -38,7 +38,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     this.windowResized();
   }
 
-  public setColorPicker(colorPicker:ElementRef){
+  public setColorPicker(colorPicker: ElementRef) {
     this.colorPicker = colorPicker;
   }
 

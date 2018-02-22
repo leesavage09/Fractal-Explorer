@@ -55,13 +55,13 @@ export class StopMarkerComponent {
   mouseup(event): void {
     if (this.moveStarted) {
       this.moveStarted = false
-      this.mouseupWindow()
+      this.mouseupWindow(event)
     } else {
       this.colorPicker.nativeElement.jscolor.show();
      }
   }
 
-  mouseupWindow() {
+  mouseupWindow(event) {
     event.stopPropagation();
     this.parent.dropMarker();
   }
@@ -158,8 +158,11 @@ export class StopMarkerComponent {
   }
 
   getCSSWidth(): number {
-    let border = parseInt(getComputedStyle(this.stopMarker.nativeElement).borderWidth) * 2;
-    return border + parseInt(getComputedStyle(this.stopMarker.nativeElement).width.replace("px", ""));
+    let left = getComputedStyle(this.stopMarker.nativeElement).borderLeftWidth;
+    let right = getComputedStyle(this.stopMarker.nativeElement).borderRightWidth;
+    let border =  parseInt(left)+parseInt(right);
+    let width = parseInt(getComputedStyle(this.stopMarker.nativeElement).width.replace("px", ""));
+    return border + width
   }
 
   getCSSLeft(): number {
