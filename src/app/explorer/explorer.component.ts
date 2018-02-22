@@ -23,7 +23,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   // component config
   @Input() width: string = "300";
   @Input() height: string = "200";
-  @Input() theme: string = "fractal-lime";
+  @Input() theme: string = "fractal-black";
   @Input() maximized: string = "false";
   // Fractal config
   @Input() equation: string = "Mandelbrot" ;
@@ -139,6 +139,15 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     let fractalEq:FractalEquations.equation;
     if (this.equation == "Mandelbrot") {
       fractalEq = new FractalEquations.Mandelbrot;
+    }
+    if (this.equation == "MandelbrotPow4") {
+      fractalEq = new FractalEquations.MandelbrotPow4;
+    }
+    if (this.equation == "MandelbrotPow6") {
+      fractalEq = new FractalEquations.MandelbrotPow6;
+    }
+    if (this.equation == "Tricorn") {
+      fractalEq = new FractalEquations.Tricorn;
     }
     if (this.equation == "BurningShip") {
       fractalEq = new FractalEquations.BurningShip;
@@ -361,6 +370,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     if (eqString == "Mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.Mandelbrot);
+    }
+    if (eqString == "MandelbrotPow4") {
+      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.setCalculationFunction(new FractalEquations.MandelbrotPow4);
+    }
+    if (eqString == "MandelbrotPow6") {
+      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.setCalculationFunction(new FractalEquations.MandelbrotPow6);
+    }
+    if (eqString == "Tricorn") {
+      this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+      this.fractal.setCalculationFunction(new FractalEquations.Tricorn);
     }
     else if (eqString == "BurningShip") {
       this.fractal.complexPlain.replaceView(-0.5, -0.5, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
