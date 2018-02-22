@@ -279,36 +279,36 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
     content = encodeURI(content);
 
-    let service = null
+    // let service = null
 
-    switch (event.target.value) {
-      case "facebook":
-        service = "http://www.facebook.com/sharer.php?u=" + content
-        break;
-      case "fb-messenger":
-        service = "fb-messenger:share/?link=" + content
-        break;
-      case "whatsapp":
-        service = "whatsapp://send?text=" + content
-        break;
-      case "twitter":
-        service = "https://twitter.com/share?url=" + content
-        break;
-      case "linkedin":
-        service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
-        break;
-      case "plus.google":
-        service = "https://plus.google.com/share?url=" + content
-        break;
-      case "mailto":
-        service = "mailto:?Body=" + content;
-        break;
-    }
+    // switch (event.target.value) {
+    //   case "facebook":
+    //     service = "http://www.facebook.com/sharer.php?u=" + content
+    //     break;
+    //   case "fb-messenger":
+    //     service = "fb-messenger:share/?link=" + content
+    //     break;
+    //   case "whatsapp":
+    //     service = "whatsapp://send?text=" + content
+    //     break;
+    //   case "twitter":
+    //     service = "https://twitter.com/share?url=" + content
+    //     break;
+    //   case "linkedin":
+    //     service = "http://www.linkedin.com/shareArticle?mini=true&amp;url=" + content
+    //     break;
+    //   case "plus.google":
+    //     service = "https://plus.google.com/share?url=" + content
+    //     break;
+    //   case "mailto":
+    //     service = "mailto:?Body=" + content;
+    //     break;
+    // }
 
-    if (service != null) window.open(service);
-    else {
+    // if (service != null) window.open(service);
+    // else {
       this.HTMLalertComponent.titleStr = "Share Link"
-      this.HTMLalertComponent.textStr = "you can share this link to this session."
+      this.HTMLalertComponent.textStr = "You can share this link."
       this.HTMLalertComponent.inputStr = content;
       this.HTMLalertComponent.closeStr = "Close"
       this.HTMLalertComponent.enableOptions(true, false, false, true)
@@ -320,8 +320,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
         self.HTMLalertComponent.selectInput();
       }, 100);
       
-    }
-    (<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
+   // }
+    //(<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
 
   windowResized() {

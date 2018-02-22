@@ -215,7 +215,7 @@ $font-size-small: 14px !default;
         pointer-events: none;
         padding: $padding;
         font-size: 0px;
-
+       
         app-gradientpanel, app-histogram {
             pointer-events: all;
         }
@@ -236,7 +236,7 @@ $font-size-small: 14px !default;
         .select-container {
             position: relative;
             display: inline-block;
-
+            
             .select {
                 -moz-appearance: none;
                 -webkit-appearance: none;
@@ -244,8 +244,8 @@ $font-size-small: 14px !default;
                 @include interactive;
 
                 padding: $padding;
-                height: $button-size;
-                width: $button-size;
+                height: $button-size+2;
+                width: $button-size+2;
                 font-size: 0px;
 
                 option {
@@ -256,7 +256,7 @@ $font-size-small: 14px !default;
                     cursor: wait;
                     background-color: rgb(15, 15, 15);
                     border-color: grey;
-                }
+                } 
             }
 
             .select-icon {
@@ -264,7 +264,7 @@ $font-size-small: 14px !default;
                 left: 0px;
                 top: 0px;
                 padding-top: $padding + 2;
-                padding-left: $padding + 2;
+                padding-left: $padding + 4;
                 line-height: $font-size - $padding / 2;
                 color: $colour-tool;
                 pointer-events: none;
@@ -311,8 +311,11 @@ $font-size-small: 14px !default;
         .btn {
             display: inline-block;
             width: $button-size;
-            height: $button-size;
-            margin-top: $input-spacing * 2;
+            height: $button-size;            
+            line-height: $button-size;
+            i{
+                margin: auto;
+            }
         }
     }
 
@@ -395,11 +398,21 @@ $font-size-small: 14px !default;
         bottom: 0;
         left: 0;
 
+        .select-container {
+            position: relative;
+            bottom: -5px;
+            left: 0;
+        }
+
         :first-child {
             margin-right: $padding;
         }
 
         select {
+            box-shadow: $shaddow-low;            
+        }
+
+        a {
             box-shadow: $shaddow-low;
         }
     }
@@ -417,6 +430,8 @@ $font-size-small: 14px !default;
             .btn {
                 margin-left: auto;
                 display: block;
+                margin-top: $input-spacing * 2;
+                margin-bottom: $input-spacing * 2;
             }
 
             > .btn:first-child {
