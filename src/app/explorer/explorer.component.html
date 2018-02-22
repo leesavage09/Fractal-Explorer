@@ -84,9 +84,9 @@
       <div class="select-container">
         <select #eqSelect class="select" id="eq-select" dir="rtl" (change)="onEqChanged($event)">
           <option value="non-option" disabled>Choose Colour</option>
-          <option value="smoothMandelbrot">Mandelbrot</option>
-          <option value="smoothBurningShip">Burning Ship</option>
-          <option value="smoothJulia">Julia</option>
+          <option value="mandelbrot">Mandelbrot</option>
+          <option value="burningShip">Burning Ship</option>
+          <option value="julia">Julia</option>
         </select>
         <div class="select-icon" id="select-caret-down">
           <i>f
@@ -100,6 +100,10 @@
           <option value={{colorBlueGold}}>Blue/Gold</option>
           <option value={{colorBW}}>B/W</option>
           <option value={{colorRainbow}}>Rainbow</option>
+          <option value={{colorBlackBlue}}>Black/Blue</option>
+          <option value={{colorCell}}>Cell</option>
+          <option value={{colorBlob}}>Blob</option> 
+          <option value={{colorCrystal}}>Crystal</option> 
         </select>
         <div class="select-icon" id="select-caret-down">
           <i class="fa fa-paint-brush" aria-hidden="true"></i>
@@ -112,7 +116,7 @@
         <a (touchstart)="startChangingIterations(0.95)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(0.9)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-minus" aria-hidden="true"></i>
         </a>
-        <input class="iteration-textbox" [(ngModel)]="iterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
+        <input class="iteration-textbox" [(ngModel)]="NumIterations" (ngModelChange)="iterationsChanged()" type="number" min="1" value="85">
         <a (touchstart)="startChangingIterations(1.05)" (touchend)="stopChangingIterations()" (mousedown)='startChangingIterations(1.1)' (mouseup)="stopChangingIterations()" (mouseleave)='stopChangingIterations()' class="btn">
           <i class="fa fa-plus" aria-hidden="true"></i>
         </a>

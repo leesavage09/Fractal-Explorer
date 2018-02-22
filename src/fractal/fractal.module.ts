@@ -1,6 +1,7 @@
 import { FractalColor, FractalHistogram } from "../fractal/fractalColouring";
 import { ComplexNumber, ComplexSquare } from "../fractal/complexNumbers";
 import { General, EasingFunctions } from "../helper/helper.module";
+import { FractalEquations } from "./fractalEquations.module";
 
 export namespace Fractals {
 
@@ -10,7 +11,7 @@ export namespace Fractals {
 		private color: FractalColor.LinearGradient;
 		complexPlain: ComplexPlain;
 		img: ImageData;
-		private calculationFunction: Function;
+		private calculationFunction: FractalEquations.equation;
 		private renderVersion: number = 0;
 		public updateTimeout: number = 100
 		private lastUpdate: number = (new Date).getTime();
@@ -19,7 +20,7 @@ export namespace Fractals {
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
 		private compiledColor: Array<FractalColor.RGBcolor>
 		private subscribers: Array<ChangeObserver> = new Array();
-		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: Function, color: FractalColor.LinearGradient) {
+		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
 			this.color = color;
@@ -46,11 +47,11 @@ export namespace Fractals {
 			}
 		}
 
-		public setCalculationFunction(f: Function) {
+		public setCalculationFunction(f: FractalEquations.equation):void {
 			this.calculationFunction = f;
 		}
 
-		public getCalculationFunction() {
+		public getCalculationFunction():FractalEquations.equation {
 			return this.calculationFunction;
 		}
 
@@ -87,7 +88,7 @@ export namespace Fractals {
 
 			for (var x = 0; x <= width; x++) {
 				var Cr = this.complexPlain.getRealNumber(x);
-				let n = this.calculationFunction(Cr, Ci, this.iterations, this.escapeRadius, this.compiledColor);
+				let n = this.calculationFunction.calculate(Cr, Ci, this.iterations, this.escapeRadius);
 				//if (n > this.iterations) throw Error("n out of bounds " + n + ">" + this.iterations)
 
 				this.histogram.incrementData(Math.floor(n))
@@ -252,11 +253,11 @@ export namespace Fractals {
 			return { x: x, y: y };
 		}
 
-		getImaginaryNumber(pixelY: number): Number {
+		getImaginaryNumber(pixelY: number): number {
 			return General.mapInOut(pixelY, 0, this.drawableCanvas.height - 1, this.complexSquare.max.i, this.complexSquare.min.i);
 		}
 
-		getRealNumber(pixelX: number): Number {
+		getRealNumber(pixelX: number): number {
 			return General.mapInOut(pixelX, 0, this.drawableCanvas.width - 1, this.complexSquare.min.r, this.complexSquare.max.r);
 		}
 	}

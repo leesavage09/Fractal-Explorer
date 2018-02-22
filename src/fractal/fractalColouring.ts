@@ -36,7 +36,19 @@ export namespace FractalColor {
 			this.arr = obj.arr;
 			this.phase = obj.phase;
 			this.frequency = obj.frequency
+			this.min = obj.min
+			this.mid = obj.mid
+			this.max = obj.max
 		}
+
+		public encodeJSON(): string {
+			return JSON.stringify(this, function replacer(key, value) {
+				if (key == "subscribers") return undefined;
+				else return value;
+			})
+		}
+
+
 
 		public subscribe(observer: LinearGradientObserver) {
 			this.subscribers.push(observer);
@@ -47,6 +59,9 @@ export namespace FractalColor {
 		}
 
 		public notify(excludeObserver: LinearGradientObserver) {
+			//console.log("Color:")
+			//console.log(this.encodeJSON())
+			//console.log()
 			for (let i = 0; i < this.subscribers.length; i++) {
 				if (excludeObserver != this.subscribers[i]) {
 					this.subscribers[i].linearGradientChanged();
@@ -248,11 +263,11 @@ export namespace FractalHistogram {
 		}
 
 		public getData() {
-			return this.histogram.slice(1, this.histogram.length-1);
+			return this.histogram.slice(1, this.histogram.length - 1);
 		}
 
 		public incrementData(i: number) {
-			if (this.subscribers.length<1) return;
+			if (this.subscribers.length < 1) return;
 			this.histogram[i] = this.histogram[i] + 1;
 		}
 

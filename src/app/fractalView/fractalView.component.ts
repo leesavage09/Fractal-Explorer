@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
+import { FractalEquations } from "../../fractal/fractalEquations.module";
 
 
 @Component({
@@ -27,6 +28,10 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     this.sizeChanged()
   }
 
+  public getFractal(): Fractals.Fractal {
+    return this.fractal;
+  }
+
   public changed() {
     this.viewChanged.emit();
   }
@@ -45,7 +50,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     this.fractal.render();
   }
 
-  public downloadImage(width: number, height: number,callback:Fractals.ChangeObserver) {
+  public downloadImage(width: number, height: number, callback: Fractals.ChangeObserver) {
     let oldCp = this.fractal.complexPlain;
 
     let canvas = <HTMLCanvasElement>document.createElement('canvas');
@@ -56,12 +61,17 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     ctx.canvas.width = width
     ctx.canvas.height = height
 
+    let newFun = new FractalEquations.julia();
+    let oldfun = <FractalEquations.julia>this.fractal.getCalculationFunction();
+    newFun.juliaReal = oldfun.juliaReal
+    newFun.juliaImaginary = oldfun.juliaImaginary
+
     let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
-    let fractal = new Fractals.Fractal(cp, this.fractal.getCalculationFunction(), this.fractal.getColor());
+    let fractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());
     fractal.iterations = this.fractal.iterations;
     fractal.updateTimeout = 10;
     fractal.getColor().unsubscribe(fractal);
-    
+
 
     fractal.subscribe(callback)
     fractal.render(true);

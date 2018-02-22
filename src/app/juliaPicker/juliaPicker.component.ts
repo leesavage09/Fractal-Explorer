@@ -22,28 +22,46 @@ export class JuliaPickerComponent {
   private data: Array<number>;
   private startX: number;
   private startY: number;
-  public hasInit:boolean = false
+  public hasInit: boolean = false
   constructor() {
   }
 
 
-  init(color: FractalColor.LinearGradient, iterations: number) {
+  init(color: FractalColor.LinearGradient, iterations: number, pickerLoc: String) {
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), FractalEquations.smoothMandelbrot, color);
+    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.mandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
+
+    this.setPickerString(pickerLoc);
     this.hasInit = true;
   }
 
-  public getFractal(): FractalViewComponent {
+  public getFractalView(): FractalViewComponent {
     return this.mainFractalView;
   }
 
+
+
+  public setPickerString(pickerLoc: String) {
+    //set the picker location
+    let centerJuliaPicker = pickerLoc.split(",");
+    let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+    let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
+    let complexCenterJuliaPicker = new ComplexNumber(centercenterJuliaPickerR, centercenterJuliaPickerI);
+    this.setPicker(complexCenterJuliaPicker);
+  }
+
+  public setPicker(pickerCenter: ComplexNumber) {
+    //set the picker location
+    let pos = this.juliaFractal.complexPlain.getMouse(pickerCenter)
+    this.setXY(pos.x, pos.y);
+  }
 
 
   /*
@@ -108,8 +126,10 @@ export class JuliaPickerComponent {
   */
 
   public setIterations(i: number) {
-    this.juliaFractal.iterations = i;
-    this.juliaFractal.render();
+    if (this.hasInit) {
+      this.juliaFractal.iterations = i;
+      this.juliaFractal.render();
+    }
   }
 
 

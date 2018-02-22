@@ -18,44 +18,54 @@ import { FractalViewComponent } from '../fractalView/fractalView.component';
   styleUrls: ["./explorerThemes.component.scss"]
 })
 export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
-  @Input() width: string;
-  @Input() height: string;
+  // component config
+  @Input() width: string = "300";
+  @Input() height: string = "200";
+  @Input() theme: string = "fractal-black";
+  @Input() maximized: string = "false";
+  // Fractal config
   @Input() equation: string;
-  @Input() theme: string;
   @Input() color: string;
-  @Input() iterations: number = 50;
-  @Input() gradientPhase: number = 0;
-  @Input() gradientFreq: number = 1;
-  @Input() complexCenter: string;
-  @Input() complexWidth: string;
-  @ViewChild('explorer') HTMLexplorer: ElementRef;
-  @ViewChild('mainFractalView') mainFractalView: FractalViewComponent;
-  @ViewChild('juliaPicker') HTMLjuliaPicker: JuliaPickerComponent;
-  @ViewChild('juliaPickerDiv') HTMLjuliaPickerDiv: ElementRef;
-  @ViewChild('juliaPullOut') HTMLjuliaPullOut: ElementRef;
-  @ViewChild('alert') HTMLalert: ElementRef;
-  @ViewChild('iterationControls') HTMLiterationControls: ElementRef;
-  @ViewChild('colorControls') HTMLcolorControls: ElementRef;
-  @ViewChild('zoomControls') HTMLzoomControls: ElementRef;
-  @ViewChild('fullScreenControls') HTMLfullScreenControls: ElementRef;
-  @ViewChild('eyeControls') HTMLeyeControls: ElementRef;
-  @ViewChild('colourSelect') HTMLcolourSelect: ElementRef;
-  @ViewChild('gradientBuilder') HTMLgradientBuilder: ElementRef;
-  @ViewChild('jscolor') HTMLjscolor: ElementRef;
-  @ViewChild('histogram') HTMLhistogram: HistogramComponent;
-  @ViewChild('gradient') HTMLgradient: GradientBuilderComponent;
-  @ViewChild('colorPullDown') HTMLcolorPullDown: ElementRef;
-  @ViewChild('histogramdiv') HTMLhistogramdiv: ElementRef;
-  @ViewChild('gradientdiv') HTMLgradientdiv: ElementRef;
-  @ViewChild('colorPullDownCaret') HTMLcolorPullDownCaret: ElementRef;
-  @ViewChild('saveButton') HTMLsaveButton: ElementRef;
-  @ViewChild('eqSelect') HTMLeqSelect: ElementRef;
-  @ViewChild('downloadReadyAlert') HTMLdownloadReadyAlert: ElementRef;
-  @ViewChild('saveSelect') HTMLsaveSelect: ElementRef;
-  @ViewChild('saveIcon') HTMLsaveIcon: ElementRef;
-  @ViewChild('shareSelect') HTMLshareSelect: ElementRef;
-  @ViewChild('shareButton') HTMLshareButton: ElementRef;
+  @Input() iterations: string = "50";
+  @Input() complexCenter: string = "-0.8, 0";
+  @Input() complexWidth: string = "3";
+  @Input() complexJuliaPicker: string = "0,0";
 
+  @ViewChild('explorer') readonly HTMLexplorer: ElementRef;
+  @ViewChild('mainFractalView') readonly mainFractalView: FractalViewComponent;
+  @ViewChild('juliaPicker') readonly HTMLjuliaPicker: JuliaPickerComponent;
+  @ViewChild('juliaPickerDiv') readonly HTMLjuliaPickerDiv: ElementRef;
+  @ViewChild('juliaPullOut') readonly HTMLjuliaPullOut: ElementRef;
+  @ViewChild('alert') readonly HTMLalert: ElementRef;
+  @ViewChild('iterationControls') readonly HTMLiterationControls: ElementRef;
+  @ViewChild('colorControls') readonly HTMLcolorControls: ElementRef;
+  @ViewChild('zoomControls') readonly HTMLzoomControls: ElementRef;
+  @ViewChild('fullScreenControls') readonly HTMLfullScreenControls: ElementRef;
+  @ViewChild('eyeControls') readonly HTMLeyeControls: ElementRef;
+  @ViewChild('colourSelect') readonly HTMLcolourSelect: ElementRef;
+  @ViewChild('gradientBuilder') readonly HTMLgradientBuilder: ElementRef;
+  @ViewChild('jscolor') readonly HTMLjscolor: ElementRef;
+  @ViewChild('histogram') readonly HTMLhistogram: HistogramComponent;
+  @ViewChild('gradient') readonly HTMLgradient: GradientBuilderComponent;
+  @ViewChild('colorPullDown') readonly HTMLcolorPullDown: ElementRef;
+  @ViewChild('histogramdiv') readonly HTMLhistogramdiv: ElementRef;
+  @ViewChild('gradientdiv') readonly HTMLgradientdiv: ElementRef;
+  @ViewChild('colorPullDownCaret') readonly HTMLcolorPullDownCaret: ElementRef;
+  @ViewChild('saveButton') readonly HTMLsaveButton: ElementRef;
+  @ViewChild('eqSelect') readonly HTMLeqSelect: ElementRef;
+  @ViewChild('downloadReadyAlert') readonly HTMLdownloadReadyAlert: ElementRef;
+  @ViewChild('saveSelect') readonly HTMLsaveSelect: ElementRef;
+  @ViewChild('saveIcon') readonly HTMLsaveIcon: ElementRef;
+  @ViewChild('shareSelect') readonly HTMLshareSelect: ElementRef;
+  @ViewChild('shareButton') readonly HTMLshareButton: ElementRef;
+  readonly colorBW: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
+  readonly colorRainbow: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":0,"b":0}},{"stop":0.166,"color":{"r":255,"g":100,"b":0}},{"stop":0.332,"color":{"r":249,"g":255,"b":0}},{"stop":0.498,"color":{"r":0,"g":255,"b":13}},{"stop":0.664,"color":{"r":0,"g":67,"b":255}},{"stop":0.830,"color":{"r":133,"g":0,"b":255}},{"stop":1,"color":{"r":255,"g":0,"b":215}}]}'
+  readonly colorBlueGold: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":51,"b":255}},{"stop":0.8041666666666667,"color":{"r":255,"g":200,"b":0}},{"stop":1,"color":{"r":255,"g":115,"b":0}}]}';
+  readonly colorBlackBlue: string = '{"phase":0,"frequency":1,"min":0.04325513196480939,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.21994134897360704,"color":{"r":0,"g":51,"b":255}},{"stop":0.49560117302052786,"color":{"r":255,"g":200,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
+  readonly colorCell: string = '{"phase":0,"frequency":1,"min":0,"mid":0.43328445747800587,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.1590909090909091,"color":{"r":0,"g":0,"b":0}},{"stop":0.16715542521994134,"color":{"r":89,"g":255,"b":225}},{"stop":0.17668621700879766,"color":{"r":0,"g":0,"b":0}},{"stop":0.30058651026392963,"color":{"r":74,"g":104,"b":255}},{"stop":0.5175953079178885,"color":{"r":18,"g":255,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
+  readonly colorBlob: string = '{"phase":0,"frequency":1,"min":0,"mid":0.36363636363636365,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":255,"b":255}},{"stop":0.1495601173020528,"color":{"r":255,"g":255,"b":255}},{"stop":0.16715542521994134,"color":{"r":0,"g":0,"b":0}},{"stop":0.18841642228739003,"color":{"r":255,"g":255,"b":255}},{"stop":0.30058651026392963,"color":{"r":255,"g":0,"b":0}},{"stop":0.5175953079178885,"color":{"r":255,"g":110,"b":63}},{"stop":1,"color":{"r":255,"g":221,"b":0}}]}'
+  readonly colorCrystal: string = '{"phase":0,"frequency":1,"min":0.2653958944281525,"mid":0.4868035190615836,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.001466275659824047,"color":{"r":0,"g":0,"b":0}},{"stop":0.4897360703812317,"color":{"r":250,"g":255,"b":115}},{"stop":1,"color":{"r":106,"g":103,"b":255}}]}'
+  
   private explorerCSSHeight;
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
@@ -66,79 +76,71 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   private zoomGestureHappening: boolean = false;
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
-  public imageToDownload: string = null;
 
-  alertText: string;
-  readonly colorBW: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
-  readonly colorRainbow: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":255,"g":0,"b":0}},{"stop":0.166,"color":{"r":255,"g":100,"b":0}},{"stop":0.332,"color":{"r":249,"g":255,"b":0}},{"stop":0.498,"color":{"r":0,"g":255,"b":13}},{"stop":0.664,"color":{"r":0,"g":67,"b":255}},{"stop":0.830,"color":{"r":133,"g":0,"b":255}},{"stop":1,"color":{"r":255,"g":0,"b":215}}]}'
-  readonly colorBlueGold: string = '{"phase":0,"frequency":1,"arr":[{"stop":0,"color":{"r":0,"g":51,"b":255}},{"stop":0.8041666666666667,"color":{"r":255,"g":200,"b":0}},{"stop":1,"color":{"r":255,"g":115,"b":0}}]}';
+  public imageToDownload: string = null;
+  public alertText: string;
+  public NumIterations: number = 50;
+
   constructor() { }
 
   ngOnInit() {
+    this.HTMLexplorer.nativeElement.style.width = this.width.toString();
+    this.HTMLexplorer.nativeElement.style.height = this.height.toString();
     this.explorerCSSHeight = getComputedStyle(this.HTMLexplorer.nativeElement).height;
 
-    if (this.width != undefined) this.HTMLexplorer.nativeElement.style.width = this.width.toString();
-    if (this.height != undefined) this.HTMLexplorer.nativeElement.style.height = this.height.toString();
+    let centerArr = this.complexCenter.split(",");
+    let centerR = parseFloat(centerArr[0]);
+    let centerI = parseFloat(centerArr[1]);
+    let complexCenter = new ComplexNumber(centerR, centerI);
 
-    let complexCenter = new ComplexNumber(-0.8, 0);
-    if (this.complexCenter != undefined) {
-      let centerArr = this.complexCenter.split(",");
-      let centerR = parseFloat(centerArr[0]);
-      let centerI = parseFloat(centerArr[1]);
-      complexCenter = new ComplexNumber(centerR, centerI);
-    }
+    let complexWidth = parseFloat(this.complexWidth);
 
-    let complexWidth = 3;
-    if (this.complexWidth != undefined) {
-      complexWidth = parseFloat(this.complexWidth);
-    }
+    this.NumIterations = parseInt(this.iterations)
 
     let colorCommandString = this.colorBlueGold;
-    if (this.color != undefined) {
-      if (this.color == "rainbow") {
-        colorCommandString = this.colorRainbow;
-        this.HTMLcolourSelect.nativeElement.value = this.colorRainbow;
-      }
-      if (this.color == "B/W") {
-        colorCommandString = this.colorBW;
-        this.HTMLcolourSelect.nativeElement.value = this.colorBW;
-      }
-    }
-
-    let fractalEq = FractalEquations.smoothMandelbrot;
-    // if (this.equation != undefined) {
-    //   if (this.equation == "burningShip") {
-    //     fractalEq = FractalEquations.burningShip;
+    let gradient = new FractalColor.LinearGradient();
+    gradient.decodeJSON(colorCommandString)
+    // if (this.color != undefined) {
+    //   if (this.color == "rainbow") {
+    //     colorCommandString = this.colorRainbow;
+    //     this.HTMLcolourSelect.nativeElement.value = this.colorRainbow;
+    //   }
+    //   if (this.color == "B/W") {
+    //     colorCommandString = this.colorBW;
+    //     this.HTMLcolourSelect.nativeElement.value = this.colorBW;
     //   }
     // }
+
+    let fractalEq = FractalEquations.mandelbrot;
+    if (this.equation == "mandelbrot") {
+      fractalEq = FractalEquations.mandelbrot;
+    }
+    if (this.equation == "burningShip") {
+      fractalEq = FractalEquations.burningShip;
+    }
+    if (this.equation == "julia") {
+      fractalEq = FractalEquations.julia;
+    }
 
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
     let ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    let gradient = new FractalColor.LinearGradient();
-    gradient.decodeJSON(colorCommandString)
-
-    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
-    this.fractal.iterations = this.iterations;
+    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), new fractalEq, gradient);
+    this.fractal.iterations = this.NumIterations;
     this.fractal.setMaxZoomListener(this);
 
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
 
-
     this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
     this.HTMLjuliaPullOut.nativeElement.style.display = "none"
 
-
-
-
-
-
-
-    this.explorerWindowIsMaximised = true;
-    this.fullScreenWindow()
+    if (this.maximized == "true") {
+      this.explorerWindowIsMaximised = true;
+      this.fullScreenWindow()
+    }
   }
 
   /*
@@ -245,8 +247,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   toggleJuliaPullOut() {
     if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
-      if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.iterations);
-      this.HTMLjuliaPicker.getFractal().sizeChanged();
+      if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker);
+      this.HTMLjuliaPicker.getFractalView().sizeChanged();
     }
     else if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px"
@@ -275,18 +277,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
   onEqChanged(event) {
     let eqString = event.target.value;
-    if (eqString == "smoothMandelbrot") {
+    if (eqString == "mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(FractalEquations.smoothMandelbrot);
+      this.fractal.setCalculationFunction(new FractalEquations.mandelbrot);
     }
-    else if (eqString == "smoothBurningShip") {
+    else if (eqString == "burningShip") {
       this.fractal.complexPlain.replaceView(-0.5, -0.5, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(FractalEquations.smoothBurningShip);
+      this.fractal.setCalculationFunction(new FractalEquations.burningShip);
     }
 
-    if (eqString == "smoothJulia") {
+    if (eqString == "julia") {
       this.fractal.complexPlain.replaceView(0, 0, 20, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(FractalEquations.smoothJulia);
+      this.fractal.setCalculationFunction(new FractalEquations.julia);
       this.HTMLjuliaPullOut.nativeElement.style.display = "block"
     }
     else {
@@ -380,8 +382,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   iterationsChanged() {
-    this.fractal.iterations = this.iterations;
-    this.HTMLjuliaPicker.setIterations(this.iterations);
+    this.fractal.iterations = this.NumIterations;
+    this.HTMLjuliaPicker.setIterations(this.NumIterations);
     this.fractal.render();
   }
 
@@ -395,10 +397,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
-  juliaNumberChanged(event: ComplexNumber) {
-    FractalEquations.JuliaReal = event.r;
-    FractalEquations.juliaImaginary = event.i;
-    this.fractal.render();
+  juliaNumberChanged(center: ComplexNumber) {    
+    let fun = this.fractal.getCalculationFunction();
+    if (fun instanceof FractalEquations.julia) {
+      (<FractalEquations.julia>fun).juliaReal = center.r;
+      (<FractalEquations.julia>fun).juliaImaginary = center.i;
+      this.fractal.render();
+    }
   }
 
   downloadReady() {
@@ -417,13 +422,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       if (!self.iterationsAreChanging) return;
 
       if (i > 1) {
-        self.iterations = Math.ceil(self.iterations * i)
+        self.NumIterations = Math.ceil(self.NumIterations * i)
       } else {
-        self.iterations = Math.floor(self.iterations * i)
+        self.NumIterations = Math.floor(self.NumIterations * i)
       }
 
-      if (self.iterations < 1) {
-        self.iterations = 1;
+      if (self.NumIterations < 1) {
+        self.NumIterations = 1;
         self.iterationsAreChanging = false;
       }
       self.iterationsChanged();
