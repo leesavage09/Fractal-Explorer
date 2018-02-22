@@ -19,11 +19,16 @@ export class StopMarkerComponent {
   private lastMouseX: number
   private moveStarted: boolean = false
   private color: FractalColor.RGBcolor = { r: Math.round(Math.random() * 255), g: Math.round(Math.random() * 255), b: Math.round(Math.random() * 255) };
+  private colorPicker:ElementRef
   constructor() { }
 
   
   ngOnInit() {
     this.setColor(this.color);
+  }
+
+  public setColorPicker(colorPicker:ElementRef){
+    this.colorPicker = colorPicker;
   }
 
   /*
@@ -52,8 +57,8 @@ export class StopMarkerComponent {
       this.moveStarted = false
       this.mouseupWindow()
     } else {
-      (<any>document.getElementById('jscolor')).jscolor.show();
-    }
+      this.colorPicker.nativeElement.jscolor.show();
+     }
   }
 
   mouseupWindow() {

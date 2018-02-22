@@ -17,7 +17,6 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   @ViewChild('colorActive') colorActive: ElementRef;
   @ViewChild('gradientDisplay') gradientDisplay: ElementRef;
   @ViewChild('gradientDisplayContainer') gradientDisplayContainer: ElementRef;
-  private jscolor = (<any>document.getElementById('jscolor'));
 
   public maxCSSleft
 
@@ -29,6 +28,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   private activeMarker: StopMarkerComponent;
   private gradient: FractalColor.LinearGradient = null;
   private gradientDisplayMoving: boolean = false;
+  private colorPicker: ElementRef;
 
   constructor(r: ComponentFactoryResolver) {
     this.factory = r.resolveComponentFactory(StopMarkerComponent);
@@ -36,6 +36,10 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
 
   ngOnInit() {
     this.windowResized();
+  }
+
+  public setColorPicker(colorPicker:ElementRef){
+    this.colorPicker = colorPicker;
   }
 
   /*
@@ -91,7 +95,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
   }
 
   setColorActive(event) {
-    let rgb = FractalColor.hexToRGB(this.jscolor.jscolor.toHEXString())
+    let rgb = FractalColor.hexToRGB(this.colorPicker.nativeElement.jscolor.toHEXString())
     this.activeMarker.setColor(rgb);
     this.draw();
     this.gradient.notify(this);
@@ -120,6 +124,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     if (cssLeft != null) componentRef.instance.setCSSLeft(cssLeft);
     else if (stop != null) componentRef.instance.setStopValue(stop);
     if (color) componentRef.instance.setColor(color);
+    componentRef.instance.setColorPicker(this.colorPicker);
     this.allMarkers.push(componentRef.instance);
     this.setActiveMarker(componentRef.instance);
     if (draw) this.draw();
@@ -137,7 +142,7 @@ export class GradientBuilderComponent implements OnInit, FractalColor.LinearGrad
     if (this.activeMarker != undefined) this.activeMarker.styleActive(false);
     this.activeMarker = marker;
     this.activeMarker.styleActive(true);
-    if (this.jscolor.jscolor != undefined) this.jscolor.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
+    if (this.colorPicker.nativeElement.jscolor != undefined) this.colorPicker.nativeElement.jscolor.fromRGB(this.activeMarker.getColor().r, this.activeMarker.getColor().g, this.activeMarker.getColor().b);
   }
 
   setSelectedMarker(marker: StopMarkerComponent, x) {

@@ -31,8 +31,6 @@ export class AlertComponent {
   public readonly YES = 'yes'
   public readonly NO = 'no'
 
-  //@Output() response = new EventEmitter<string>();
-
   constructor() {
   }
 

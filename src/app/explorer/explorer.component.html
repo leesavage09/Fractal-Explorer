@@ -1,7 +1,7 @@
 <div class={{theme}}>
   <div #explorer id="explorer" (window:resize)="windowResized()">
 
-    <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {closable:true, closeText:'Close',width:250,  height:150, }" value="000000">
+    <input #jscolor id="jscolor" (change)="HTMLgradient.setColorActive($event)" class="jscolor {width:250,  height:150}" value="000000">
 
     <div class="controls bottom-right">
       <div #zoomControls class="btn-group-vertical" data-toggle="buttons">

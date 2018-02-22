@@ -90,6 +90,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   ngOnInit() {
     this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
     this.HTMLjuliaPullOut.nativeElement.style.display = "none"
+    this.HTMLgradient.setColorPicker(this.HTMLjscolor);
 
     this.HTMLexplorer.nativeElement.style.width = this.width.toString();
     this.HTMLexplorer.nativeElement.style.height = this.height.toString();

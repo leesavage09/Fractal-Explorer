@@ -77,7 +77,6 @@ export namespace FractalEquations {
 			var Ti = 0;
 			var n = 0;
 
-			// Z^2+C
 			for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
 				Zi = 0-Zi
 
@@ -110,7 +109,7 @@ export namespace FractalEquations {
 			var Ti = 0;
 			var n = 0;
 
-			// Z^2+C
+
 			for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
 
 				Tr = (Zr * Zr - Zi * Zi);
@@ -149,7 +148,6 @@ export namespace FractalEquations {
 			var Ti = 0;
 			var n = 0;
 
-			// Z^2+C
 			for (; n < i && (Zr * Zr + Zi * Zi) <= e; ++n) {
 
 				Tr = (Zr * Zr - Zi * Zi);
