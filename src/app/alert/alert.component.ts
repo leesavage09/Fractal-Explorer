@@ -13,7 +13,6 @@ import { FractalViewComponent } from '../fractalView/fractalView.component';
   styleUrls: []
 })
 export class AlertComponent {
-  private juliaFractal: Fractals.Fractal = null;
   @Input() titleStr: string = "title";
   @Input() textStr: string = "text";
   @Input() closeStr: string = "close";
@@ -24,12 +23,14 @@ export class AlertComponent {
   @ViewChild('yes') yesElm: ElementRef;
   @ViewChild('no') noElm: ElementRef;
   @ViewChild('input') inputElm: ElementRef;
+  
   private callback: Function;
-  private yesHREF: string
-
+  private juliaFractal: Fractals.Fractal = null;
+  
   public readonly CLOSE = 'close'
   public readonly YES = 'yes'
   public readonly NO = 'no'
+  public yesHREF: string
 
   constructor() {
   }

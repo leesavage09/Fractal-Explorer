@@ -12,7 +12,6 @@ import { HistogramComponent } from "../histogram/histogram.component";
 import { JuliaPickerComponent } from "../juliaPicker/juliaPicker.component";
 import { FractalViewComponent } from '../fractalView/fractalView.component';
 import { AlertComponent } from "../alert/alert.component";
-import { setTimeout } from "timers";
 
 @Component({
   selector: "ExplorerComponent",

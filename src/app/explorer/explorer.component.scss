@@ -1,6 +1,6 @@
 $button-size: 40px !default;
 $input-spacing: 10px !default;
-$iterations-width: 70px !default;
+$iterations-width: 40px !default;
 $select-width: $iterations-width + $button-size * 2 !default;
 $corner-radius: 3px !default;
 $padding: 10px !default;
@@ -11,8 +11,8 @@ $explorer-height: 300px !default;
 $julia-picker-width: 250px !default;
 $julia-picker-height: 200px !default;
 
-$colour-tool: rgb(100, 100, 100) !default;
-$color-tool-bg: white !default;
+$colour-tool: rgba(100, 100, 100,0.85) !default;
+$color-tool-bg:  rgba(255, 255, 255,0.85) !default;
 $color-canvas-bg: rgb(0, 29, 0) !default;
 $color-highlight-bg: rgba(255, 255, 255, 0.7) !default;
 $color-mouseover: black !default;
@@ -26,15 +26,18 @@ $font-size-small: 14px !default;
 
 @keyframes disabled-blink {
     0% {
-        color: $colour-tool;
+        background-color: $color-tool-bg;
+        border-color: $colour-tool;
     }
 
     50% {
-        color: $color-text;
+        background-color: $colour-tool;
+        border-color: $color-tool-bg;
     }
 
     100% {
-        color: $colour-tool;
+        background-color: $color-tool-bg;
+        border-color: $colour-tool;
     }
 }
 
@@ -198,11 +201,12 @@ $font-size-small: 14px !default;
         ::ng-deep app-alert {
             input {
                 @include interactive;
-                width:100%;
+                width: 100%;
             }
+
             .btn {
                 @include interactive;
-        
+
                 display: inline-block;
                 padding: $padding;
                 height: 20px;
@@ -215,7 +219,7 @@ $font-size-small: 14px !default;
         pointer-events: none;
         padding: $padding;
         font-size: 0px;
-       
+
         app-gradientpanel, app-histogram {
             pointer-events: all;
         }
@@ -236,7 +240,7 @@ $font-size-small: 14px !default;
         .select-container {
             position: relative;
             display: inline-block;
-            
+
             .select {
                 -moz-appearance: none;
                 -webkit-appearance: none;
@@ -244,8 +248,8 @@ $font-size-small: 14px !default;
                 @include interactive;
 
                 padding: $padding;
-                height: $button-size+2;
-                width: $button-size+2;
+                height: $button-size + 2;
+                width: $button-size + 2;
                 font-size: 0px;
 
                 option {
@@ -254,9 +258,10 @@ $font-size-small: 14px !default;
 
                 &.disabled {
                     cursor: wait;
-                    background-color: rgb(15, 15, 15);
-                    border-color: grey;
-                } 
+                    animation-name: disabled-blink;
+                    animation-duration: 1s;
+                    animation-iteration-count: infinite;
+                }
             }
 
             .select-icon {
@@ -271,25 +276,19 @@ $font-size-small: 14px !default;
 
                 i {
                     font-size: $font-size;
-
-                    &.disabled {
-                        animation-name: disabled-blink;
-                        animation-duration: 1s;
-                        animation-iteration-count: infinite;
-                    }                  
                 }
             }
 
-            .icon-text{
+            .icon-text {
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                line-height: $button-size/2;
-                width:$button-size;
+                line-height: $button-size / 2;
+                width: $button-size;
                 font-size: $font-size;
                 color: $colour-tool;
                 height: $button-size;
-                padding-top:$padding;
+                padding-top: $padding;
                 text-align: center;
             }
         }
@@ -311,9 +310,10 @@ $font-size-small: 14px !default;
         .btn {
             display: inline-block;
             width: $button-size;
-            height: $button-size;            
+            height: $button-size;
             line-height: $button-size;
-            i{
+
+            i {
                 margin: auto;
             }
         }
@@ -369,8 +369,8 @@ $font-size-small: 14px !default;
             border-right-style: none;
             border-left-style: none;
             margin: 0px;
-            margin-left: -$font-size;
-            margin-right: -$font-size;
+            margin-left: 0;
+            margin-right: 0;
             padding-left: $font-size;
             padding-right: $font-size;
             width: $iterations-width;
@@ -409,7 +409,7 @@ $font-size-small: 14px !default;
         }
 
         select {
-            box-shadow: $shaddow-low;            
+            box-shadow: $shaddow-low;
         }
 
         a {
