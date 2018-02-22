@@ -61,10 +61,15 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     ctx.canvas.width = width
     ctx.canvas.height = height
 
-    let newFun = new FractalEquations.julia();
-    let oldfun = <FractalEquations.julia>this.fractal.getCalculationFunction();
-    newFun.juliaReal = oldfun.juliaReal
-    newFun.juliaImaginary = oldfun.juliaImaginary
+    let oldfun = <FractalEquations.equation>this.fractal.getCalculationFunction();
+    let newFun = oldfun.copy();
+    if (newFun instanceof FractalEquations.Julia) {
+      newFun.juliaReal = (<FractalEquations.Julia>oldfun).juliaReal
+      newFun.juliaImaginary = (<FractalEquations.Julia>oldfun).juliaImaginary
+    }
+    
+    
+    
 
     let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
     let fractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());

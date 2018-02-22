@@ -23,7 +23,7 @@
     </div>
 
     <div class="controls bottom-left">
-      <div #shareButton  class="select-container">
+      <div #shareButton class="select-container">
         <select #shareSelect class="select" id="eq-select" (change)="share($event)">
           <option value="non-option" disabled>Share Options</option>
           <option value="link">Open In Browser</option>
@@ -35,8 +35,8 @@
           <option value="linkedin">LinkedIn</option>
           <option value="plus.google">Google +</option>
         </select>
-        <div  class="select-icon" id="select-caret-down">
-          <i  class="fa fa-share-alt" aria-hidden="true"></i>
+        <div class="select-icon" id="select-caret-down">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
         </div>
       </div>
       <div #saveButton class="select-container">
@@ -102,8 +102,8 @@
           <option value={{colorRainbow}}>Rainbow</option>
           <option value={{colorBlackBlue}}>Black/Blue</option>
           <option value={{colorCell}}>Cell</option>
-          <option value={{colorBlob}}>Blob</option> 
-          <option value={{colorCrystal}}>Crystal</option> 
+          <option value={{colorBlob}}>Blob</option>
+          <option value={{colorCrystal}}>Crystal</option>
         </select>
         <div class="select-icon" id="select-caret-down">
           <i class="fa fa-paint-brush" aria-hidden="true"></i>
@@ -128,24 +128,7 @@
     </div>
 
     <div #alert class="alert center" (wheel)="$event.preventDefault()">
-      <h4>Alert</h4>
-      <p>{{alertText}}</p>
-      <a (click)="closeAlert($event)" class="btn">
-        Ok
-        <i class="fa fa-check" aria-hidden="true"></i>
-      </a>
-    </div>
-
-    <div #downloadReadyAlert class="alert center" (wheel)="$event.preventDefault()">
-      <h4>Your Download Is Ready</h4>
-      <a href="{{imageToDownload}}" (click)="download()" class="btn" download="fractal.jpg">
-        Download
-        <i class="fa fa-save" aria-hidden="true"></i>
-      </a>
-
-      <a (click)="download()" class="btn">
-        Cancel
-      </a>
+      <app-alert #alertComponent></app-alert>
     </div>
 
   </div>

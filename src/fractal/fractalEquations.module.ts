@@ -35,7 +35,10 @@ export namespace FractalEquations {
 		}
 	}
 
-	export class mandelbrot implements FractalEquations.equation {
+	export class Mandelbrot implements FractalEquations.equation {
+		copy():equation{
+			return new Mandelbrot()
+		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
 			var Zi = 0;
@@ -63,7 +66,10 @@ export namespace FractalEquations {
 		}
 	}
 
-	export class burningShip implements FractalEquations.equation {
+	export class BurningShip implements FractalEquations.equation {
+		copy():equation{
+			return new BurningShip()
+		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = 0;
 			var Zi = 0;
@@ -86,10 +92,12 @@ export namespace FractalEquations {
 		}
 	}
 
-	export class julia implements FractalEquations.equation {
+	export class Julia implements FractalEquations.equation {
 		public juliaReal: number = 0;
 		public juliaImaginary: number = 0;
-
+		copy():equation{
+			return new Julia()
+		}
 		calculate(Cr: number, Ci: number, i: number, e: number): number {
 			var Zr = Cr;
 			var Zi = Ci;
@@ -119,6 +127,7 @@ export namespace FractalEquations {
 	}
 
 	export interface equation {
+		copy():equation
 		calculate(Cr: number, Ci: number, i: number, e: number): number
 	}
 }

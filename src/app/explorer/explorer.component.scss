@@ -195,13 +195,15 @@ $font-size-small: 14px !default;
         width: $explorer-width / 1.5;
         box-shadow: $shaddow-low;
 
-        .btn {
-            @include interactive;
-
-            display: inline-block;
-            padding: $padding;
-            height: 20px;
-            line-height: 20px;
+        ::ng-deep app-alert {
+            .btn {
+                @include interactive;
+        
+                display: inline-block;
+                padding: $padding;
+                height: 20px;
+                line-height: 20px;
+            }
         }
     }
 

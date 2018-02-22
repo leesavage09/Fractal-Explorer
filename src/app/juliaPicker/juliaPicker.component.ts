@@ -34,7 +34,7 @@ export class JuliaPickerComponent {
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.mandelbrot, color);
+    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
 

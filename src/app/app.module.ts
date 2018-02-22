@@ -11,6 +11,7 @@ import { StopMarkerComponent } from './gradientBuilder/stop-marker/stop-marker.c
 import { HistogramComponent } from './histogram/histogram.component';
 import { JuliaPickerComponent } from './juliaPicker/juliaPicker.component';
 import { FractalViewComponent } from './fractalView/fractalView.component';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   entryComponents: [ StopMarkerComponent ],
@@ -22,7 +23,8 @@ import { FractalViewComponent } from './fractalView/fractalView.component';
     StopMarkerComponent,
     HistogramComponent,
     JuliaPickerComponent,
-    FractalViewComponent
+    FractalViewComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule, FormsModule

@@ -1,0 +1,15 @@
+<h4>{{titleStr}}</h4>
+<p>{{textStr}}</p>
+
+
+<a #close (click)="closeClick()" class="btn" style="display:none">
+      {{closeStr}}
+</a>
+
+<a #yes href="{{yesHREF}}" download="fractal.jpg" (click)="yesClick()" class="btn" style="display:none">
+    {{yesStr}}
+</a>
+
+<a #no (click)="noClick()" class="btn" style="display:none">
+    {{noStr}}
+</a>

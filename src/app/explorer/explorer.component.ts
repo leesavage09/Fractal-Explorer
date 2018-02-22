@@ -11,6 +11,7 @@ import { GradientBuilderComponent } from '../gradientBuilder/gradientBuilder.com
 import { HistogramComponent } from "../histogram/histogram.component";
 import { JuliaPickerComponent } from "../juliaPicker/juliaPicker.component";
 import { FractalViewComponent } from '../fractalView/fractalView.component';
+import { AlertComponent } from "../alert/alert.component";
 
 @Component({
   selector: "ExplorerComponent",
@@ -53,11 +54,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('colorPullDownCaret') readonly HTMLcolorPullDownCaret: ElementRef;
   @ViewChild('saveButton') readonly HTMLsaveButton: ElementRef;
   @ViewChild('eqSelect') readonly HTMLeqSelect: ElementRef;
-  @ViewChild('downloadReadyAlert') readonly HTMLdownloadReadyAlert: ElementRef;
   @ViewChild('saveSelect') readonly HTMLsaveSelect: ElementRef;
   @ViewChild('saveIcon') readonly HTMLsaveIcon: ElementRef;
   @ViewChild('shareSelect') readonly HTMLshareSelect: ElementRef;
   @ViewChild('shareButton') readonly HTMLshareButton: ElementRef;
+  @ViewChild('alertComponent') readonly HTMLalertComponent: AlertComponent;
+
   readonly colorBW: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":0,"b":0}},{"stop":0.166,"color":{"r":255,"g":100,"b":0}},{"stop":0.332,"color":{"r":249,"g":255,"b":0}},{"stop":0.498,"color":{"r":0,"g":255,"b":13}},{"stop":0.664,"color":{"r":0,"g":67,"b":255}},{"stop":0.830,"color":{"r":133,"g":0,"b":255}},{"stop":1,"color":{"r":255,"g":0,"b":215}}]}'
   readonly colorBlueGold: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":51,"b":255}},{"stop":0.8041666666666667,"color":{"r":255,"g":200,"b":0}},{"stop":1,"color":{"r":255,"g":115,"b":0}}]}';
@@ -65,7 +67,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   readonly colorCell: string = '{"phase":0,"frequency":1,"min":0,"mid":0.43328445747800587,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.1590909090909091,"color":{"r":0,"g":0,"b":0}},{"stop":0.16715542521994134,"color":{"r":89,"g":255,"b":225}},{"stop":0.17668621700879766,"color":{"r":0,"g":0,"b":0}},{"stop":0.30058651026392963,"color":{"r":74,"g":104,"b":255}},{"stop":0.5175953079178885,"color":{"r":18,"g":255,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
   readonly colorBlob: string = '{"phase":0,"frequency":1,"min":0,"mid":0.36363636363636365,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":255,"b":255}},{"stop":0.1495601173020528,"color":{"r":255,"g":255,"b":255}},{"stop":0.16715542521994134,"color":{"r":0,"g":0,"b":0}},{"stop":0.18841642228739003,"color":{"r":255,"g":255,"b":255}},{"stop":0.30058651026392963,"color":{"r":255,"g":0,"b":0}},{"stop":0.5175953079178885,"color":{"r":255,"g":110,"b":63}},{"stop":1,"color":{"r":255,"g":221,"b":0}}]}'
   readonly colorCrystal: string = '{"phase":0,"frequency":1,"min":0.2653958944281525,"mid":0.4868035190615836,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.001466275659824047,"color":{"r":0,"g":0,"b":0}},{"stop":0.4897360703812317,"color":{"r":250,"g":255,"b":115}},{"stop":1,"color":{"r":106,"g":103,"b":255}}]}'
-  
+
   private explorerCSSHeight;
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
@@ -111,15 +113,15 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     //   }
     // }
 
-    let fractalEq = FractalEquations.mandelbrot;
+    let fractalEq = FractalEquations.Mandelbrot;
     if (this.equation == "mandelbrot") {
-      fractalEq = FractalEquations.mandelbrot;
+      fractalEq = FractalEquations.Mandelbrot;
     }
     if (this.equation == "burningShip") {
-      fractalEq = FractalEquations.burningShip;
+      fractalEq = FractalEquations.BurningShip;
     }
     if (this.equation == "julia") {
-      fractalEq = FractalEquations.julia;
+      fractalEq = FractalEquations.Julia;
     }
 
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
@@ -141,6 +143,14 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.explorerWindowIsMaximised = true;
       this.fullScreenWindow()
     }
+    else {
+      this.HTMLalertComponent.titleStr = "Welcome"
+      this.HTMLalertComponent.textStr = "For the best experence click the full screen button"
+      this.HTMLalertComponent.closeStr = "Continue"
+      this.HTMLalertComponent.enableOptions(true, false, false)
+      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+      this.HTMLalert.nativeElement.style.visibility = "visible";
+    }
   }
 
   /*
@@ -148,7 +158,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   */
 
   download() {
-    this.HTMLdownloadReadyAlert.nativeElement.style.visibility = "hidden";
     this.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save");
     this.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
     this.HTMLsaveSelect.nativeElement.disabled = false;
@@ -189,11 +198,23 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
         changed(fractal: Fractals.Fractal) {
           fractal.unsubscribe(element.base)
           this.explorer.imageToDownload = fractal.complexPlain.getViewCanvas().toDataURL("image/jpeg");
-          this.explorer.downloadReady()
+
+          this.explorer.HTMLalertComponent.titleStr = "Download Ready"
+          this.explorer.HTMLalertComponent.textStr = ""
+          this.explorer.HTMLalertComponent.yesStr = "Download"
+          this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
+          this.explorer.HTMLalertComponent.noStr = "Cancel"
+          this.explorer.HTMLalertComponent.enableOptions(false,true,true)
+          this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
+          this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
+
+          this.explorer.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save");
+          this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+          this.explorer.HTMLsaveSelect.nativeElement.disabled = false;
         }
       }
     }
-    let img = this.mainFractalView.downloadImage(width, height, element.base);
+    this.mainFractalView.downloadImage(width, height, element.base);
 
     (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
   }
@@ -243,7 +264,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-
   toggleJuliaPullOut() {
     if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
@@ -279,16 +299,16 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     let eqString = event.target.value;
     if (eqString == "mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(new FractalEquations.mandelbrot);
+      this.fractal.setCalculationFunction(new FractalEquations.Mandelbrot);
     }
     else if (eqString == "burningShip") {
       this.fractal.complexPlain.replaceView(-0.5, -0.5, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(new FractalEquations.burningShip);
+      this.fractal.setCalculationFunction(new FractalEquations.BurningShip);
     }
 
     if (eqString == "julia") {
       this.fractal.complexPlain.replaceView(0, 0, 20, <HTMLCanvasElement>this.mainFractalView.getCanvas())
-      this.fractal.setCalculationFunction(new FractalEquations.julia);
+      this.fractal.setCalculationFunction(new FractalEquations.Julia);
       this.HTMLjuliaPullOut.nativeElement.style.display = "block"
     }
     else {
@@ -397,17 +417,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
-  juliaNumberChanged(center: ComplexNumber) {    
+  juliaNumberChanged(center: ComplexNumber) {
     let fun = this.fractal.getCalculationFunction();
-    if (fun instanceof FractalEquations.julia) {
-      (<FractalEquations.julia>fun).juliaReal = center.r;
-      (<FractalEquations.julia>fun).juliaImaginary = center.i;
+    if (fun instanceof FractalEquations.Julia) {
+      (<FractalEquations.Julia>fun).juliaReal = center.r;
+      (<FractalEquations.Julia>fun).juliaImaginary = center.i;
       this.fractal.render();
     }
-  }
-
-  downloadReady() {
-    this.HTMLdownloadReadyAlert.nativeElement.style.visibility = "visible";
   }
 
   /*
