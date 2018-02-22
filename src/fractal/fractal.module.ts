@@ -20,6 +20,7 @@ export namespace Fractals {
 		private histogram: FractalHistogram.Histogram = new FractalHistogram.Histogram()
 		private compiledColor: Array<FractalColor.RGBcolor>
 		private subscribers: Array<ChangeObserver> = new Array();
+		public currentScanLine = 0;
 		constructor(complexPlain: ComplexPlain, fractalCalculationFunction: FractalEquations.equation, color: FractalColor.LinearGradient) {
 			this.complexPlain = complexPlain;
 			this.calculationFunction = fractalCalculationFunction;
@@ -47,11 +48,11 @@ export namespace Fractals {
 			}
 		}
 
-		public setCalculationFunction(f: FractalEquations.equation):void {
+		public setCalculationFunction(f: FractalEquations.equation): void {
 			this.calculationFunction = f;
 		}
 
-		public getCalculationFunction():FractalEquations.equation {
+		public getCalculationFunction(): FractalEquations.equation {
 			return this.calculationFunction;
 		}
 
@@ -59,7 +60,7 @@ export namespace Fractals {
 			this.render();
 		}
 
-		public render(fullRes:boolean = false): void {
+		public render(fullRes: boolean = false): void {
 			this.stopRendering();
 			if (this.complexPlain.getSquare().width < 5.2291950245225395e-15) {
 				this.notifiMaxZoomListeners();
@@ -82,6 +83,7 @@ export namespace Fractals {
 		}
 		private scanLine(y: number, version: number): void {
 			if (this.renderVersion != version) return;
+			this.currentScanLine = y;
 			this.img = this.complexPlain.getScanLineImage();
 			var Ci = this.complexPlain.getImaginaryNumber(y);
 			let width = this.complexPlain.getDrawableWidth() - 1;
@@ -105,7 +107,7 @@ export namespace Fractals {
 				var now = (new Date).getTime();
 				if ((now - this.lastUpdate) >= this.updateTimeout) {
 					this.lastUpdate = now;
-					var self = this;			
+					var self = this;
 					setTimeout(function () {
 						self.scanLine(y + 1, version);
 					}, 1);// using timeout 1 to force thread to yeald so we can update UI
@@ -264,7 +266,7 @@ export namespace Fractals {
 
 
 	export interface ChangeObserver {
-		changed(fractal:Fractal);
+		changed(fractal: Fractal);
 	}
 
 

@@ -13,6 +13,7 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
   @ViewChild('fractalCanvas') HTMLcanvas: ElementRef;
   @Output() viewChanged = new EventEmitter();
   private fractal: Fractals.Fractal;
+  private downloadingFractal: Fractals.Fractal;
   private zoomGestureHappening: boolean = false;
 
   constructor() { }
@@ -72,14 +73,25 @@ export class FractalViewComponent implements Fractals.ChangeObserver {
     
 
     let cp = new Fractals.ComplexPlain(oldCp.getSquare().center.r, oldCp.getSquare().center.i, oldCp.getSquare().width, canvas)
-    let fractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());
-    fractal.iterations = this.fractal.iterations;
-    fractal.updateTimeout = 10;
-    fractal.getColor().unsubscribe(fractal);
+    this.downloadingFractal = new Fractals.Fractal(cp, newFun, this.fractal.getColor());
+    this.downloadingFractal.iterations = this.fractal.iterations;
+    this.downloadingFractal.updateTimeout = 10;
+    this.downloadingFractal.getColor().unsubscribe(this.downloadingFractal);
 
 
-    fractal.subscribe(callback)
-    fractal.render(true);
+    this.downloadingFractal.subscribe(callback)
+    this.downloadingFractal.render(true);
+  }
+
+  getDownloadProgress():number {
+    let num = 100*(this.downloadingFractal.currentScanLine/this.downloadingFractal.complexPlain.getViewCanvas().height);
+    return Math.trunc(num)
+  }
+
+  abortDownload(){
+    if (this.downloadingFractal!=null){
+      this.downloadingFractal.stopRendering();
+    } 
   }
 
 

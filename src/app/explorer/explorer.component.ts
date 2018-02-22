@@ -12,6 +12,7 @@ import { HistogramComponent } from "../histogram/histogram.component";
 import { JuliaPickerComponent } from "../juliaPicker/juliaPicker.component";
 import { FractalViewComponent } from '../fractalView/fractalView.component';
 import { AlertComponent } from "../alert/alert.component";
+import { setTimeout } from "timers";
 
 @Component({
   selector: "ExplorerComponent",
@@ -59,6 +60,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('shareSelect') readonly HTMLshareSelect: ElementRef;
   @ViewChild('shareButton') readonly HTMLshareButton: ElementRef;
   @ViewChild('alertComponent') readonly HTMLalertComponent: AlertComponent;
+  @ViewChild('saveIconText') readonly HTMLsaveIconText: ElementRef;
 
   readonly colorBW: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":1,"color":{"r":255,"g":255,"b":255}}]}'
   readonly colorRainbow: string = '{"phase":0,"frequency":1,"min":0,"mid":0.5,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":0,"b":0}},{"stop":0.166,"color":{"r":255,"g":100,"b":0}},{"stop":0.332,"color":{"r":249,"g":255,"b":0}},{"stop":0.498,"color":{"r":0,"g":255,"b":13}},{"stop":0.664,"color":{"r":0,"g":67,"b":255}},{"stop":0.830,"color":{"r":133,"g":0,"b":255}},{"stop":1,"color":{"r":255,"g":0,"b":215}}]}'
@@ -80,7 +82,6 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 
   public imageToDownload: string = null;
-  public alertText: string;
   public NumIterations: number = 50;
 
   constructor() { }
@@ -157,16 +158,21 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   * User triggerable functions \/
   */
 
+  abortDownload() {
+    this.mainFractalView.abortDownload();
+    this.HTMLsaveIcon.nativeElement.style.display = "block"
+    this.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
+  }
+
   download() {
-    this.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save");
+    this.HTMLsaveIcon.nativeElement.style.display = "none"
     this.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
     this.HTMLsaveSelect.nativeElement.disabled = false;
   }
 
   save(event) {
-    this.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save disabled");
+    this.HTMLsaveIcon.nativeElement.style.display = "none"
     this.HTMLsaveSelect.nativeElement.setAttribute("class", "select disabled");
-    this.HTMLsaveSelect.nativeElement.disabled = true;
     let width = 1920
     let height = 1080
     switch (event.target.value) {
@@ -204,17 +210,18 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
           this.explorer.HTMLalertComponent.yesStr = "Download"
           this.explorer.HTMLalertComponent.setYesHref(this.explorer.imageToDownload)
           this.explorer.HTMLalertComponent.noStr = "Cancel"
-          this.explorer.HTMLalertComponent.enableOptions(false,true,true)
+          this.explorer.HTMLalertComponent.enableOptions(false, true, true)
           this.explorer.HTMLalertComponent.setCallback(this.explorer.closeAlert.bind(this.explorer))
           this.explorer.HTMLalert.nativeElement.style.visibility = "visible";
 
-          this.explorer.HTMLsaveIcon.nativeElement.setAttribute("class", "fa fa-save");
+          this.explorer.HTMLsaveIcon.nativeElement.style.display = "block"
           this.explorer.HTMLsaveSelect.nativeElement.setAttribute("class", "select");
-          this.explorer.HTMLsaveSelect.nativeElement.disabled = false;
         }
       }
     }
     this.mainFractalView.downloadImage(width, height, element.base);
+
+    this.updateSaveProgress();
 
     (<HTMLSelectElement>this.HTMLsaveSelect.nativeElement).selectedIndex = 0
   }
@@ -412,8 +419,11 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   */
 
   maxZoomReached() {
-    this.fractal.deleteMaxZoomListener();
-    this.alertText = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!";
+    this.HTMLalertComponent.titleStr = "Alert"
+    this.HTMLalertComponent.textStr = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!"
+    this.HTMLalertComponent.closeStr = "Continue"
+    this.HTMLalertComponent.enableOptions(true, false, false)
+    this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 
@@ -499,6 +509,22 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
       this.toggleJuliaPullOut();
     }
+  }
+
+  private updateSaveProgress() {
+    this.HTMLsaveIconText.nativeElement.style.display = "block"
+    this.HTMLsaveIconText.nativeElement.innerHTML = this.mainFractalView.getDownloadProgress() + "%"
+
+    if (this.HTMLsaveIcon.nativeElement.style.display == "none") {
+      let self = this
+      setTimeout(() => {
+        self.updateSaveProgress()
+      }, 50);
+    }
+    else {
+      this.HTMLsaveIconText.nativeElement.style.display = "none"
+    }
+
   }
 
 }

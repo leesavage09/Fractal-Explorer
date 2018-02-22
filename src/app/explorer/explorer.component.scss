@@ -272,8 +272,21 @@ $font-size-small: 14px !default;
                         animation-name: disabled-blink;
                         animation-duration: 1s;
                         animation-iteration-count: infinite;
-                    }
+                    }                  
                 }
+            }
+
+            .icon-text{
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                line-height: $button-size/2;
+                width:$button-size;
+                font-size: $font-size;
+                color: $colour-tool;
+                height: $button-size;
+                padding-top:$padding;
+                text-align: center;
             }
         }
 

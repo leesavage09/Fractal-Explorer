@@ -39,7 +39,7 @@
           <i class="fa fa-share-alt" aria-hidden="true"></i>
         </div>
       </div>
-      <div #saveButton class="select-container">
+      <div #saveButton class="select-container" (mousedown)="abortDownload()">
         <select #saveSelect class="select" id="eq-select" (change)="save($event)">
           <option value="non-option">Save JPG</option>
           <option value="HD 1920×1080">HD 1920×1080</option>
@@ -49,8 +49,9 @@
           <option value="16k 15360×8640">16k 15360×8640</option>
         </select>
         <div class="select-icon" id="select-caret-down">
-          <i #saveIcon class="fa fa-save" aria-hidden="true"></i>
+          <i #saveIcon class="fa fa-save" aria-hidden="true"></i>         
         </div>
+        <i #saveIconText class="icon-text" style="display:none" aria-hidden="true"></i>
       </div>
     </div>
 
