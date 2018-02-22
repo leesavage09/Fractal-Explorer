@@ -148,7 +148,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLalertComponent.titleStr = "Welcome"
       this.HTMLalertComponent.textStr = "For the best experence click the full screen button"
       this.HTMLalertComponent.closeStr = "Continue"
-      this.HTMLalertComponent.enableOptions(true, false, false)
+      this.HTMLalertComponent.enableOptions(true, false, false, false)
       this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
       this.HTMLalert.nativeElement.style.visibility = "visible";
     }
@@ -255,8 +255,17 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
 
     if (service != null) window.open(service);
-    else window.open(content);
+    else {
+      this.HTMLalertComponent.titleStr = "Share Link"
+      this.HTMLalertComponent.textStr = "you can share this link to this session."
+      this.HTMLalertComponent.inputStr = content;
+      this.HTMLalertComponent.closeStr = "Close"
+      this.HTMLalertComponent.enableOptions(true, false, false, true)
+      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+      this.HTMLalert.nativeElement.style.visibility = "visible";
 
+      this.HTMLalertComponent.selectInput();
+    }
     (<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
 
@@ -422,7 +431,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLalertComponent.titleStr = "Alert"
     this.HTMLalertComponent.textStr = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!"
     this.HTMLalertComponent.closeStr = "Continue"
-    this.HTMLalertComponent.enableOptions(true, false, false)
+    this.HTMLalertComponent.enableOptions(true, false, false, false)
     this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }

@@ -196,6 +196,10 @@ $font-size-small: 14px !default;
         box-shadow: $shaddow-low;
 
         ::ng-deep app-alert {
+            input {
+                @include interactive;
+                width:100%;
+            }
             .btn {
                 @include interactive;
         

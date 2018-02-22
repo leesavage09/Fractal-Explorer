@@ -19,12 +19,13 @@ export class AlertComponent {
   @Input() closeStr: string = "close";
   @Input() yesStr: string = "yes";
   @Input() noStr: string = "no";
+  @Input() inputStr: string = "no";
   @ViewChild('close') closeElm: ElementRef;
   @ViewChild('yes') yesElm: ElementRef;
   @ViewChild('no') noElm: ElementRef;
-
+  @ViewChild('input') inputElm: ElementRef;
   private callback: Function;
-  private yesHREF:string
+  private yesHREF: string
 
   public readonly CLOSE = 'close'
   public readonly YES = 'yes'
@@ -42,28 +43,39 @@ export class AlertComponent {
   yesClick() {
     this.callback(this.YES)
   }
-  
+
   noClick() {
     this.callback(this.NO)
   }
 
-  enableOptions(close:boolean,yes:boolean,no:boolean) {
+  enableOptions(close: boolean, yes: boolean, no: boolean, input: boolean) {
     if (close) this.closeElm.nativeElement.style.display = 'inline-block'
-    else  this.closeElm.nativeElement.style.display = 'none'
+    else this.closeElm.nativeElement.style.display = 'none'
 
     if (yes) this.yesElm.nativeElement.style.display = 'inline-block'
-    else  this.yesElm.nativeElement.style.display = 'none'
+    else this.yesElm.nativeElement.style.display = 'none'
 
     if (no) this.noElm.nativeElement.style.display = 'inline-block'
-    else  this.noElm.nativeElement.style.display = 'none'
+    else this.noElm.nativeElement.style.display = 'none'
+
+    if (input) {
+      this.inputElm.nativeElement.style.display = 'block'
+    }
+    else this.inputElm.nativeElement.style.display = 'none'
   }
 
-  setCallback(f:Function){
+  setCallback(f: Function) {
     this.callback = f;
   }
 
-  setYesHref(s:string) {
+  setYesHref(s: string) {
     this.yesHREF = s;
+  }
+
+  selectInput() {
+    console.log("select called")
+    this.inputElm.nativeElement.focus();
+    this.inputElm.nativeElement.select();
   }
 
 

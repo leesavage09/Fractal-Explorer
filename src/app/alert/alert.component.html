@@ -1,15 +1,15 @@
 <h4>{{titleStr}}</h4>
 <p>{{textStr}}</p>
+<input #input type="text" readonly  value="{{inputStr}}">
 
-
-<a #close (click)="closeClick()" class="btn" style="display:none">
+<a #close (click)="closeClick()" class="btn" >
       {{closeStr}}
 </a>
 
-<a #yes href="{{yesHREF}}" download="fractal.jpg" (click)="yesClick()" class="btn" style="display:none">
+<a #yes href="{{yesHREF}}" download="fractal.jpg" (click)="yesClick()" class="btn" >
     {{yesStr}}
 </a>
 
-<a #no (click)="noClick()" class="btn" style="display:none">
+<a #no (click)="noClick()" class="btn" >
     {{noStr}}
 </a>
