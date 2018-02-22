@@ -23,11 +23,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   // component config
   @Input() width: string = "300";
   @Input() height: string = "200";
-  @Input() theme: string = "fractal-black";
+  @Input() theme: string = "fractal-lime";
   @Input() maximized: string = "false";
   // Fractal config
-  @Input() equation: string;
+  @Input() equation: string = "Mandelbrot" ;
   @Input() color: string;
+  @Input() colorName: string = "Blob";
   @Input() iterations: string = "50";
   @Input() complexCenter: string = "-0.8, 0";
   @Input() complexWidth: string = "3";
@@ -87,6 +88,9 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   constructor() { }
 
   ngOnInit() {
+    this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
+    this.HTMLjuliaPullOut.nativeElement.style.display = "none"
+
     this.HTMLexplorer.nativeElement.style.width = this.width.toString();
     this.HTMLexplorer.nativeElement.style.height = this.height.toString();
     this.explorerCSSHeight = getComputedStyle(this.HTMLexplorer.nativeElement).height;
@@ -100,29 +104,51 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
     this.NumIterations = parseInt(this.iterations)
 
-    let colorCommandString = this.colorBlueGold;
+    let colorCommandString;
+    if (this.color != null) {
+      colorCommandString = this.color;
+    }
+    else {
+      if (this.colorName == "Blue/Gold") {
+        colorCommandString = this.colorBlueGold;
+      }
+      if (this.colorName == "B/W") {
+        colorCommandString = this.colorBW;
+      }
+      if (this.colorName == "Rainbow") {
+        colorCommandString = this.colorRainbow;
+      }
+      if (this.colorName == "Black/Blue") {
+        colorCommandString = this.colorBlackBlue;
+      }
+      if (this.colorName == "Cell") {
+        colorCommandString = this.colorCell;
+      }
+      if (this.colorName == "Blob") {
+        colorCommandString = this.colorBlob;
+      }
+      if (this.colorName == "Crystal") {
+        colorCommandString = this.colorCrystal;
+      }
+    }
     let gradient = new FractalColor.LinearGradient();
     gradient.decodeJSON(colorCommandString)
-    // if (this.color != undefined) {
-    //   if (this.color == "rainbow") {
-    //     colorCommandString = this.colorRainbow;
-    //     this.HTMLcolourSelect.nativeElement.value = this.colorRainbow;
-    //   }
-    //   if (this.color == "B/W") {
-    //     colorCommandString = this.colorBW;
-    //     this.HTMLcolourSelect.nativeElement.value = this.colorBW;
-    //   }
-    // }
 
-    let fractalEq = FractalEquations.Mandelbrot;
-    if (this.equation == "mandelbrot") {
-      fractalEq = FractalEquations.Mandelbrot;
+
+
+    let fractalEq:FractalEquations.equation;
+    if (this.equation == "Mandelbrot") {
+      fractalEq = new FractalEquations.Mandelbrot;
     }
-    if (this.equation == "burningShip") {
-      fractalEq = FractalEquations.BurningShip;
+    if (this.equation == "BurningShip") {
+      fractalEq = new FractalEquations.BurningShip;
     }
-    if (this.equation == "julia") {
-      fractalEq = FractalEquations.Julia;
+    if (this.equation == "Julia") {
+      fractalEq = new FractalEquations.Julia;
+      let jNumStr = this.complexJuliaPicker.split(",");
+      (<FractalEquations.Julia>fractalEq).juliaReal = parseFloat(jNumStr[0]);
+      (<FractalEquations.Julia>fractalEq).juliaImaginary = parseFloat(jNumStr[1]);
+      this.HTMLjuliaPullOut.nativeElement.style.display = "block"
     }
 
     let canvas = <HTMLCanvasElement>this.mainFractalView.getCanvas();
@@ -130,15 +156,12 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), new fractalEq, gradient);
+    this.fractal = new Fractals.Fractal(new Fractals.ComplexPlain(complexCenter.r, complexCenter.i, complexWidth, canvas), fractalEq, gradient);
     this.fractal.iterations = this.NumIterations;
     this.fractal.setMaxZoomListener(this);
-
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
-
-    this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
-    this.HTMLjuliaPullOut.nativeElement.style.display = "none"
+ 
 
     if (this.maximized == "true") {
       this.explorerWindowIsMaximised = true;
@@ -146,7 +169,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
     else {
       this.HTMLalertComponent.titleStr = "Welcome"
-      this.HTMLalertComponent.textStr = "For the best experence click the full screen button"
+      this.HTMLalertComponent.textStr = "For the best experence click the full screen button."
       this.HTMLalertComponent.closeStr = "Continue"
       this.HTMLalertComponent.enableOptions(true, false, false, false)
       this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
@@ -227,7 +250,25 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   share(event) {
-    let content = "http://leesavage.co.uk/";
+    var host = location.protocol + "//" + window.location.hostname + ":" + location.port + "/?"
+
+    let theme = this.theme
+    let equation = this.fractal.getCalculationFunction().constructor.name
+    let color = this.fractal.getColor().encodeJSON()
+    let iterations = this.fractal.iterations.toString()
+    let complexCenter = this.fractal.complexPlain.getSquare().center.toString();
+    let complexWidth = this.fractal.complexPlain.getSquare().width.toString();
+    let complexJuliaPicker = new ComplexNumber(0, 0).toString();
+
+    let fun = this.fractal.getCalculationFunction();
+    if (fun instanceof FractalEquations.Julia) {
+      let julia = <FractalEquations.Julia>fun;
+      complexJuliaPicker = new ComplexNumber(julia.juliaReal, julia.juliaImaginary).toString()
+    }
+
+    let content = host + "theme=" + theme + "&equation=" + equation + "&color=" + color + "&iterations=" + iterations + "&complexCenter=" + complexCenter + "&complexWidth=" + complexWidth + "&complexJuliaPicker=" + complexJuliaPicker;
+    content = encodeURI(content);
+
     let service = null
 
     switch (event.target.value) {
@@ -264,7 +305,11 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
       this.HTMLalert.nativeElement.style.visibility = "visible";
 
-      this.HTMLalertComponent.selectInput();
+      let self = this;
+      setTimeout(() => {
+        self.HTMLalertComponent.selectInput();
+      }, 100);
+      
     }
     (<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
@@ -280,13 +325,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-  toggleJuliaPullOut() {
-    if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
+  toggleJuliaPullOut(out:boolean = null) {
+    if (out || this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
       if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker);
       this.HTMLjuliaPicker.getFractalView().sizeChanged();
     }
-    else if (this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
+    else if (!out || this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px"
     }
   }
@@ -313,19 +358,20 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
   onEqChanged(event) {
     let eqString = event.target.value;
-    if (eqString == "mandelbrot") {
+    if (eqString == "Mandelbrot") {
       this.fractal.complexPlain.replaceView(-0.8, 0, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.Mandelbrot);
     }
-    else if (eqString == "burningShip") {
+    else if (eqString == "BurningShip") {
       this.fractal.complexPlain.replaceView(-0.5, -0.5, 3, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.BurningShip);
     }
 
-    if (eqString == "julia") {
-      this.fractal.complexPlain.replaceView(0, 0, 20, <HTMLCanvasElement>this.mainFractalView.getCanvas())
+    if (eqString == "Julia") {
+      this.fractal.complexPlain.replaceView(-2.5, 0, 20, <HTMLCanvasElement>this.mainFractalView.getCanvas())
       this.fractal.setCalculationFunction(new FractalEquations.Julia);
       this.HTMLjuliaPullOut.nativeElement.style.display = "block"
+      this.toggleJuliaPullOut(true);
     }
     else {
       this.HTMLjuliaPullOut.nativeElement.style.display = "none"
@@ -348,6 +394,11 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   startChangingIterations(i) {
+    if (i > 1) { 
+      this.NumIterations = Math.ceil(this.NumIterations * i)
+    } else {
+      this.NumIterations = Math.floor(this.NumIterations * i)
+    }
     if (this.iterationsAreChanging) return;
     this.changingIterations(i);
   }

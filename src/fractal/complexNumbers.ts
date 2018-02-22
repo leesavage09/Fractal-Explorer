@@ -5,6 +5,10 @@ export class ComplexNumber {
 		this.r = real;
 		this.i = imaginary;
 	}
+
+	toString():string{
+		return this.r+","+this.i
+	}
 }
 
 export class ComplexSquare {

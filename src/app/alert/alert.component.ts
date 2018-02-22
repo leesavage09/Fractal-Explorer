@@ -73,7 +73,6 @@ export class AlertComponent {
   }
 
   selectInput() {
-    console.log("select called")
     this.inputElm.nativeElement.focus();
     this.inputElm.nativeElement.select();
   }
