@@ -417,12 +417,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   }
 
   startChangingIterations(i) {
+    if (this.iterationsAreChanging) return;
     if (i > 1) { 
       this.NumIterations = Math.ceil(this.NumIterations * i)
     } else {
       this.NumIterations = Math.floor(this.NumIterations * i)
     }
-    if (this.iterationsAreChanging) return;
+    this.iterationsChanged()
     this.changingIterations(i);
   }
 
