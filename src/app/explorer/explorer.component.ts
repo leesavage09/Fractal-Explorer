@@ -418,13 +418,8 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
   startChangingIterations(i) {
     if (this.iterationsAreChanging) return;
-    if (i > 1) { 
-      this.NumIterations = Math.ceil(this.NumIterations * i)
-    } else {
-      this.NumIterations = Math.floor(this.NumIterations * i)
-    }
-    this.iterationsChanged()
-    this.changingIterations(i);
+    this.updateNumIterations(i);
+    this.animateIterations(i);
   }
 
   stopChangingIterations() {
@@ -524,27 +519,31 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   * Private Functions \/
   */
 
-  private changingIterations(i) {
+  private animateIterations(i) {
     var self = this;
     this.iterationsAreChanging = true;
     this.fractal.stopRendering();
     setTimeout(function () {
       if (!self.iterationsAreChanging) return;
 
-      if (i > 1) {
-        self.NumIterations = Math.ceil(self.NumIterations * i)
-      } else {
-        self.NumIterations = Math.floor(self.NumIterations * i)
-      }
+      self.updateNumIterations(i);
 
-      if (self.NumIterations < 1) {
-        self.NumIterations = 1;
-        self.iterationsAreChanging = false;
-      }
-      self.iterationsChanged();
-
-      self.changingIterations(i);
+      self.animateIterations(i);
     }, 100);
+  }
+
+  private updateNumIterations(i:number) {
+    if (i > 1) {
+      this.NumIterations = Math.ceil(this.NumIterations * i)
+    } else {
+      this.NumIterations = Math.floor(this.NumIterations * i)
+    }
+
+    if (this.NumIterations < 2) {
+      this.NumIterations = 2;
+      this.iterationsAreChanging = false;
+    }
+    this.iterationsChanged();
   }
 
   private requestNativeFullScreen() {
