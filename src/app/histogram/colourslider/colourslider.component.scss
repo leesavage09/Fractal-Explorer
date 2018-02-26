@@ -11,11 +11,11 @@
         canvas {
             height: 1px;
             width: 1px;
-            cursor: move;
+            // cursor: move;
 
-            &:active:hover {
-                cursor: col-resize;
-            }
+            // &:active:hover {
+            //     cursor: col-resize;
+            // }
         }
     }
 }

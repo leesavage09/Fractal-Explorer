@@ -48,29 +48,29 @@ export class ColoursliderComponent implements OnInit, FractalColor.LinearGradien
     this.updateImg();
   }
 
-  start(event) {
-    this.trackingMove = true;
-    this.startX = event.offsetX;
-    this.startPhase = this.linearGradient.getPhase();
-  }
+  // start(event) {
+  //   this.trackingMove = true;
+  //   this.startX = event.offsetX;
+  //   this.startPhase = this.linearGradient.getPhase();
+  // }
 
-  end(event) {
-    this.trackingMove = false;
-  }
+  // end(event) {
+  //   this.trackingMove = false;
+  // }
 
-  move(event) {
-    if (!this.trackingMove) return;
-    let offset = this.startX - event.offsetX;
-    let style = getComputedStyle(this.HTMLslider.nativeElement);
-    let percent = offset / parseInt(style.width);
-    this.linearGradient.setPhase(this.startPhase + percent)
-    this.updateImg();
-    this.linearGradient.notify(this);
-  }
+  // move(event) {
+  //   if (!this.trackingMove) return;
+  //   let offset = this.startX - event.offsetX;
+  //   let style = getComputedStyle(this.HTMLslider.nativeElement);
+  //   let percent = offset / parseInt(style.width);
+  //   this.linearGradient.setPhase(this.startPhase + percent)
+  //   this.updateImg();
+  //   this.linearGradient.notify(this);
+  // }
 
-  touchMove(event) {
-    if (!this.trackingMove) return;
-  }
+  // touchMove(event) {
+  //   if (!this.trackingMove) return;
+  // }
 
   /*
   * Private

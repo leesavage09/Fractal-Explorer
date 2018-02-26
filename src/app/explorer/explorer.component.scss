@@ -104,22 +104,18 @@ $font-size-small: 16px !default;
         border-color: $colour-tool;
         border-width: 1px;
         border-radius: $corner-radius;
-        height: 0px;
+        height: $explorer-height;
         display: flex;
         flex-direction: column-reverse;
         position: relative;
         box-shadow: $shaddow-low;
 
         #gradientpanel {
-            height: 0px;
-            flex-grow: 1;
-            display: none;
+            height: $explorer-height/4;
         }
 
         #histogrampanel {
-            height: 0px;
-            flex-grow: 1;
-            display: none;
+            height: $explorer-height/4;
             overflow: hidden;
         }
 
@@ -177,8 +173,9 @@ $font-size-small: 16px !default;
 
     #fractalContainer {
         height: $explorer-height;
+        min-height: 0px;
         width: 100%;
-        flex-grow: 1;
+        flex-shrink: 1;
         display: flex;
 
         #mainFractalView {
