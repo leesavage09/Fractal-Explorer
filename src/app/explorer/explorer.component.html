@@ -44,7 +44,7 @@
       </div> -->
       <div #saveButton class="select-container" (mousedown)="abortDownload()">
         <select #saveSelect class="select" id="eq-select" (change)="save($event)">
-          <option value="non-option">Save JPG</option>
+          <option value="non-option" disabled></option>
           <option value="HD 1920×1080">HD 1920×1080</option>
           <option value="2K 2048×1080">2K 2048×1080</option>
           <option value="4K 4096×2160">4K 4096×2160</option>
@@ -87,7 +87,7 @@
     <div #colorControls class="controls top-right">
       <div class="select-container">
         <select #eqSelect class="select" id="eq-select" dir="rtl" (change)="onEqChanged($event)">
-          <option value="non-option" disabled>Choose Colour</option>
+          <option value="non-option" disabled></option>
           <option value="Mandelbrot">Mandelbrot z=z^2+C</option>
           <option value="MandelbrotPow4">Mandelbrot z=z^4+C</option>
           <option value="MandelbrotPow6">Mandelbrot z=z^6+C</option>
@@ -103,7 +103,7 @@
       </div>
       <div class="select-container ">
         <select #colourSelect class="select" id="colour-select" dir="rtl" (change)="onColorChanged($event)">
-          <option value="non-option" disabled>Choose equation</option>
+          <option value="non-option" disabled></option>
           <option value={{colorBlueGold}}>Blue/Gold</option>
           <option value={{colorBW}}>B/W</option>
           <option value={{colorRainbow}}>Rainbow</option>
