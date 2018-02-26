@@ -112,10 +112,12 @@ $font-size-small: 16px !default;
 
         #gradientpanel {
             height: $explorer-height/4;
+            flex-grow: 1;
         }
 
         #histogrampanel {
             height: $explorer-height/4;
+            flex-grow: 1;
             overflow: hidden;
         }
 
@@ -176,6 +178,7 @@ $font-size-small: 16px !default;
         min-height: 0px;
         width: 100%;
         flex-shrink: 1;
+        flex-grow: 1;
         display: flex;
 
         #mainFractalView {
