@@ -53,6 +53,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @ViewChild('histogramdiv') readonly HTMLhistogramdiv: ElementRef;
   @ViewChild('gradientdiv') readonly HTMLgradientdiv: ElementRef;
   @ViewChild('colorPullDownCaret') readonly HTMLcolorPullDownCaret: ElementRef;
+  @ViewChild('juliaPullOutCaret') readonly HTMLjuliaPullOutCaret: ElementRef;
   @ViewChild('saveButton') readonly HTMLsaveButton: ElementRef;
   @ViewChild('eqSelect') readonly HTMLeqSelect: ElementRef;
   @ViewChild('saveSelect') readonly HTMLsaveSelect: ElementRef;
@@ -339,11 +340,13 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   toggleJuliaPullOut(out:boolean = null) {
     if (out || this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
+      this.HTMLjuliaPullOutCaret.nativeElement.setAttribute("class", "fa fa-caret-left");
       if (!this.HTMLjuliaPicker.hasInit) this.HTMLjuliaPicker.init(this.fractal.getColor(), this.NumIterations, this.complexJuliaPicker);
       this.HTMLjuliaPicker.getFractalView().sizeChanged();
     }
     else if (!out || this.HTMLjuliaPickerDiv.nativeElement.style.width == "200px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px"
+      this.HTMLjuliaPullOutCaret.nativeElement.setAttribute("class", "fa fa-caret-right");
     }
   }
 
@@ -414,6 +417,11 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
       this.HTMLalert.nativeElement.style.visibility = "hidden";
       return;
     }
+  }
+
+  closeMaxZoomAlert(event){
+    this.closeAlert(event)
+    this.fractal.deleteMaxZoomListener();
   }
 
   startChangingIterations(i) {
@@ -502,7 +510,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLalertComponent.textStr = "You have reached the max zoom, What you can see are floting point errors as the diffrences between the numbers are so small!"
     this.HTMLalertComponent.closeStr = "Continue"
     this.HTMLalertComponent.enableOptions(true, false, false, false)
-    this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+    this.HTMLalertComponent.setCallback(this.closeMaxZoomAlert.bind(this))
     this.HTMLalert.nativeElement.style.visibility = "visible";
   }
 

@@ -128,11 +128,11 @@ $font-size-small: 16px !default;
             position: absolute;
             left: 0;
             right: 0;
-            bottom: -$button-size / 2;
+            bottom: -$button-size * 0.8;
             margin: auto;
             width: $button-size * 2;
-            height: $button-size / 2;
-            line-height: $button-size / 2;
+            height: $button-size * 0.8;
+            line-height: $button-size * 0.8;
             border-top-left-radius: 0px;
             border-top-right-radius: 0px;
             box-shadow: $shaddow-low;
@@ -158,13 +158,13 @@ $font-size-small: 16px !default;
 
         #juliaPullOut-btn {
             position: absolute;
-            right: -$button-size / 2;
+            right: -$button-size * 0.8;
             margin: auto;
             display: inline-block;
 
             @include interactive;
 
-            width: $button-size / 2;
+            width: $button-size * 0.8;
             height: $button-size * 2;
             line-height: $button-size * 2;
             border-bottom-left-radius: 0px;
