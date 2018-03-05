@@ -430,14 +430,14 @@ $font-size-small: 16px !default;
         bottom: 0;
         right: 0;
 
-        a {
+        .btn-group-vertical {            
+            border-radius: $corner-radius;
             box-shadow: $shaddow-low;
-        }
-
-        .btn-group-vertical {
+            width: $button-size;
+            margin-left: auto;
+            margin-right: 2px;
             .btn {
-                margin-left: auto;
-                display: block;
+                display: block; 
                 margin-top: $input-spacing * 2;
                 margin-bottom: $input-spacing * 2;
             }

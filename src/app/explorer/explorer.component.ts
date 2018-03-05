@@ -25,7 +25,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   @Input() theme: string = "fractal-black";
   @Input() maximized: string = "false";
   // Fractal config
-  @Input() equation: string = "Mandelbrot" ;
+  @Input() equation: string = "Mandelbrot";
   @Input() color: string;
   @Input() colorName: string = "Blob";
   @Input() iterations: string = "50";
@@ -71,6 +71,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   readonly colorBlob: string = '{"phase":0,"frequency":1,"min":0,"mid":0.36363636363636365,"max":1,"arr":[{"stop":0,"color":{"r":255,"g":255,"b":255}},{"stop":0.1495601173020528,"color":{"r":255,"g":255,"b":255}},{"stop":0.16715542521994134,"color":{"r":0,"g":0,"b":0}},{"stop":0.18841642228739003,"color":{"r":255,"g":255,"b":255}},{"stop":0.30058651026392963,"color":{"r":255,"g":0,"b":0}},{"stop":0.5175953079178885,"color":{"r":255,"g":110,"b":63}},{"stop":1,"color":{"r":255,"g":221,"b":0}}]}'
   readonly colorCrystal: string = '{"phase":0,"frequency":1,"min":0.2653958944281525,"mid":0.4868035190615836,"max":1,"arr":[{"stop":0,"color":{"r":0,"g":0,"b":0}},{"stop":0.001466275659824047,"color":{"r":0,"g":0,"b":0}},{"stop":0.4897360703812317,"color":{"r":250,"g":255,"b":115}},{"stop":1,"color":{"r":106,"g":103,"b":255}}]}'
 
+  private isIonic = false;
   private explorerCSSHeight;
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
@@ -88,12 +89,17 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   constructor() { }
 
   ngOnInit() {
+    if (this.isIonic) {
+      this.maximized = "true"
+      this.HTMLfullScreenControls.nativeElement.style.display = "none";
+    }
+
     this.HTMLjuliaPickerDiv.nativeElement.style.width = "0px";
     this.HTMLjuliaPullOut.nativeElement.style.display = "none"
     this.HTMLgradient.setColorPicker(this.HTMLjscolor);
 
     this.HTMLcolorPullDown.nativeElement.style.height = "0px";
-    
+
     this.HTMLexplorer.nativeElement.style.width = this.width.toString();
     this.HTMLexplorer.nativeElement.style.height = this.height.toString();
     this.explorerCSSHeight = getComputedStyle(this.HTMLexplorer.nativeElement).height;
@@ -139,7 +145,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
 
 
-    let fractalEq:FractalEquations.equation;
+    let fractalEq: FractalEquations.equation;
     if (this.equation == "Mandelbrot") {
       fractalEq = new FractalEquations.Mandelbrot;
     }
@@ -173,7 +179,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.fractal.setMaxZoomListener(this);
     this.mainFractalView.setFractal(this.fractal);
     this.fractal.render();
- 
+
 
     if (this.maximized == "true") {
       this.explorerWindowIsMaximised = true;
@@ -309,20 +315,20 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
 
     // if (service != null) window.open(service);
     // else {
-      this.HTMLalertComponent.titleStr = "Share Link"
-      this.HTMLalertComponent.textStr = "You can share this link."
-      this.HTMLalertComponent.inputStr = content;
-      this.HTMLalertComponent.closeStr = "Close"
-      this.HTMLalertComponent.enableOptions(true, false, false, true)
-      this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
-      this.HTMLalert.nativeElement.style.visibility = "visible";
+    this.HTMLalertComponent.titleStr = "Share Link"
+    this.HTMLalertComponent.textStr = "You can share this link."
+    this.HTMLalertComponent.inputStr = content;
+    this.HTMLalertComponent.closeStr = "Close"
+    this.HTMLalertComponent.enableOptions(true, false, false, true)
+    this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
+    this.HTMLalert.nativeElement.style.visibility = "visible";
 
-      let self = this;
-      setTimeout(() => {
-        self.HTMLalertComponent.selectInput();
-      }, 100);
-      
-   // }
+    let self = this;
+    setTimeout(() => {
+      self.HTMLalertComponent.selectInput();
+    }, 100);
+
+    // }
     //(<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
 
@@ -337,7 +343,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-  toggleJuliaPullOut(out:boolean = null) {
+  toggleJuliaPullOut(out: boolean = null) {
     if (out || this.HTMLjuliaPickerDiv.nativeElement.style.width == "0px") {
       this.HTMLjuliaPickerDiv.nativeElement.style.width = "200px"
       this.HTMLjuliaPullOutCaret.nativeElement.setAttribute("class", "fa fa-caret-left");
@@ -419,7 +425,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }
   }
 
-  closeMaxZoomAlert(event){
+  closeMaxZoomAlert(event) {
     this.closeAlert(event)
     this.fractal.deleteMaxZoomListener();
   }
@@ -540,7 +546,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     }, 100);
   }
 
-  private updateNumIterations(i:number) {
+  private updateNumIterations(i: number) {
     if (i > 1) {
       this.NumIterations = Math.ceil(this.NumIterations * i)
     } else {
