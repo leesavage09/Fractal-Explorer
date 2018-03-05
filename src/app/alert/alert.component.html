@@ -1,6 +1,9 @@
 <h4>{{titleStr}}</h4>
 <p>{{textStr}}</p>
-<input #input type="text" readonly  value="{{inputStr}}">
+
+<a #inputCopy (click)="copyClick()" (window:copy)="copy($event)" class="btn" >
+    Copy to clipboard
+</a>
 
 <a #close (click)="closeClick()" class="btn" >
       {{closeStr}}

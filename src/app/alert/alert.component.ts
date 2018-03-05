@@ -22,14 +22,14 @@ export class AlertComponent {
   @ViewChild('close') closeElm: ElementRef;
   @ViewChild('yes') yesElm: ElementRef;
   @ViewChild('no') noElm: ElementRef;
-  @ViewChild('input') inputElm: ElementRef;
-  
+  @ViewChild('inputCopy') inputCopyElm: ElementRef;
+
   private callback: Function;
   private juliaFractal: Fractals.Fractal = null;
-  
-  public readonly CLOSE = 'close'
-  public readonly YES = 'yes'
-  public readonly NO = 'no'
+
+  private readonly CLOSE = 'close'
+  private readonly YES = 'yes'
+  private readonly NO = 'no'
   public yesHREF: string
 
   constructor() {
@@ -47,6 +47,18 @@ export class AlertComponent {
     this.callback(this.NO)
   }
 
+  copyClick() {
+    document.execCommand('copy');
+    this.callback(this.CLOSE);
+  }
+
+  copy(event) {
+    event.preventDefault();
+    if (event.clipboardData) {
+      event.clipboardData.setData("text/plain", this.inputStr);
+    }
+  }
+
   enableOptions(close: boolean, yes: boolean, no: boolean, input: boolean) {
     if (close) this.closeElm.nativeElement.style.display = 'inline-block'
     else this.closeElm.nativeElement.style.display = 'none'
@@ -58,9 +70,11 @@ export class AlertComponent {
     else this.noElm.nativeElement.style.display = 'none'
 
     if (input) {
-      this.inputElm.nativeElement.style.display = 'block'
+      this.inputCopyElm.nativeElement.style.display = 'block'
     }
-    else this.inputElm.nativeElement.style.display = 'none'
+    else {
+      this.inputCopyElm.nativeElement.style.display = 'none'
+    }
   }
 
   setCallback(f: Function) {
@@ -70,11 +84,5 @@ export class AlertComponent {
   setYesHref(s: string) {
     this.yesHREF = s;
   }
-
-  selectInput() {
-    this.inputElm.nativeElement.focus();
-    this.inputElm.nativeElement.select();
-  }
-
 
 }

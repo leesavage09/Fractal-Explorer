@@ -22,7 +22,7 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   // component config
   @Input() width: string = "300";
   @Input() height: string = "200";
-  @Input() theme: string = "fractal-black";
+  @Input() theme: string = "";//"fractal-black";
   @Input() maximized: string = "false";
   // Fractal config
   @Input() equation: string = "Mandelbrot";
@@ -318,18 +318,9 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
     this.HTMLalertComponent.titleStr = "Share Link"
     this.HTMLalertComponent.textStr = "You can share this link."
     this.HTMLalertComponent.inputStr = content;
-    this.HTMLalertComponent.closeStr = "Close"
-    this.HTMLalertComponent.enableOptions(true, false, false, true)
+    this.HTMLalertComponent.enableOptions(false, false, false, true)
     this.HTMLalertComponent.setCallback(this.closeAlert.bind(this))
     this.HTMLalert.nativeElement.style.visibility = "visible";
-
-    let self = this;
-    setTimeout(() => {
-      self.HTMLalertComponent.selectInput();
-    }, 100);
-
-    // }
-    //(<HTMLSelectElement>this.HTMLshareSelect.nativeElement).selectedIndex = 0
   }
 
   windowResized() {
