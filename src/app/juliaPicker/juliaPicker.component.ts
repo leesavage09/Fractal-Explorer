@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { Component, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
 import { Fractals } from "../../fractal/fractal.module";
-import { FractalColor, FractalHistogram } from "../../fractal/fractalColouring";
-import { General } from "../../helper/helper.module";
+import { FractalColor } from "../../fractal/fractalColouring";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
 import { ComplexNumber } from '../../fractal/complexNumbers';
 import { FractalViewComponent } from '../fractalView/fractalView.component';
@@ -19,7 +18,6 @@ export class JuliaPickerComponent {
   @ViewChild('picker') picker: ElementRef;
   @Output() numberChanged = new EventEmitter<ComplexNumber>();
   private movingMarker: boolean = false;
-  private data: Array<number>;
   private startX: number;
   private startY: number;
   public hasInit: boolean = false

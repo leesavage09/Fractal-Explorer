@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
+import { Component, ViewChild, ElementRef, Output, EventEmitter } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module";

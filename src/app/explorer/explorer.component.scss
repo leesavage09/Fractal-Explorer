@@ -385,8 +385,8 @@ $font-size-small: 16px !default;
             margin: 0px;
             margin-left: 0;
             margin-right: 0;
-            padding-left: $font-size;
-            padding-right: $font-size;
+            //padding-left: $font-size;
+            //padding-right: $font-size;
             width: $iterations-width;
             height: $button-size;
             border-radius: 0px;
@@ -429,6 +429,10 @@ $font-size-small: 16px !default;
         position: absolute;
         bottom: 0;
         right: 0;
+
+        a {
+            box-shadow: $shaddow-low;
+        }
 
         .btn-group-vertical {            
             border-radius: $corner-radius;

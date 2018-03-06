@@ -2,10 +2,7 @@ import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 
 import { Fractals } from "../../fractal/fractal.module";
 import { FractalEquations } from "../../fractal/fractalEquations.module"
-import { CompiledStylesheet } from "@angular/compiler";
-import { error } from "util";
 import { ComplexNumber } from "../../fractal/complexNumbers";
-import { ColoursliderComponent } from "../histogram/colourslider/colourslider.component";
 import { FractalColor } from "../../fractal/fractalColouring";
 import { GradientBuilderComponent } from '../gradientBuilder/gradientBuilder.component';
 import { HistogramComponent } from "../histogram/histogram.component";
@@ -74,11 +71,9 @@ export class ExplorerComponent implements OnInit, Fractals.MaxZoomListner {
   private explorerCSSHeight;
   private explorerWindowStyle: string;
   private jscolorWindowStyle: string;
-  private fractal: Fractals.Fractal;
-  private juliaFractal: Fractals.Fractal;
+  protected fractal: Fractals.Fractal;
   private explorerWindowIsMaximised: boolean = false;
   private iterationsAreChanging: boolean = false;
-  private zoomGestureHappening: boolean = false;
   private static readonly htmlClassForFaEyeOpen: string = "fa fa-eye"
   private static readonly htmlClassForFaEyeClosed: string = "fa fa-eye-slash"
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ComponentFactoryResolver, ComponentRef, ElementRef, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, ComponentRef, ElementRef, ViewChild } from '@angular/core';
 import { General } from "../../../helper/helper.module";
 
 import { GradientBuilderComponent } from '../gradientBuilder.component';
