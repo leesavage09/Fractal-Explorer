@@ -60,6 +60,10 @@ $font-size-small: 16px !default;
     &:hover {
         color: $color-mouseover;
     }
+
+    &:focus {
+        color: $colour-tool;
+    }
 }
 
 @mixin prevent-drag-selection {
@@ -258,6 +262,10 @@ $font-size-small: 16px !default;
                     color: $color-transparent;
                 }
 
+                &:focus {
+                    color:$color-transparent;
+                }
+
                 option {
                     font-size: $font-size;
                     color: $colour-tool;
@@ -385,6 +393,7 @@ $font-size-small: 16px !default;
             margin: 0px;
             margin-left: 0;
             margin-right: 0;
+
             //padding-left: $font-size;
             //padding-right: $font-size;
             width: $iterations-width;
@@ -434,14 +443,15 @@ $font-size-small: 16px !default;
             box-shadow: $shaddow-low;
         }
 
-        .btn-group-vertical {            
+        .btn-group-vertical {
             border-radius: $corner-radius;
             box-shadow: $shaddow-low;
             width: $button-size;
             margin-left: auto;
             margin-right: 2px;
+
             .btn {
-                display: block; 
+                display: block;
                 margin-top: $input-spacing * 2;
                 margin-bottom: $input-spacing * 2;
             }

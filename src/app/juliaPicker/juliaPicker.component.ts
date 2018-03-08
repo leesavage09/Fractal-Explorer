@@ -32,11 +32,15 @@ export class JuliaPickerComponent {
     ctx.canvas.width = canvas.offsetWidth;
     ctx.canvas.height = canvas.offsetHeight;
 
-    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(-0.8, 0, 3, canvas), new FractalEquations.Mandelbrot, color);
+    let centerJuliaPicker = pickerLoc.split(",");
+    let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
+    let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
+
+    this.juliaFractal = new Fractals.Fractal(new Fractals.ComplexPlain(centercenterJuliaPickerR, centercenterJuliaPickerI, 3, canvas), new FractalEquations.Mandelbrot, color);
     this.juliaFractal.iterations = iterations;
     this.mainFractalView.setFractal(this.juliaFractal)
 
-    this.setPickerString(pickerLoc);
+    this.setXY(this.getPickerX(),this.getPickerY());
     this.hasInit = true;
   }
 
@@ -44,30 +48,14 @@ export class JuliaPickerComponent {
     return this.mainFractalView;
   }
 
-
-
-  public setPickerString(pickerLoc: String) {
-    //set the picker location
-    let centerJuliaPicker = pickerLoc.split(",");
-    let centercenterJuliaPickerR = parseFloat(centerJuliaPicker[0]);
-    let centercenterJuliaPickerI = parseFloat(centerJuliaPicker[1]);
-    let complexCenterJuliaPicker = new ComplexNumber(centercenterJuliaPickerR, centercenterJuliaPickerI);
-    this.setPicker(complexCenterJuliaPicker);
-  }
-
-  public setPicker(pickerCenter: ComplexNumber) {
-    //set the picker location
-    let pos = this.juliaFractal.complexPlain.getMouse(pickerCenter)
-    this.setXY(pos.x, pos.y);
-  }
-
-
   /*
   * Events
   */
 
   viewChanged() {
-    this.numberChanged.emit(new ComplexNumber(this.getRealNumber(), this.getImaginaryNumber()));
+    if (this.getMaxX()!=0 && this.getMaxY()!=0) {
+      this.numberChanged.emit(new ComplexNumber(this.getRealNumber(0), this.getImaginaryNumber(0)));
+    }
   }
 
   touchStart(event) {
@@ -99,24 +87,7 @@ export class JuliaPickerComponent {
     if (this.movingMarker == false) return;
     let offsetX = event.screenX - this.startX
     let offsetY = event.screenY - this.startY
-
-    this.startX = event.screenX
-    this.startY = event.screenY
-
-    let y = this.getCurrentY() + offsetY
-    let x = this.getCurrentX() + offsetX
-
-    if (y < 0) y = 0;
-    else if (y > this.getMaxY()) y = this.getMaxY();
-
-    if (x < 0) x = 0;
-    else if (x > this.getMaxX()) x = this.getMaxX();
-
-    this.setXY(x, y);
-
-
-    this.numberChanged.emit(new ComplexNumber(this.getRealNumber(), this.getImaginaryNumber()));
-
+    this.numberChanged.emit(new ComplexNumber(this.getRealNumber(offsetX), this.getImaginaryNumber(offsetY)));
   }
 
   /*
@@ -135,11 +106,11 @@ export class JuliaPickerComponent {
   * Private Methods
   */
 
-  private getRealNumber() {
-    return this.juliaFractal.complexPlain.getRealNumber(this.getCurrentX())
+  private getRealNumber(offset) {
+    return this.juliaFractal.complexPlain.getRealNumber(this.getPickerX()-offset)
   }
-  private getImaginaryNumber() {
-    return this.juliaFractal.complexPlain.getImaginaryNumber(this.getCurrentY())
+  private getImaginaryNumber(offset) {
+    return this.juliaFractal.complexPlain.getImaginaryNumber(this.getPickerY()-offset)
   }
 
   private getMaxX() {
@@ -150,14 +121,12 @@ export class JuliaPickerComponent {
     return parseInt(getComputedStyle(this.juliadiv.nativeElement).height.replace("px", ""));
   }
 
-  public getCurrentX() {
-    let w = parseInt(getComputedStyle(this.picker.nativeElement).width.replace("px", "")) / 2
-    return parseInt(getComputedStyle(this.picker.nativeElement).left.replace("px", "")) + w;
+  private getPickerX() {
+    return this.getMaxX()/2;
   }
 
-  public getCurrentY() {
-    let h = parseInt(getComputedStyle(this.picker.nativeElement).height.replace("px", "")) / 2
-    return parseInt(getComputedStyle(this.picker.nativeElement).top.replace("px", "")) + h;
+  private getPickerY() {
+    return this.getMaxY()/2;
   }
 
   private setXY(x: number, y: number) {
